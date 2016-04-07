@@ -14,6 +14,7 @@ import {
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
+import { LoadingOutlined } from '@ant-design/icons';
 
 const MesssageList = () => {
   const dispatch = useDispatch();
@@ -57,7 +58,12 @@ const MesssageList = () => {
         next={fetchMoreData}
         inverse={true}
         hasMore={messages.currentPage < messages.lastPage}
-        loader={<Spin className="py-2" />}
+        loader={
+          <Spin
+            className="p-2"
+            indicator={<LoadingOutlined style={{ fontSize: 30 }} spin />}
+          />
+        }
         scrollableTarget="scrollableDiv"
       >
         <Space direction="vertical">
