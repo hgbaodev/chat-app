@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
 import { useEffect, useState } from 'react';
-import ProfileModal from '~/section/common/ProfileModal';
+import ProfileModal from '~/section/common/AccountModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';

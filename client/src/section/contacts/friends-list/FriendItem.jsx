@@ -2,11 +2,16 @@ import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import useHover from '~/hooks/useHover';
+import { useNavigate } from 'react-router-dom';
+import { useDispatch } from '~/store';
+import { setCurrentConversation } from '~/store/slices/chatSlice';
 
-
-export const FriendItem = ({ id, avatar, fullName, email }) => {
+export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
   // handle
   const handleDeleteFriend = () => {
     // logic here
@@ -18,8 +23,8 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
   };
 
   const handleChatFriend = () => {
-    // logic here
-    console.log('chat friend', id);
+    navigate('/');
+    dispatch(setCurrentConversation(conversation));
   };
 
   const dropdownItems = [

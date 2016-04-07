@@ -29,10 +29,10 @@ class NewestMessage(serializers.ModelSerializer):
 
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
-    latest_message = NewestMessage(read_only=True)
+    latest_message = serializers.SerializerMethodField(read_only=True)
     type = serializers.IntegerField(read_only=True)
-    members = MemberConversationSerializer(many=True, read_only=True)
-    is_pinned = serializers.BooleanField(read_only=True)
+    members = serializers.SerializerMethodField(read_only=True)
+    is_pinned = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Conversation
@@ -54,6 +54,25 @@ class ConversationSerializer(serializers.ModelSerializer):
 
         return conversation
     
+    def get_latest_message(self, conversation):
+        latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=self.context['request'].user).order_by('-created_at').first()
+        if latest_message:
+            return MessageSerializer(latest_message).data
+        return None
+
+    def get_members(self, conversation):
+        users = User.objects.filter(participants__conversation=conversation)
+        return MemberConversationSerializer(users, many=True, context=self.context).data
+
+    def get_is_pinned(self, conversation):
+        return PinConversation.objects.filter(user=self.context['request'].user, conversation=conversation).exists()
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        if not instance.title and instance.type == 2:
+            other_user = User.objects.filter(participants__conversation=instance).exclude(id=self.context['request'].user.id).first()
+            data['title'] = other_user.get_full_name if other_user else ''
+        return data
 
 class AddMemberSerializer(serializers.ModelSerializer):
     status = serializers.SerializerMethodField(read_only=True)
