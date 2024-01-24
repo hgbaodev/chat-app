@@ -61,7 +61,7 @@
    ```bash
    python manage.py migrate
    ```
-5. Star server
+5. Start server
    ```bash
    python manage.py runserver
    ```
