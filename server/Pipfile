@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+django = "*"
+djangorestframework = "*"
+pymysql = "*"
+pygments = "*"
+django-debug-toolbar = "*"
+django-cors-headers = "*"
+pillow = "*"
+channels = "*"
+channels-redis = "*"
+django-filter = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.12"

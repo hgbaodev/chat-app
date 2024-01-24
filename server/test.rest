@@ -1,0 +1,16 @@
+POST http://127.0.0.1:8000/chat-app/login/
+Content-Type: application/json
+
+{ "username": "transinh08000", "password": "2109"}
+
+###
+POST http://127.0.0.1:8000/chat-app/registration/
+Content-Type: application/json
+
+{ "username": "transinh086", "password": "2109", "email": "musicanime2501@gmail.com"}
+
+###
+GET http://127.0.0.1:8000/test-token
+Content-Type: application/json
+Authorization: Token 47df7b007860e10c598ce4c7caf7d297a8bd488e
+{}
