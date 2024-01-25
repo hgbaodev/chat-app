@@ -1,0 +1,4 @@
+/client/nodo_modules
+/client/.env
+.vscode
+.prettierrc
