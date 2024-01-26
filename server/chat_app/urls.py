@@ -5,6 +5,8 @@ from rest_framework.authtoken import views
 
 from chat_app.views.call_view import StartCall, EndCall
 from chat_app.views.message_view import MessageView
+# group api
+from chat_app.views.group_view import CreateGroup, GetAllGroups
 from config import settings
 
 urlpatterns = [
@@ -16,5 +18,12 @@ urlpatterns = [
     path('message/', MessageView.as_view()),
     path('start-call/', StartCall.as_view()),
     path('end-call/', EndCall.as_view()),
+
+    # group api here
+    path('groups/<int:user_id>', GetAllGroups.as_view()),
+    path('groups/create-group', CreateGroup.as_view()),
+
+
+    # socket here
     path('test-socket/', test_socket)
 ]
