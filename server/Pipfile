@@ -14,6 +14,7 @@ pillow = "*"
 channels = "*"
 channels-redis = "*"
 django-filter = "*"
+markdown = "*"
 
 [dev-packages]
 

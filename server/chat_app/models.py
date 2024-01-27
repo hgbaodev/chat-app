@@ -12,6 +12,7 @@ class Profile(models.Model):
     photo = models.ImageField(null=True, blank=True, default='icon_default.jpg')
     status = models.CharField(default="Hi i'm using chatapp-hgbaodev", max_length=255)
     online = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True, blank=True)
 
 
 @receiver(post_save, sender=User)
@@ -22,13 +23,14 @@ def create_user_profile(sender, instance, created, *args, **kwargs):
 
 class Message(models.Model):
     text = models.TextField()
-    date_time = models.DateTimeField(auto_now_add=True, blank=True)
     sender = models.ForeignKey(User, related_name='sender', on_delete=models.CASCADE)
     receiver = models.ForeignKey(User, related_name='receiver', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True)
     
 class Group(models.Model):
-    id = models.AutoField(primary_key=True)
-    groupName = models.CharField(validators=[
+    group_id = models.AutoField(primary_key=True)
+    group_name = models.CharField(validators=[
             RegexValidator(
                 regex=r'^[a-zA-Z ]+$',
                 message='groupName can only contains letter and space.',
@@ -36,13 +38,14 @@ class Group(models.Model):
            MinLengthValidator(limit_value=8, message='groupName must have at least 8 characters.'),
            MaxLengthValidator(limit_value=100, message='groupName can only have a maximum of 100 characters.'),
         ], max_length=100)
-    avatar = models.CharField(default="link_to_default_avatar", max_length=255)
-    createdBy = models.ForeignKey(User, related_name='createdBy', on_delete=models.CASCADE)
-    createdAt = models.DateTimeField(default=timezone.now)
+    avatar = models.CharField(default="group_default.png", max_length=255)
+    created_by = models.ForeignKey(User, related_name='createdBy', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True)
 
 class GroupMember(models.Model):
     group = models.ForeignKey(Group, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    joineddAt = models.DateTimeField(default=timezone.now)
+    joined_at = models.DateTimeField(default=timezone.now)
     class Meta:
         unique_together = (('group', 'user'),)
