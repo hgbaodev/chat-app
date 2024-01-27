@@ -1,9 +1,20 @@
-import { Router } from "~/routes";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ThemeRoutes } from "~/routes";
 
 function App() {
+  // eslint-disable-next-line no-console
+  console.info(
+    `%c
+    ░█▀▀▀░█▀▀▀░█░░█
+    ░▀▀▀█░█░▀█░█░░█
+    ░▀▀▀▀░▀▀▀▀░▀▀▀▀
+  `,
+    'color: #0089e2'
+  );
+  const routes = createBrowserRouter(ThemeRoutes);
   return (
     <>
-      <Router />
+      <RouterProvider router={routes} />
     </>
   );
 }
