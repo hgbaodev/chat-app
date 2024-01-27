@@ -1,9 +1,9 @@
 import { Suspense, lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
-import DashboardLayout from '../layouts/DashboardLayout';
-import EmptyLayout from '../layouts/EmptyLayout';
-import AdminLayout from '../layouts/AdminLayout';
 import { GeneralApp } from '../pages/dashboard/GeneralApp';
+import EmptyLayout from '~/layouts/EmptyLayout';
+import DashboardLayout from '~/layouts/DashboardLayout';
+import AdminLayout from '~/layouts/AdminLayout';
 
 const Loadable = (Component) => (props) => {
   return (

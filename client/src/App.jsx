@@ -1,11 +1,10 @@
-import { Router } from './routes';
+import { Router } from "~/routes";
 
 function App() {
   return (
     <>
       <Router />
     </>
-   
   );
 }
 
