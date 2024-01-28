@@ -6,7 +6,7 @@ import { WechatOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons
 import { useState } from 'react';
 const DashboardLayout = () => {
   // handle
-  const [mode, setMode] = useState(false);
+  const [mode, setMode] = useState(true);
   const handleToggleMode = () => {
     const isDarkMode = document.body.classList.contains('dark');
     setMode(isDarkMode);
