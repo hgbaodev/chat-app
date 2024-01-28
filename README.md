@@ -1,102 +1,110 @@
 # Getting Started
 
-## Download project
-  1. Step 1: Change info project directory
+## Download Project
+1. Change into the project directory
 
-  ```bash
-  git clone https://github.com/hgbaodev/chat-app.git
-  ```
-  2. Step 1: Change info project directory
+   ```bash
+   git clone https://github.com/hgbaodev/chat-app.git
+   ```
+   
+2. Navigate to the project directory
 
-  ```bash
-  cd chat-app
-  ```
-  
+   ```bash
+   cd chat-app
+   ```
 
-## Start client
-  ### Requirment: using nodejs v20.11.0
-  1. Step 1: Change info project directory
+## Start Client
+### Requirement: Use Node.js v20.11.0
+1. Change into the client directory
 
-  ```bash
-  cd client
-  ```
-  2. Step 2: Install npm
+   ```bash
+   cd client
+   ```
 
-  ```bash
-  Npm install
-  ```
-  3. Step 1: Start interface
+2. Install npm dependencies
 
-  ```bash
-  npm run dev
-  ```
+   ```bash
+   npm install
+   ```
 
-## Start server
-  ### Step 1
-  ![Giao diện đăng nhập](./server/desc/add_database_chat_app.png)
-  1. Install Xampp
-  2. Create a database with the name "chat_app"
+3. Start the client interface
 
-  ### Step 2
-  #### With Window
-  1. Install WSL2
-  2. Open WSL on Window
-  3. Install redis-server
+   ```bash
+   npm run dev
+   ```
 
-      1. Step 1:
+## Start Server
+### Step 1
+![Login Interface](./server/desc/add_database_chat_app.png)
 
-      ```bash
-      sudo apt-add-repository ppa:redislabs/redis
-      ```
-      2. Step 2:
+1. Install Xampp
+2. Create a database named "chat_app"
 
-      ```bash
-      sudo apt-get update
-      ```
-      3. Step 1:
+### Step 2 - For Windows
+1. Install WSL2
+2. Open WSL on Windows
+3. Install redis-server
 
-      ```bash
-      sudo apt-get upgrade
-      ```
-      4. Step 2:
+   - Step 1:
 
-      ```bash
-      sudo apt-get install redis-server
-      ```
+     ```bash
+     sudo apt-add-repository ppa:redislabs/redis
+     ```
 
-  4. Run redis-server
+   - Step 2:
 
-    ```bash
-    sudo service redis-server restart
-    ```
+     ```bash
+     sudo apt-get update
+     ```
 
+   - Step 3:
 
-  ### Step 3
-  1. Change into the project directory:
+     ```bash
+     sudo apt-get upgrade
+     ```
 
-    ```bash
-    cd server
-    ```
+   - Step 4:
 
-  2. Install pipenv:
+     ```bash
+     sudo apt-get install redis-server
+     ```
 
-    ```bash
-    pip install pipenv
-    ```
+4. Run redis-server
 
-  3. Activate vitural the environment
+   ```bash
+   sudo service redis-server restart
+   ```
 
-    ```bash
-    pipenv shell
-    ```
+### Step 3
+1. Change into the project directory:
 
-  4. Update database
+   ```bash
+   cd server
+   ```
 
-    ```bash
-    python manage.py migrate
-    ```
-  5. Start server
-  
-    ```bash
-    python manage.py runserver
-    ```
+2. Install pipenv:
+
+   ```bash
+   pip install pipenv
+   ```
+
+3. Activate the virtual environment
+
+   ```bash
+   pipenv shell
+   ```
+
+4. Update the database
+
+   ```bash
+   python manage.py migrate
+   ```
+
+5. Start the server
+
+   ```bash
+   python manage.py runserver
+   ```
+```
+
+Copy and paste this content into a markdown file (e.g., `getting_started_instructions.md`). Make sure to adjust the Node.js version according to your project requirements - author hgbaodev.
