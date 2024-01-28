@@ -1,4 +1,4 @@
-import { Avatar, Button, Flex, Space, Typography } from 'antd';
+import { Avatar, Badge, Button, Flex, Space, Typography } from 'antd';
 import { VideoCameraOutlined, SearchOutlined, ExclamationCircleOutlined, PhoneOutlined } from '@ant-design/icons';
 import { faker } from '@faker-js/faker';
 import { useDispatch, useSelector } from 'react-redux';
@@ -12,13 +12,15 @@ export const ChatHeader = () => {
   };
   return (
     <Flex className="h-[60px] px-4" justify="space-between">
-      <Space>
-        <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
-          {faker.person.fullName()[0].toUpperCase()}
-        </Avatar>
+      <Space size={18}>
+        <Badge size="default" dot={true} color="green" offset={[0, 28]}>
+          <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
+            {faker.person.fullName()[0].toUpperCase()}
+          </Avatar>
+        </Badge>
         <Flex vertical justify="center">
           <Typography className="font-bold">{faker.person.fullName()}</Typography>
-          <Typography>Online</Typography>
+          <Typography className='text-[12px]'>Online</Typography>
         </Flex>
       </Space>
       <Space size={18}>

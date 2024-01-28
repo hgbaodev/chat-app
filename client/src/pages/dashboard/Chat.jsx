@@ -8,7 +8,7 @@ const Chat = () => {
   const { contactInfo } = useSelector((state) => state.app);
   return (
     <Row className="h-full ">
-      <Col span={5} className="p-4" style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}>
+      <Col span={5} className="p-4 " style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}>
         <Contacts />
       </Col>
       <Col span={19}>
