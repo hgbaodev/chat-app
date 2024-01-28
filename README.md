@@ -1,6 +1,20 @@
 # Getting Started
 
+## Download project
+  1. Step 1: Change info project directory
+
+  ```bash
+  git clone https://github.com/hgbaodev/chat-app.git
+  ```
+  2. Step 1: Change info project directory
+
+  ```bash
+  cd chat-app
+  ```
+  
+
 ## Start client
+  ### Requirment: using nodejs v20.11.0
   1. Step 1: Change info project directory
 
   ```bash
