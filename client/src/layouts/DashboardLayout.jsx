@@ -23,8 +23,8 @@ const DashboardLayout = () => {
       <Col span={1} className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900">
         <Flex vertical justify="space-between" align="center" className="h-[100%]">
           <Flex vertical align="center" className="text-white">
-            <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white" />
-            <Space direction="vertical" size={20} className="mt-1">
+            <img src={mode ? logo_light : logo_dark} alt="logo" className="w-[70px] h-[70px] p-1  dark:text-white" />
+            <Space direction="vertical" size={20} className="mt-7">
               <Button type="primary" icon={<WechatOutlined />} size="large" className="dark:text-white" />
               <Button type="text" icon={<UserOutlined />} size="large" className="dark:text-white" />
               <Button type="text" icon={<SettingOutlined />} size="large" className="dark:text-white" />

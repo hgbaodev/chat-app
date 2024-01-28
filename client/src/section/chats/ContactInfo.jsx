@@ -17,7 +17,7 @@ export const ContactInfo = () => {
       <Flex
         justify="space-between"
         align="center"
-        className=" w-full h-[60px] px-4"
+        className="w-full h-[60px] px-4"
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
       >
         <Title level={5} className="m-0">

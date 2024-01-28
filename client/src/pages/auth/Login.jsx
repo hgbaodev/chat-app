@@ -1,87 +1,103 @@
-import { Button, Checkbox, Col, Form, Input, Row } from "antd";
-import { UserOutlined, LockOutlined } from "@ant-design/icons";
+import logo_light from "~/assets/icon_app.svg";
+import {
+  Button,
+  Checkbox,
+  Form,
+  Input,
+  Flex,
+  Row,
+  Typography,
+  Col,
+  Divider,
+} from "antd";
+
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import GoogleLoginCustom from "~/components/GoogleLoginCustom";
+
+const { Paragraph, Text, Link } = Typography;
 
 const Login = () => {
   const onFinish = (values) => {
-    console.log("Success:", values);
-  };
-  const onFinishFailed = (errorInfo) => {
-    console.log("Failed:", errorInfo);
+    // eslint-disable-next-line no-console
+    console.log("Received values of form: ", values);
   };
   return (
-    <Row className="h-[100vh] bg-gray-50 dark:bg-gray-900">
+    <Row justify="center" className="h-[100vh] bg-gray-50">
       <Col
-        span={8}
-        className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+        xs={18}
+        md={12}
+        lg={8}
+        className="flex flex-col justify-center items-center"
       >
-        <a
-          href="/"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+        <Flex
+          gap="small"
+          vertical
+          justify="center"
+          align="center"
+          className="w-full mx-auto bg-white rounded-lg py-3 px-8"
         >
-          Chat app
-        </a>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign in to your account
-            </h1>
-            <Form
-              name="form_login"
-              initialValues={{
-                remember: true,
-              }}
-              onFinish={onFinish}
-              onFinishFailed={onFinishFailed}
-              autoComplete="off"
+          <Link href="/" className="cursor-pointer">
+            <img src={logo_light} className="object-fill w-[100px] h-[100px]" />
+          </Link>
+          <GoogleLoginCustom />
+          <Divider>Or</Divider>
+          <Text className="flex items-center mb-2 text-2xl font-semibold text-gray-900 dark:text-whit">
+            Sign in
+          </Text>
+          <Paragraph className="text-center">
+            Welcome back to Chat apps UI! Please enter your details below to
+            sign in.
+          </Paragraph>
+          <Form
+            name="normal_login"
+            className="login-form w-full"
+            initialValues={{ remember: true }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="username"
+              rules={[
+                { required: true, message: "Please input your username!" },
+              ]}
             >
-              <Form.Item
-                name="username"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your username!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<UserOutlined className="site-form-item-icon" />}
-                  placeholder="Username"
-                />
+              <Input prefix={<UserOutlined />} placeholder="Username" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: "Please input your password!",
+                },
+              ]}
+            >
+              <Input.Password
+                prefix={<LockOutlined />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox>Remember me</Checkbox>
               </Form.Item>
 
-              <Form.Item
-                name="password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input your Password!",
-                  },
-                ]}
-              >
-                <Input
-                  prefix={<LockOutlined className="site-form-item-icon" />}
-                  type="password"
-                  placeholder="Password"
-                />
-              </Form.Item>
-              <Form.Item>
-                <Form.Item name="remember" valuePropName="checked" noStyle>
-                  <Checkbox>Remember me</Checkbox>
-                </Form.Item>
+              <Link className="float-right" href="/auth/forgot-password">
+                Forgot password
+              </Link>
+            </Form.Item>
 
-                <a className="float-right" href="/auth/forgot-password">
-                  Forgot password
-                </a>
-              </Form.Item>
-
-              <Form.Item>
-                <Button className="w-full" type="primary" htmlType="submit">
-                  Submit
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        </div>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="w-full">
+                Log in
+              </Button>
+            </Form.Item>
+            <Form.Item className="text-center">
+              <Text>{"Don't have an account?"}</Text>
+              <Link href="/auth/register"> Sign up now</Link>
+            </Form.Item>
+          </Form>
+        </Flex>
       </Col>
     </Row>
   );

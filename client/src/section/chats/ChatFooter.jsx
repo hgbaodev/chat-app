@@ -1,4 +1,4 @@
-import { Button, Flex, Input } from 'antd';
+import { Button, Flex } from 'antd';
 import { PaperClipOutlined } from '@ant-design/icons';
 import Search from 'antd/es/input/Search';
 export const ChatFooter = () => {
