@@ -1,6 +1,5 @@
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ThemeRoutes } from '~/routes';
-
 function App() {
   // eslint-disable-next-line no-console
   console.info(
