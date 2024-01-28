@@ -3,6 +3,17 @@ import { Outlet } from 'react-router-dom';
 import logo from '~/assets/react.svg';
 import { WechatOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 const DashboardLayout = () => {
+  // handle
+  const handleToggleMode = () => {
+    const isDarkMode = document.body.classList.contains('dark');
+    if (isDarkMode) {
+      document.body.classList.remove('dark');
+    } else {
+      document.body.classList.add('dark');
+    }
+  };
+
+  // render
   return (
     <Row className="h-[100vh] ">
       <Col span={1} className="bg-gray-50 flex items-center flex-col py-4 dark:bg-gray-900 ">
@@ -16,12 +27,18 @@ const DashboardLayout = () => {
             </Space>
           </Flex>
           <Space direction="vertical" size={18} align="center">
-            <Switch checkedChildren="light" unCheckedChildren="dark" defaultChecked onChange={() => {}} size="small" />
+            <Switch
+              checkedChildren="light"
+              unCheckedChildren="dark"
+              defaultChecked={!document.body.classList.contains('dark')}
+              onChange={handleToggleMode}
+              size="small"
+            />
             <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>P</Avatar>
           </Space>
         </Flex>
       </Col>
-      <Col span={23}>
+      <Col span={23} className="h-[100%]">
         <Outlet />
       </Col>
     </Row>
