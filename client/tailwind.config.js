@@ -7,6 +7,9 @@ export default {
         body: ['Inter'],
       },
     },
+    container: {
+      center: true,
+    },
   },
   plugins: [],
   corePlugins: {

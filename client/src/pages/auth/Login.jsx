@@ -1,4 +1,4 @@
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Col, Form, Input, Row } from "antd";
 import { UserOutlined, LockOutlined } from "@ant-design/icons";
 
 const Login = () => {
@@ -9,8 +9,11 @@ const Login = () => {
     console.log("Failed:", errorInfo);
   };
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
+    <Row className="h-[100vh] bg-gray-50 dark:bg-gray-900">
+      <Col
+        span={8}
+        className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0"
+      >
         <a
           href="/"
           className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
@@ -79,8 +82,8 @@ const Login = () => {
             </Form>
           </div>
         </div>
-      </div>
-    </section>
+      </Col>
+    </Row>
   );
 };
 
