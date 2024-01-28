@@ -4,7 +4,7 @@ import { ChatFooter } from './ChatFooter';
 
 export const ChatContainer = () => {
   return (
-    <Flex vertical className="h-full">
+    <Flex vertical className="h-full flex-1">
       <ChatHeader />
       <Flex
         className="flex-1"
