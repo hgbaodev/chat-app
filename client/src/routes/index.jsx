@@ -4,10 +4,11 @@ import { GeneralApp } from '../pages/dashboard/GeneralApp';
 import EmptyLayout from '~/layouts/EmptyLayout';
 import DashboardLayout from '~/layouts/DashboardLayout';
 import AdminLayout from '~/layouts/AdminLayout';
+import { Loading } from '~/components/loading/Loading';
 
 const Loadable = (Component) => (props) => {
   return (
-    <Suspense fallback={<h1>Loading</h1>}>
+    <Suspense fallback={<Loading />}>
       <Component {...props} />
     </Suspense>
   );

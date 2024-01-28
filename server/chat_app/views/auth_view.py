@@ -59,7 +59,7 @@ class RegisterView(CreateAPIView):
 
     def post(self, request, *args, **kwargs):
         response = super(RegisterView, self).post(request, *args, **kwargs)
-
+        print('res', response)
         # Kiểm tra xem quá trình đăng ký có thành công không
         if response.status_code == status.HTTP_201_CREATED:
             return Response({'message': 'Registration success, now you can login'})
