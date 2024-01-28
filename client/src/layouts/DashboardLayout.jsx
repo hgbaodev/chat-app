@@ -9,7 +9,7 @@ const DashboardLayout = () => {
   const [mode, setMode] = useState(false);
   const handleToggleMode = () => {
     const isDarkMode = document.body.classList.contains('dark');
-    setMode(isDarkMode)
+    setMode(isDarkMode);
     if (isDarkMode) {
       document.body.classList.remove('dark');
     } else {
@@ -23,7 +23,7 @@ const DashboardLayout = () => {
       <Col span={1} className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900 ">
         <Flex vertical justify="space-between" align="center" className="h-[100%]">
           <Flex vertical align="center" className="text-white">
-            <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white"/>
+            <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white" />
             <Space direction="vertical" size={20} className="mt-1">
               <Button type="primary" icon={<WechatOutlined />} size="large" className="dark:text-white" />
               <Button type="text" icon={<UserOutlined />} size="large" className="dark:text-white" />
