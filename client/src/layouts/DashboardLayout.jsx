@@ -20,7 +20,7 @@ const DashboardLayout = () => {
   // render
   return (
     <Row className="h-[100vh]">
-      <Col span={1} className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900 ">
+      <Col span={1} className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900">
         <Flex vertical justify="space-between" align="center" className="h-[100%]">
           <Flex vertical align="center" className="text-white">
             <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white"/>
