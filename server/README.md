@@ -1,4 +1,4 @@
-## Getting Started
+## Started Server
 
 ### Step 1
 ![Giao diện đăng nhập](./desc/add_database_chat_app.png)
@@ -53,15 +53,18 @@
    ```
 
 3. Activate vitural the environment
+
    ```bash
    pipenv shell
    ```
 
 4. Update database
+
    ```bash
    python manage.py migrate
    ```
 5. Start server
+
    ```bash
    python manage.py runserver
    ```
