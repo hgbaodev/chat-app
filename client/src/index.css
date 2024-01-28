@@ -8,9 +8,14 @@ html,
 body {
   padding: 0;
   margin: 0;
+}
+* {
   box-sizing: border-box;
 }
 
+body::-webkit-scrollbar {
+  display: none;
+}
 .scrollbar::-webkit-scrollbar {
   display: none;
   width: 5px;
