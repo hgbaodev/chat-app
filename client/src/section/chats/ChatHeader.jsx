@@ -1,5 +1,6 @@
 import { Avatar, Badge, Button, Flex, Space, Typography } from 'antd';
 import { VideoCameraOutlined, SearchOutlined, ExclamationCircleOutlined, PhoneOutlined } from '@ant-design/icons';
+import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleContactInfo } from '~/store/slices/appSlice';
@@ -20,13 +21,13 @@ export const ChatHeader = () => {
         </Badge>
         <Flex vertical justify="center">
           <Typography className="font-bold">{faker.person.fullName()}</Typography>
-          <Typography className='text-[12px]'>Online</Typography>
+          <Typography className="text-[12px]">Online</Typography>
         </Flex>
       </Space>
       <Space size={18}>
-        <Button type="text" shape="circle" icon={<VideoCameraOutlined />} size={20} />
-        <Button type="text" shape="circle" icon={<PhoneOutlined />} size={20} />
-        <Button type="text" shape="circle" icon={<SearchOutlined />} size={20} />
+        <Button type="text" shape="circle" icon={<IoVideocamOutline size={20} />} />
+        <Button type="text" shape="circle" icon={<PhoneOutlined />} />
+        <Button type="text" shape="circle" icon={<SearchOutlined />} />
         {!contactInfo.open && (
           <Button
             type="text"

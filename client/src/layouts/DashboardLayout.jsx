@@ -2,7 +2,7 @@ import { Avatar, Button, Col, Flex, Row, Space, Switch } from 'antd';
 import { Outlet } from 'react-router-dom';
 import logo_light from '~/assets/icon_app.svg';
 import logo_dark from '~/assets/icon_app_dark.svg';
-import { WechatOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { IoChatbubbleEllipsesOutline, IoPeopleOutline, IoSettingsOutline } from 'react-icons/io5';
 import { useState } from 'react';
 const DashboardLayout = () => {
   // handle
@@ -25,9 +25,14 @@ const DashboardLayout = () => {
           <Flex vertical align="center" className="text-white">
             <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white" />
             <Space direction="vertical" size={20} className="mt-1">
-              <Button type="primary" icon={<WechatOutlined />} size="large" className="dark:text-white" />
-              <Button type="text" icon={<UserOutlined />} size="large" className="dark:text-white" />
-              <Button type="text" icon={<SettingOutlined />} size="large" className="dark:text-white" />
+              <Button
+                type="primary"
+                icon={<IoChatbubbleEllipsesOutline size={24} />}
+                size="large"
+                className="dark:text-white"
+              />
+              <Button type="text" icon={<IoPeopleOutline size={24} />} size="large" className="dark:text-white" />
+              <Button type="text" icon={<IoSettingsOutline size={24} />} size="large" className="dark:text-white" />
             </Space>
           </Flex>
           <Space direction="vertical" size={18} align="center">
