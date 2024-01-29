@@ -1,5 +1,5 @@
 import { Avatar, Badge, Button, Flex, Space, Typography } from 'antd';
-import { VideoCameraOutlined, SearchOutlined, ExclamationCircleOutlined, PhoneOutlined } from '@ant-design/icons';
+import { SearchOutlined, ExclamationCircleOutlined, PhoneOutlined } from '@ant-design/icons';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { faker } from '@faker-js/faker';
 import { useDispatch, useSelector } from 'react-redux';
