@@ -1,10 +1,10 @@
-import { createRoot } from 'react-dom/client';
-import App from './App';
-import { GoogleOAuthProvider } from '@react-oauth/google';
-import reportWebVitals from '~/reportWebVitals';
-import { Provider as ReduxProvider } from 'react-redux';
-import { store } from './store';
-const container = document.getElementById('root');
+import { createRoot } from "react-dom/client";
+import App from "./App";
+import { GoogleOAuthProvider } from "@react-oauth/google";
+import reportWebVitals from "~/reportWebVitals";
+import { Provider as ReduxProvider } from "react-redux";
+import { store } from "./store";
+const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
@@ -12,7 +12,7 @@ root.render(
     <ReduxProvider store={store}>
       <App />
     </ReduxProvider>
-  </GoogleOAuthProvider>,
+  </GoogleOAuthProvider>
 );
 
 reportWebVitals();
