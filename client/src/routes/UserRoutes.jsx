@@ -1,6 +1,6 @@
 import DashboardLayout from "~/layouts/DashboardLayout";
 import Chat from "~/pages/dashboard/Chat";
-import Friends from "~/pages/dashboard/Friends";
+import Contacts from "~/pages/dashboard/Contacts";
 import Settings from "~/pages/dashboard/Settings";
 
 const UserRoutes = {
@@ -15,8 +15,8 @@ const UserRoutes = {
           element: <Chat />,
         },
         {
-          path: "friends",
-          element: <Friends />,
+          path: "contacts",
+          element: <Contacts />,
         },
         {
           path: "settings",

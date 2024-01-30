@@ -1,5 +1,5 @@
-import { Avatar, Button, Col, Flex, Row, Space, Switch } from "antd";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Avatar, Button, Col, Flex, Row, Space, Switch, Tooltip } from "antd";
+import { NavLink, Outlet } from "react-router-dom";
 import logo_light from "~/assets/icon_app.svg";
 import logo_dark from "~/assets/icon_app_dark.svg";
 import {
@@ -43,11 +43,17 @@ const DashboardLayout = () => {
             <Space direction="vertical" size={20} className="mt-1">
               <NavButton
                 href="/"
+                tooltip="Messages"
                 icon={<IoChatbubbleEllipsesOutline size={24} />}
               />
-              <NavButton href="/friends" icon={<IoPeopleOutline size={24} />} />
+              <NavButton
+                href="/contacts"
+                tooltip="Contacts"
+                icon={<IoPeopleOutline size={24} />}
+              />
               <NavButton
                 href="/settings"
+                tooltip="Settings"
                 icon={<IoSettingsOutline size={24} />}
               />
             </Space>
@@ -66,25 +72,27 @@ const DashboardLayout = () => {
           </Space>
         </Flex>
       </Col>
-      <Col span={23} className="h-[100%]">
+      <Col span={23} className="h-screen">
         <Outlet />
       </Col>
     </Row>
   );
 };
 
-const NavButton = ({ href, icon }) => {
+const NavButton = ({ tooltip, href, icon }) => {
   return (
-    <NavLink to={href}>
-      {({ isActive }) => (
-        <Button
-          type={isActive ? "primary" : "text"}
-          icon={icon}
-          size="large"
-          className="dark:text-white"
-        />
-      )}
-    </NavLink>
+    <Tooltip placement="right" title={tooltip}>
+      <NavLink to={href}>
+        {({ isActive }) => (
+          <Button
+            type={isActive ? "primary" : "text"}
+            icon={icon}
+            size="large"
+            className="dark:text-white"
+          />
+        )}
+      </NavLink>
+    </Tooltip>
   );
 };
 
