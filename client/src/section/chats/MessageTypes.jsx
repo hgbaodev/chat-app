@@ -1,10 +1,11 @@
-import { Flex, Image, Typography } from 'antd';
+import { Avatar, Flex, Image, Typography } from 'antd';
 
 export const MessageWrapper = ({ from, children }) => {
   const userId = '9999';
   return (
     <Flex justify={from === userId ? 'end' : 'start'}>
-      <Flex className={`${from === userId ? 'bg-blue-500 text-white' : 'bg-gray-200'}  p-2 rounded-lg max-w-[45%]`}>
+      {from !== userId && <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2">B</Avatar>}
+      <Flex className={`${from === userId ? 'bg-blue-500 text-white' : 'bg-gray-100'}  p-2 rounded-lg max-w-[45%]`}>
         {children}
       </Flex>
     </Flex>

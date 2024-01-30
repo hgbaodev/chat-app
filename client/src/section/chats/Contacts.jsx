@@ -11,7 +11,7 @@ export const Contacts = () => {
       <Input
         size="large"
         placeholder="Search"
-        className="text-sm rounded-full bg-gray-200 hover:bg-gray-200 focus:bg-gray-200 border-none focus:shadow-none"
+        className="text-sm rounded-full bg-white  focus:bg-gray-200 border-none focus:shadow-none"
         prefix={<SearchOutlined className="text-gray-400" />}
       />
       <Space

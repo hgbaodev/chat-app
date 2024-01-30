@@ -1,5 +1,5 @@
 import { Avatar, Button, Col, Flex, Row, Space, Switch } from "antd";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet } from "react-router-dom";
 import logo_light from "~/assets/icon_app.svg";
 import logo_dark from "~/assets/icon_app_dark.svg";
 import {

@@ -15,7 +15,7 @@ export const ChatHeader = () => {
     <Flex className="h-[60px] px-4" justify="space-between">
       <Space size={18}>
         <Badge size="default" dot={true} color="green" offset={[0, 28]}>
-          <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
+          <Avatar className="bg-[#fde3cf] text-[#f56a00]">
             {faker.person.fullName()[0].toUpperCase()}
           </Avatar>
         </Badge>
