@@ -33,7 +33,7 @@ export const FriendItem = () => {
   ];
 
   return (
-    <Flex align="center" justify="space-between" className="w-full p-2  hover:bg-blue-50 cursor-pointer">
+    <Flex align="center" justify="space-between" className="w-full py-2 px-4  hover:bg-blue-50 cursor-pointer">
       {contextHolder}
       <Space align="center" className="font-semibold">
         <Avatar className="bg-[#fde3cf] text-[#f56a00]">A</Avatar>
@@ -43,7 +43,7 @@ export const FriendItem = () => {
         <Button
           type="text"
           shape="circle"
-          icon={<IoEllipsisVertical size={20} />}
+          icon={<IoEllipsisVertical size={18} />}
           size="large"
           className="text-gray-500"
         />
