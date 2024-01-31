@@ -23,74 +23,64 @@ const DashboardLayout = () => {
 
   // render
   return (
-    <Row className="h-[100vh]">
-      <Col
-        span={1}
-        className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900"
+    <Flex className="h-[100vh]">
+      <Flex
+        vertical
+        justify="space-between"
+        align="center"
+        className="bg-blue-500 dark:bg-gray-900 py-2 h-[100%] w-[64px]"
       >
-        <Flex
-          vertical
-          justify="space-between"
-          align="center"
-          className="h-[100%]"
-        >
-          <Flex vertical align="center" className="text-white">
-            <img
-              src={mode ? logo_light : logo_dark}
-              alt="logo"
-              className="dark:text-white"
+        <Flex vertical align="center" className="text-white">
+          <img src={logo_dark} alt="logo" className="dark:text-white" />
+          <Flex vertical className="mt-5 w-[100%]">
+            <NavButton
+              href="/"
+              tooltip="Messages"
+              icon={<IoChatbubbleEllipsesOutline size={27} />}
             />
-            <Space direction="vertical" size={20} className="mt-1">
-              <NavButton
-                href="/"
-                tooltip="Messages"
-                icon={<IoChatbubbleEllipsesOutline size={24} />}
-              />
-              <NavButton
-                href="/contacts"
-                tooltip="Contacts"
-                icon={<IoPeopleOutline size={24} />}
-              />
-              <NavButton
-                href="/settings"
-                tooltip="Settings"
-                icon={<IoSettingsOutline size={24} />}
-              />
-            </Space>
+            <NavButton
+              href="/contacts"
+              tooltip="Contacts"
+              icon={<IoPeopleOutline size={27} />}
+            />
+            <NavButton
+              href="/settings"
+              tooltip="Settings"
+              icon={<IoSettingsOutline size={27} />}
+            />
           </Flex>
-          <Space direction="vertical" size={18} align="center">
-            <Switch
-              checkedChildren="light"
-              unCheckedChildren="dark"
-              defaultChecked={!document.body.classList.contains('dark')}
-              onChange={handleToggleMode}
-              size="small"
-            />
-            <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
-              P
-            </Avatar>
-          </Space>
         </Flex>
-      </Col>
-      <Col span={23} className="h-screen">
+        <Space direction="vertical" size={18} align="center">
+          <Switch
+            checkedChildren="light"
+            unCheckedChildren="dark"
+            defaultChecked={!document.body.classList.contains('dark')}
+            onChange={handleToggleMode}
+            size="small"
+          />
+          <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
+            P
+          </Avatar>
+        </Space>
+      </Flex>
+      <div className="h-screen flex-1">
         <Outlet />
-      </Col>
-    </Row>
+      </div>
+    </Flex>
   );
 };
 /* <Tooltip placement="right" title={tooltip}>
     </Tooltip> */
 const NavButton = ({ tooltip, href, icon }) => {
   return (
-    <NavLink to={href}>
-      {({ isActive }) => (
-        <Button
-          type={isActive ? 'primary' : 'text'}
-          icon={icon}
-          size="large"
-          className="dark:text-white"
-        />
-      )}
+    <NavLink
+      to={href}
+      className={({ isActive }) =>
+        (isActive ? 'bg-blue-700' : 'hover:bg-blue-600 ') +
+        ' text-white flex items-center justify-center h-[64px] w-[64px] hover:text-inherit'
+      }
+    >
+      <span className="">{icon}</span>
     </NavLink>
   );
 };

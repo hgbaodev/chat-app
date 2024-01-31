@@ -9,7 +9,7 @@ export const ChatContainer = () => {
       <ChatHeader />
       <Space
         direction="vertical"
-        className="p-4  overflow-y-auto "
+        className="p-4 overflow-y-auto "
         style={{
           height: "calc(100vh - 120px)",
           boxShadow:
