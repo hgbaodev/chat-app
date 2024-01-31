@@ -1,4 +1,4 @@
-import { Col, Flex, Input, Row, Select, Typography } from "antd";
+import { Button, Flex, Input, Select, Tabs } from "antd";
 import {
   IoPeopleOutline,
   IoPersonAddOutline,
@@ -9,61 +9,68 @@ import { FriendItem } from "~/section/friends/FriendItem";
 
 const Contacts = () => {
   return (
-    <Row className="h-screen">
-      <Col span={5} style={{ boxShadow: "0px 0px 2px rgba(0,0,0,.2)" }}>
-        <TabItem
-          text="Friend Lists"
-          icon={<IoPersonOutline size={22} />}
-          active
-        />
-        <TabItem text="Joined Groups" icon={<IoPeopleOutline size={24} />} />
-        <TabItem
-          text="Friend Requests"
-          icon={<IoPersonAddOutline size={22} />}
-        />
-      </Col>
-      <Col span={19}>
-        <Flex
-          align="center"
-          className="h-[60px] p-4"
-          style={{ boxShadow: "0px 0px 2px rgba(0,0,0,.2)" }}
-        >
-          <p className="font-semibold">Friends (20)</p>
-        </Flex>
-        <Flex className="p-4" gap={10}>
-          <Input
-            placeholder="Search friends"
-            prefix={<IoSearchOutline />}
-            className="w-[350px]"
-          />
-          <Select
-            className="w-[250px]"
-            defaultValue="asc"
-            options={[
-              { value: "asc", label: "Name (A-Z)" },
-              { value: "desc", label: "Name (Z-A)" },
-            ]}
-          />
-        </Flex>
-        <FriendItem />
-      </Col>
-    </Row>
+    <Tabs
+      className="contacts-tab"
+      defaultActiveKey="2"
+      tabPosition="left"
+      items={[
+        {
+          key: "friends-list",
+          label: `Friends List`,
+          children: <TabFriendsList />,
+          icon: <IoPersonOutline size={22} />,
+        },
+        {
+          key: "joined-groups",
+          label: `Joined Groups`,
+          children: <TabJoinedGroups />,
+          icon: <IoPeopleOutline size={22} />,
+        },
+        {
+          key: "friend-requests",
+          label: `Friend Requests`,
+          children: <TabFriendsList />,
+          icon: <IoPersonAddOutline size={22} />,
+        },
+      ]}
+    />
   );
 };
 
-const TabItem = ({ text, icon, active }) => {
+const TabFriendsList = () => {
   return (
-    <Flex
-      className={`${
-        active ? "bg-blue-50 " : ""
-      } p-4 cursor-pointer hover:bg-gray-100`}
-      gap={20}
-      align="center"
-    >
-      {icon}
-      <Typography className="font-bold">{text}</Typography>
-    </Flex>
+    <>
+      <Flex
+        align="center"
+        className="h-[60px] p-4"
+        style={{ boxShadow: "0px 0px 2px rgba(0,0,0,.2)" }}
+      >
+        <p className="font-semibold">Friends (20)</p>
+      </Flex>
+      <Flex className="p-4" gap={10}>
+        <Input
+          placeholder="Search friends"
+          prefix={<IoSearchOutline />}
+          className="w-[350px]"
+        />
+        <Select
+          className="w-[250px]"
+          defaultValue="asc"
+          options={[
+            { value: "asc", label: "Name (A-Z)" },
+            { value: "desc", label: "Name (Z-A)" },
+          ]}
+        />
+      </Flex>
+      <div className="px-2">
+        <FriendItem />
+      </div>
+    </>
   );
+};
+
+const TabJoinedGroups = () => {
+  return <Button>Ok</Button>;
 };
 
 export default Contacts;

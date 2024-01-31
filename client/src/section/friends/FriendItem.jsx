@@ -33,7 +33,7 @@ export const FriendItem = () => {
   ];
 
   return (
-    <Flex align="center" justify="space-between" className="w-full p-2  hover:bg-blue-50 cursor-pointer">
+    <Flex align="center" justify="space-between" className="w-full p-2  hover:bg-blue-50 cursor-pointer rounded">
       {contextHolder}
       <Space align="center" className="font-semibold">
         <Avatar className="bg-[#fde3cf] text-[#f56a00]">A</Avatar>
