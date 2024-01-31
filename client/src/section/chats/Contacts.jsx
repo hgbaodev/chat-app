@@ -1,7 +1,7 @@
 import { Button, Flex, Input, Space } from 'antd';
 import { ContactItem } from './ContactItem';
 import { SearchOutlined } from '@ant-design/icons';
-import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
+import { MdOutlinePersonAddAlt } from 'react-icons/md';
 export const Contacts = () => {
   return (
     <Flex className="h-screen" vertical>

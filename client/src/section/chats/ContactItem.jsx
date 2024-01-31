@@ -1,8 +1,20 @@
-import { Avatar, Flex, Space, Typography } from 'antd';
+import { Avatar, Button, Flex, Space, Typography } from 'antd';
 import { faker } from '@faker-js/faker';
+import useHover from '~/hooks/useHover';
+import { AiOutlineEllipsis } from 'react-icons/ai';
+import confetti from 'canvas-confetti';
 export const ContactItem = ({ active }) => {
+  const [hoverRef, isHovering] = useHover();
+  const handleConfetti = () => {
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+  };
   return (
     <Flex
+      ref={hoverRef}
       className={`${
         active ? 'bg-blue-100' : 'bg-white hover:bg-neutral-100'
       } px-4 py-3 cursor-pointer`}
@@ -22,11 +34,21 @@ export const ContactItem = ({ active }) => {
           </Typography>
         </Flex>
       </Space>
-      <Typography className="text-[10px] text-neutral-500">
-        {faker.date
-          .anytime()
-          .toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}
-      </Typography>
+      {isHovering ? (
+        <Button
+          type="text"
+          size="small"
+          onClick={handleConfetti}
+          icon={<AiOutlineEllipsis size={20} />}
+        />
+      ) : (
+        <Typography className="text-[10px] text-neutral-500">
+          {faker.date.anytime().toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric'
+          })}
+        </Typography>
+      )}
     </Flex>
   );
 };

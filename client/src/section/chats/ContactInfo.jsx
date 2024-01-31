@@ -25,7 +25,7 @@ export const ContactInfo = () => {
   return (
     <Flex
       vertical
-      className="w-[300px]"
+      className="w-[350px]"
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
     >
       <Flex
