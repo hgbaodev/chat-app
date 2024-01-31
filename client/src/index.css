@@ -29,3 +29,45 @@ body::-webkit-scrollbar {
 .scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
+/* Contacts Tab  */
+.contacts-tab {
+  height: 100%;
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.2);
+}
+
+.contacts-tab .ant-tabs-nav-list {
+  height: 100%;
+}
+
+.contacts-tab .ant-tabs-tab + .ant-tabs-tab {
+  margin: 0 !important;
+}
+
+.contacts-tab .ant-tabs-tab-btn {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+
+.contacts-tab .ant-tabs-tab {
+  width: 320px;
+  padding: 15px 25px !important;
+}
+
+.contacts-tab .ant-tabs-tab:hover {
+  background-color: rgb(243, 244, 246);
+  color: inherit;
+}
+
+.contacts-tab .ant-tabs-tab-active {
+  background-color: rgb(239, 246, 255);
+}
+
+.contacts-tab .ant-tabs-tab-active:hover {
+  background-color: rgb(239, 246, 255);
+}
+
+.contacts-tab .ant-tabs-tabpane {
+  padding-left: 0 !important;
+}

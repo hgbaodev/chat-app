@@ -2,7 +2,7 @@ import { faker } from '@faker-js/faker';
 import { Avatar, Button, Dropdown, Flex, Space, Typography, message } from 'antd';
 import { IoEllipsisVertical } from 'react-icons/io5';
 
-export const FriendItem = () => {
+const FriendItem = () => {
   const [messageApi, contextHolder] = message.useMessage();
 
   const handleDeleteFriend = () => {
@@ -51,3 +51,4 @@ export const FriendItem = () => {
     </Flex>
   );
 };
+export default FriendItem;
