@@ -1,11 +1,12 @@
-import { Button, Flex, Input, Select, Tabs } from "antd";
+import { Tabs } from "antd";
 import {
   IoPeopleOutline,
   IoPersonAddOutline,
   IoPersonOutline,
-  IoSearchOutline,
 } from "react-icons/io5";
-import { FriendItem } from "~/section/friends/FriendItem";
+import TabFriendsRequest from "~/section/contacts/friend-request/TabFriendsRequest";
+import TabFriendsList from "~/section/contacts/friends-list/TabFriendsList";
+import TabJoinedGroups from "~/section/contacts/joined-group/TabJoinedGroups";
 
 const Contacts = () => {
   return (
@@ -29,48 +30,12 @@ const Contacts = () => {
         {
           key: "friend-requests",
           label: `Friend Requests`,
-          children: <TabFriendsList />,
+          children: <TabFriendsRequest />,
           icon: <IoPersonAddOutline size={22} />,
         },
       ]}
     />
   );
-};
-
-const TabFriendsList = () => {
-  return (
-    <>
-      <Flex
-        align="center"
-        className="h-[60px] p-4"
-        style={{ boxShadow: "0px 0px 2px rgba(0,0,0,.2)" }}
-      >
-        <p className="font-semibold">Friends (20)</p>
-      </Flex>
-      <Flex className="p-4" gap={10}>
-        <Input
-          placeholder="Search friends"
-          prefix={<IoSearchOutline />}
-          className="w-[350px]"
-        />
-        <Select
-          className="w-[250px]"
-          defaultValue="asc"
-          options={[
-            { value: "asc", label: "Name (A-Z)" },
-            { value: "desc", label: "Name (Z-A)" },
-          ]}
-        />
-      </Flex>
-      <div className="px-2">
-        <FriendItem />
-      </div>
-    </>
-  );
-};
-
-const TabJoinedGroups = () => {
-  return <Button>Ok</Button>;
 };
 
 export default Contacts;

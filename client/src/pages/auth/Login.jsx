@@ -45,8 +45,8 @@ const Login = () => {
             Sign in
           </Text>
           <Paragraph className="text-center">
-            Welcome back to Chat apps UI! Please enter your details below to
-            sign in.
+            Welcome back to Chat apps! Please enter your details below to sign
+            in.
           </Paragraph>
           <Form
             name="normal_login"
@@ -60,7 +60,11 @@ const Login = () => {
                 { required: true, message: "Please input your username!" },
               ]}
             >
-              <Input prefix={<UserOutlined />} placeholder="Username" />
+              <Input
+                prefix={<UserOutlined />}
+                placeholder="Username"
+                variant="filled"
+              />
             </Form.Item>
             <Form.Item
               name="password"
@@ -75,6 +79,7 @@ const Login = () => {
                 prefix={<LockOutlined />}
                 type="password"
                 placeholder="Password"
+                variant="filled"
               />
             </Form.Item>
             <Form.Item>
