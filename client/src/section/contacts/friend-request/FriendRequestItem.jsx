@@ -4,10 +4,7 @@ import { faker } from "@faker-js/faker";
 
 const FriendRequestItem = () => {
   return (
-    <div
-      className="bg-white p-4 rounded-md"
-      style={{ boxShadow: "rgba(0, 0, 0, 0.16) 0px 1px 4px" }}
-    >
+    <div className="bg-white p-4 rounded-md">
       <Flex align="center" justify="space-between">
         <Flex align="center" gap={10}>
           <Avatar size={40} className="bg-[#fde3cf] text-[#f56a00]">
@@ -35,9 +32,9 @@ const FriendRequestItem = () => {
         </p>
       </div>
       <Flex align="center" justify="space-between">
-        <Button className="w-[48%]">CANCEL</Button>
+        <Button className="w-[48%]">Cancel</Button>
         <Button type="primary" className="w-[48%]">
-          ACCEPT
+          Accept
         </Button>
       </Flex>
     </div>
