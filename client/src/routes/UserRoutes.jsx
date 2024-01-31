@@ -1,25 +1,29 @@
-import DashboardLayout from "~/layouts/DashboardLayout";
-import Chat from "~/pages/dashboard/Chat";
-import Contacts from "~/pages/dashboard/Contacts";
-import Settings from "~/pages/dashboard/Settings";
+import { lazy } from 'react';
+import Loadable from '~/components/Loadable';
+import DashboardLayout from '~/layouts/DashboardLayout';
+import Chat from '~/pages/dashboard/Chat';
+import Contacts from '~/pages/dashboard/Contacts';
+
+// dynamic import
+const Settings = Loadable(lazy(() => import('~/pages/dashboard/Settings')));
 
 const UserRoutes = {
-  path: "/",
+  path: '/',
   children: [
     {
-      path: "/",
+      path: '/',
       element: <DashboardLayout />,
       children: [
         {
-          path: "/",
+          path: '/',
           element: <Chat />,
         },
         {
-          path: "contacts",
+          path: '/contacts',
           element: <Contacts />,
         },
         {
-          path: "settings",
+          path: 'settings',
           element: <Settings />,
         },
       ],
