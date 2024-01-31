@@ -4,11 +4,7 @@ import FriendRequestItem from "~/section/contacts/friend-request/FriendRequestIt
 
 const TabFriendsRequest = () => {
   return (
-    <Space
-      direction="vertical"
-      size="large"
-      className="w-[100%] bg-neutral-100"
-    >
+    <div className="w-[100%] bg-neutral-100">
       <Flex
         align="center"
         gap={10}
@@ -20,8 +16,8 @@ const TabFriendsRequest = () => {
       </Flex>
       <Space
         direction="vertical"
-        size="large"
-        className="overflow-y-auto h-[calc(100vh-84px)]"
+        size="middle"
+        className="overflow-y-auto h-[calc(100vh-60px)] pt-4"
       >
         <Space direction="vertical" className="w-[100%] px-5">
           <Typography className="font-semibold">
@@ -76,7 +72,7 @@ const TabFriendsRequest = () => {
           />
         </Space>
       </Space>
-    </Space>
+    </div>
   );
 };
 

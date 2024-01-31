@@ -1,5 +1,5 @@
 import { Avatar, Button, Flex } from "antd";
-import { IoCloseOutline } from "react-icons/io5";
+import { IoChatbubblesOutline } from "react-icons/io5";
 import { faker } from "@faker-js/faker";
 
 const FriendRequestItem = () => {
@@ -23,16 +23,16 @@ const FriendRequestItem = () => {
         <Button
           type="text"
           shape="circle"
-          icon={<IoCloseOutline size={20} />}
+          icon={<IoChatbubblesOutline size={20} />}
         />
       </Flex>
-      <div className="h-[60px] p-2  bg-gray-50 my-4 rounded border-[1px] border-gray-300 border-solid">
+      <div className="h-[60px] p-2  bg-gray-50 my-4 rounded border-[1px] border-gray-200 border-solid">
         <p className="m-0 line-clamp-2 text-ellipsis overflow-hidden">
           {faker.lorem.sentence()}
         </p>
       </div>
       <Flex align="center" justify="space-between">
-        <Button className="w-[48%]">Cancel</Button>
+        <Button className="w-[48%]">Reject</Button>
         <Button type="primary" className="w-[48%]">
           Accept
         </Button>
