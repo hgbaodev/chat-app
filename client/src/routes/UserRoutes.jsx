@@ -6,9 +6,11 @@ import Contacts from '~/pages/dashboard/Contacts';
 
 // dynamic import
 const Settings = Loadable(lazy(() => import('~/pages/dashboard/Settings')));
+const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
 const UserRoutes = {
   path: '/',
+  errorElement: <Page404 />,
   children: [
     {
       path: '/',
@@ -16,19 +18,19 @@ const UserRoutes = {
       children: [
         {
           path: '/',
-          element: <Chat />,
+          element: <Chat />
         },
         {
-          path: '/contacts',
-          element: <Contacts />,
+          path: 'contacts',
+          element: <Contacts />
         },
         {
           path: 'settings',
-          element: <Settings />,
-        },
-      ],
-    },
-  ],
+          element: <Settings />
+        }
+      ]
+    }
+  ]
 };
 
 export default UserRoutes;

@@ -2,7 +2,11 @@ import { Avatar, Button, Col, Flex, Row, Space, Switch, Tooltip } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_light from '~/assets/icon_app.svg';
 import logo_dark from '~/assets/icon_app_dark.svg';
-import { IoChatbubbleEllipsesOutline, IoPeopleOutline, IoSettingsOutline } from 'react-icons/io5';
+import {
+  IoChatbubbleEllipsesOutline,
+  IoPeopleOutline,
+  IoSettingsOutline
+} from 'react-icons/io5';
 import { useState } from 'react';
 const DashboardLayout = () => {
   // handle
@@ -20,14 +24,38 @@ const DashboardLayout = () => {
   // render
   return (
     <Row className="h-[100vh]">
-      <Col span={1} className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900">
-        <Flex vertical justify="space-between" align="center" className="h-[100%]">
+      <Col
+        span={1}
+        className="bg-gray-50 flex items-center flex-col py-2 dark:bg-gray-900"
+      >
+        <Flex
+          vertical
+          justify="space-between"
+          align="center"
+          className="h-[100%]"
+        >
           <Flex vertical align="center" className="text-white">
-            <img src={mode ? logo_light : logo_dark} alt="logo" className="dark:text-white" />
+            <img
+              src={mode ? logo_light : logo_dark}
+              alt="logo"
+              className="dark:text-white"
+            />
             <Space direction="vertical" size={20} className="mt-1">
-              <NavButton href="/" tooltip="Messages" icon={<IoChatbubbleEllipsesOutline size={24} />} />
-              <NavButton href="/contacts" tooltip="Contacts" icon={<IoPeopleOutline size={24} />} />
-              <NavButton href="/settings" tooltip="Settings" icon={<IoSettingsOutline size={24} />} />
+              <NavButton
+                href="/"
+                tooltip="Messages"
+                icon={<IoChatbubbleEllipsesOutline size={24} />}
+              />
+              <NavButton
+                href="/contacts"
+                tooltip="Contacts"
+                icon={<IoPeopleOutline size={24} />}
+              />
+              <NavButton
+                href="/settings"
+                tooltip="Settings"
+                icon={<IoSettingsOutline size={24} />}
+              />
             </Space>
           </Flex>
           <Space direction="vertical" size={18} align="center">
@@ -38,7 +66,9 @@ const DashboardLayout = () => {
               onChange={handleToggleMode}
               size="small"
             />
-            <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>P</Avatar>
+            <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
+              P
+            </Avatar>
           </Space>
         </Flex>
       </Col>
@@ -48,16 +78,20 @@ const DashboardLayout = () => {
     </Row>
   );
 };
-
+/* <Tooltip placement="right" title={tooltip}>
+    </Tooltip> */
 const NavButton = ({ tooltip, href, icon }) => {
   return (
-    <Tooltip placement="right" title={tooltip}>
-      <NavLink to={href}>
-        {({ isActive }) => (
-          <Button type={isActive ? 'primary' : 'text'} icon={icon} size="large" className="dark:text-white" />
-        )}
-      </NavLink>
-    </Tooltip>
+    <NavLink to={href}>
+      {({ isActive }) => (
+        <Button
+          type={isActive ? 'primary' : 'text'}
+          icon={icon}
+          size="large"
+          className="dark:text-white"
+        />
+      )}
+    </NavLink>
   );
 };
 
