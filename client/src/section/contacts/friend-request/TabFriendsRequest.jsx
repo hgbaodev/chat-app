@@ -1,5 +1,6 @@
 import { Empty, Flex, Space, Typography } from "antd";
 import { IoPersonAddOutline } from "react-icons/io5";
+import FriendRequestItem from "~/section/contacts/friend-request/FriendRequestItem";
 
 const TabFriendsRequest = () => {
   return (
@@ -26,6 +27,7 @@ const TabFriendsRequest = () => {
       </Space>
       <Space direction="vertical" className="w-[100%] px-5">
         <Typography className="font-semibold">Requests Received (3)</Typography>
+        <FriendRequestItem></FriendRequestItem>
         <Empty
           description="Your incoming request list is empty"
           className="py-4"
