@@ -1,6 +1,6 @@
-import { Avatar, Button, Flex } from "antd";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { faker } from "@faker-js/faker";
+import { Avatar, Button, Flex } from 'antd';
+import { IoChatbubblesOutline } from 'react-icons/io5';
+import { faker } from '@faker-js/faker';
 
 const FriendRequestItem = () => {
   return (
@@ -13,9 +13,9 @@ const FriendRequestItem = () => {
           <div>
             <p className="my-1 font-semibold">{faker.person.firstName()}</p>
             <p className="m-0 text-[12px]">
-              {faker.date.anytime().toLocaleTimeString("en-US", {
-                hour: "numeric",
-                minute: "numeric",
+              {faker.date.anytime().toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: 'numeric'
               })}
             </p>
           </div>
