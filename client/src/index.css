@@ -40,6 +40,10 @@ body::-webkit-scrollbar {
   height: 100%;
 }
 
+.contacts-tab .ant-tabs-nav {
+  width: 25%;
+}
+
 .contacts-tab .ant-tabs-tab + .ant-tabs-tab {
   margin: 0 !important;
 }
@@ -51,7 +55,6 @@ body::-webkit-scrollbar {
 }
 
 .contacts-tab .ant-tabs-tab {
-  width: 320px;
   padding: 15px 25px !important;
 }
 

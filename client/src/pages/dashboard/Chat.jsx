@@ -13,9 +13,7 @@ const Chat = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!screens.xl) {
-      dispatch(setOpenContact(false));
-    }
+    dispatch(setOpenContact(screens.xl));
   }, [dispatch, screens]);
 
   return (
