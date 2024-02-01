@@ -1,12 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Image,
-  Popover,
-  Typography
-} from 'antd';
+import { Avatar, Button, Dropdown, Flex, Image, Typography } from 'antd';
 import { useState } from 'react';
 import {
   IoArrowUndo,
@@ -75,12 +67,11 @@ const MessageAction = ({ ...props }) => {
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = (newOpen) => {
-    console.log(newOpen);
     setOpen(newOpen);
   };
 
   return (
-    <Flex gap={6} className={open ? '!visible' : '!invisible'} {...props}>
+    <Flex gap={6} {...props}>
       <Button
         type="text"
         size="small"
