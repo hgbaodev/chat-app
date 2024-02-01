@@ -1,4 +1,4 @@
-import logo_light from "~/assets/icon_app.svg";
+import logo_light from '~/assets/icon_app.svg';
 import {
   Button,
   Checkbox,
@@ -8,18 +8,18 @@ import {
   Row,
   Typography,
   Col,
-  Divider,
-} from "antd";
+  Divider
+} from 'antd';
 
-import { LockOutlined, UserOutlined } from "@ant-design/icons";
-import GoogleLoginCustom from "~/components/GoogleLoginCustom";
+import { LockOutlined, UserOutlined } from '@ant-design/icons';
+import GoogleLoginCustom from '~/components/GoogleLoginCustom';
 
 const { Paragraph, Text, Link } = Typography;
 
 const Login = () => {
   const onFinish = (values) => {
     // eslint-disable-next-line no-console
-    console.log("Received values of form: ", values);
+    console.log('Received values of form: ', values);
   };
   return (
     <Row justify="center" className="h-[100vh] bg-gray-50">
@@ -57,7 +57,7 @@ const Login = () => {
             <Form.Item
               name="username"
               rules={[
-                { required: true, message: "Please input your username!" },
+                { required: true, message: 'Please input your username!' }
               ]}
             >
               <Input
@@ -71,8 +71,8 @@ const Login = () => {
               rules={[
                 {
                   required: true,
-                  message: "Please input your password!",
-                },
+                  message: 'Please input your password!'
+                }
               ]}
             >
               <Input.Password
