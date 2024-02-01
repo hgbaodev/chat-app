@@ -7,12 +7,14 @@ import {
   Popover,
   Typography
 } from 'antd';
+import { GoDownload } from 'react-icons/go';
 import { useState } from 'react';
 import {
   IoArrowUndo,
   IoEllipsisVerticalSharp,
   IoHappyOutline
 } from 'react-icons/io5';
+import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
 
 export const MessageWrapper = ({ from, children, ...props }) => {
@@ -129,6 +131,27 @@ export const MediaMessage = ({ from, image }) => {
   return (
     <MessageWrapper from={from} className="p-0 rounded-lg overflow-hidden">
       <Image width={320} className="w-full" src={image} />
+    </MessageWrapper>
+  );
+};
+
+export const DocMessage = ({ from, doc, text }) => {
+  return (
+    <MessageWrapper from={from}>
+      <Flex align="center" justify="space-between" className="w-[260px]">
+        <Flex align="center" gap={5}>
+          <img src={pdf} className="w-[60px] h-[60px] " />{' '}
+          <p className="font-semibold text-ellipsis text-nowrap overflow-hidden w-[150px]">
+            {text}
+          </p>
+        </Flex>
+        <Button
+          type="text"
+          shape="circle"
+          icon={<GoDownload size={20} />}
+          className="text-inherit"
+        />
+      </Flex>
     </MessageWrapper>
   );
 };

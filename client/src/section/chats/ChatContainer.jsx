@@ -2,7 +2,7 @@ import { Flex, Space } from "antd";
 import { ChatHeader } from "./ChatHeader";
 import { ChatFooter } from "./ChatFooter";
 import { __msg_mock__ } from "~/__mock__";
-import { MediaMessage, TextMessage, TimeLine } from "./MessageTypes";
+import { DocMessage, MediaMessage, TextMessage, TimeLine } from "./MessageTypes";
 export const ChatContainer = () => {
   return (
     <Flex vertical className="h-full flex-1">
@@ -22,6 +22,8 @@ export const ChatContainer = () => {
             return <TextMessage key={msg.id} {...msg} />;
           case "IMAGE":
             return <MediaMessage key={msg.id} {...msg} />;
+          case "DOC":
+            return <DocMessage key={msg.id} {...msg} />;
           case "TIMELINE":
             return <TimeLine key={msg.id} {...msg} />;
           default:
