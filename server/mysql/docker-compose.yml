@@ -3,4 +3,4 @@ services:
   database:
     build: .
     ports:
-      - "3307:3306"
+      - "3307:3307"
