@@ -17,47 +17,29 @@ const TabFriendsRequest = () => {
       <Space
         direction="vertical"
         size="middle"
-        className="overflow-y-auto h-[calc(100vh-px)] pt-4"
+        className="overflow-y-auto h-[calc(100vh-60px)] pt-4"
       >
         <Space direction="vertical" className="w-[100%] px-5">
           <Typography className="font-semibold">
             Requests Received (3)
           </Typography>
           <Row gutter={[16, 16]}>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={6}>
+            <Col span={8}>
               <FriendRequestItem />
             </Col>
           </Row>

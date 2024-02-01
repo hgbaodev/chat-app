@@ -3,19 +3,21 @@ import Loadable from '~/components/Loadable';
 
 const Login = Loadable(lazy(() => import('~/pages/auth/Login')));
 const Register = Loadable(lazy(() => import('~/pages/auth/Register')));
+const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
 const AuthRoutes = {
-  path: "/auth",
+  path: '/auth',
+  errorElement: <Page404 />,
   children: [
     {
       path: 'login',
-      element: <Login/>,
+      element: <Login />
     },
     {
       path: 'register',
-      element: <Register/>,
+      element: <Register />
     }
-  ],
+  ]
 };
 
 export default AuthRoutes;
