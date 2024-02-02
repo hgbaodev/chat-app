@@ -8,6 +8,7 @@ from django.db.models import Q
 from rest_framework import serializers
 
 from chat_app.models import Message
+from chat_app.models import Group
 
 class MessageSerializer(serializers.Serializer):
     text = serializers.CharField()
@@ -124,3 +125,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         )
 
 
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
