@@ -4,7 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ChatContainer } from '~/section/chats/ChatContainer';
 import { ContactInfo } from '~/section/chats/ContactInfo';
 import { Contacts } from '~/section/chats/Contacts';
-import { setOpenContact } from '~/store/slices/appSlice';
+import { SharedMessages } from '~/section/chats/SharedMessages';
+import { setOpenContactInfo } from '~/store/slices/appSlice';
 const { useBreakpoint } = Grid;
 
 const Chat = () => {
@@ -13,7 +14,7 @@ const Chat = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(setOpenContact(screens.xl));
+    dispatch(setOpenContactInfo(screens.xl));
   }, [dispatch, screens]);
 
   return (
@@ -24,7 +25,17 @@ const Chat = () => {
       <Col span={18}>
         <Flex className="w-full h-full">
           <ChatContainer />
-          {contactInfo.open && <ContactInfo />}
+          {contactInfo.open &&
+            (() => {
+              switch (contactInfo.type) {
+                case 'CONTACT':
+                  return <ContactInfo />;
+                case 'SHARED':
+                  return <SharedMessages />;
+                default:
+                  return <></>;
+              }
+            })()}
         </Flex>
       </Col>
     </Row>

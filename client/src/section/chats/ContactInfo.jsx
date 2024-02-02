@@ -11,8 +11,9 @@ import {
 } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { CloseOutlined, StarOutlined, RightOutlined } from '@ant-design/icons';
+import { IoChevronForward } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
-import { toggleContactInfo } from '~/store/slices/appSlice';
+import { showSharedMessage, toggleContactInfo } from '~/store/slices/appSlice';
 import { faker } from '@faker-js/faker';
 
 export const ContactInfo = () => {
@@ -21,6 +22,9 @@ export const ContactInfo = () => {
   // handle
   const handleClose = () => {
     dispatch(toggleContactInfo());
+  };
+  const handleOpenSharedMessages = () => {
+    dispatch(showSharedMessage());
   };
   return (
     <Flex
@@ -60,7 +64,18 @@ export const ContactInfo = () => {
         <Typography>{faker.lorem.sentence()}</Typography>
 
         <Divider className="my-2" />
-        <Typography className="font-bold m-0">Media, Links and Docs</Typography>
+        <Flex justify="space-between">
+          <Typography className="font-bold m-0">
+            Media, Links and Docs
+          </Typography>
+          <Button
+            type="text"
+            shape="circle"
+            icon={<IoChevronForward size={20} />}
+            onClick={handleOpenSharedMessages}
+          />
+        </Flex>
+
         <Row gutter={10}>
           <Col span={8}>
             <Image className="w-full" src={faker.image.urlLoremFlickr()} />
@@ -81,8 +96,7 @@ export const ContactInfo = () => {
           <Button
             type="text"
             shape="circle"
-            icon={<RightOutlined />}
-            size={20}
+            icon={<IoChevronForward size={20} />}
           />
         </Flex>
         <Divider className="my-3" />
