@@ -1,7 +1,7 @@
 ## Started Server
 
 ### Step 1
-![Giao diện đăng nhập](./desc/add_database_chat_app.png)
+![Giao diện đăng nhập](../docs/image/add_database_chat_app.png)
 1. Install Xampp
 2. Create a database with the name "chat_app"
 

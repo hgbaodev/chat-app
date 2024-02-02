@@ -35,7 +35,7 @@
 
 ## Start Server
 ### Step 1
-![Login Interface](./server/desc/add_database_chat_app.png)
+![Login Interface](./docs/image/add_database_chat_app.png)
 
 1. Install Xampp
 2. Create a database named "chat_app"
