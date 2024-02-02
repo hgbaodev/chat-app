@@ -92,12 +92,13 @@ const MessageAction = ({ ...props }) => {
         menu={{
           items
         }}
-        placement="topCenter"
+        placement="topLeft"
         arrow={{
           pointAtCenter: true
         }}
         open={open}
         onOpenChange={handleOpenChange}
+        className="min-w-[100px]"
       >
         <Button
           type="text"

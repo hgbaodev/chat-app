@@ -32,7 +32,9 @@ const FriendRequestItem = () => {
         </p>
       </div>
       <Flex align="center" justify="space-between">
-        <Button className="w-[48%]">Reject</Button>
+        <Button type="text" className="w-[48%] bg-neutral-200">
+          Reject
+        </Button>
         <Button type="primary" className="w-[48%]">
           Accept
         </Button>
