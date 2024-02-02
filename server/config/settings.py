@@ -40,6 +40,7 @@ INSTALLED_APPS = [
 
     #install app
     'chat_app',
+    'groups',
     'debug_toolbar',
     'rest_framework',
     'rest_framework.authtoken',
