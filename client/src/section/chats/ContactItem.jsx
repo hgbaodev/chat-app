@@ -14,7 +14,7 @@ import { useMemo } from 'react';
 export const ContactItem = ({ active }) => {
   const [hoverRef, isHovering] = useHover();
 
-  const avatarSrc = useMemo(() => faker.image.avatar(), []);
+  const avatarSrc = useMemo(() => faker.image.avatarLegacy(), []);
   const fullName = useMemo(() => faker.person.fullName(), []);
   const messageContent = useMemo(() => faker.lorem.sentence(), []);
 
