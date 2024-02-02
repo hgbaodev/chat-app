@@ -1,22 +1,52 @@
-import { Avatar, Button, Flex, Space, Typography } from 'antd';
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  Flex,
+  Space,
+  Typography,
+  message
+} from 'antd';
 import { faker } from '@faker-js/faker';
 import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
-import confetti from 'canvas-confetti';
 import { useMemo } from 'react';
 export const ContactItem = ({ active }) => {
   const [hoverRef, isHovering] = useHover();
-  const handleConfetti = () => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-  };
 
   const avatarSrc = useMemo(() => faker.image.avatar(), []);
   const fullName = useMemo(() => faker.person.fullName(), []);
-  const message = useMemo(() => faker.lorem.sentence(), []);
+  const messageContent = useMemo(() => faker.lorem.sentence(), []);
+
+  const handleDeleteConversation = () => {
+    message.success('Delete conversation successfully!');
+  };
+
+  const items = [
+    {
+      key: '1',
+      label: <p className="m-0 min-w-[180px]">Pin this conversation</p>
+    },
+    {
+      key: '2',
+      label: <p className="m-0 w-[180px]">Mark as unread</p>
+    },
+    {
+      key: '3',
+      label: <p className="m-0 w-[180px]">Hide conversation</p>
+    },
+    {
+      key: '4',
+      label: (
+        <p
+          onClick={handleDeleteConversation}
+          className="text-red-500 m-0 w-[180px]"
+        >
+          Delete conversation
+        </p>
+      )
+    }
+  ];
 
   return (
     <Flex
@@ -34,25 +64,31 @@ export const ContactItem = ({ active }) => {
             {fullName}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {message}
+            {messageContent}
           </Typography>
         </Flex>
       </Space>
-      {isHovering ? (
+      <Dropdown
+        menu={{ items }}
+        placement="bottomLeft"
+        className={`${isHovering ? 'block' : 'hidden'}`}
+      >
         <Button
           type="text"
           size="small"
-          onClick={handleConfetti}
           icon={<AiOutlineEllipsis size={20} />}
         />
-      ) : (
-        <Typography className="text-[10px] text-neutral-500">
-          {faker.date.anytime().toLocaleTimeString('en-US', {
-            hour: 'numeric',
-            minute: 'numeric'
-          })}
-        </Typography>
-      )}
+      </Dropdown>
+      <Typography
+        className={`${
+          isHovering ? 'hidden' : 'block'
+        } text-[10px] text-neutral-500`}
+      >
+        {faker.date.anytime().toLocaleTimeString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric'
+        })}
+      </Typography>
     </Flex>
   );
 };

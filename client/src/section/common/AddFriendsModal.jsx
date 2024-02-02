@@ -1,6 +1,5 @@
 import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import Title from 'antd/es/typography/Title';
 import { faker } from '@faker-js/faker';
 import useHover from '~/hooks/useHover';
 import { useMemo } from 'react';
