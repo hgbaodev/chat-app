@@ -2,9 +2,8 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.views import APIView
 from django.http import JsonResponse
 from rest_framework import status
-
-from chat_app.serializers import GroupSerializer
-from chat_app.models import Group
+from .models import Group
+from .serializers import GroupSerializer
 
 class CreateGroup(CreateAPIView):
 
@@ -17,7 +16,7 @@ class CreateGroup(CreateAPIView):
 
 class GetAllGroups(APIView):
     def get(self, request, user_id):
-        groups = Group.objects.filter(createdBy=user_id)
+        groups = Group.objects.filter(created_by=user_id)
         serializer = GroupSerializer(groups, many=True)
         # response
         return JsonResponse(serializer.data, safe=False, status=status.HTTP_200_OK)
