@@ -14,15 +14,22 @@ const slice = createSlice({
     toggleContactInfo(state) {
       state.contactInfo.open = !state.contactInfo.open;
     },
-    setOpenContact(state, action) {
+    setOpenContactInfo(state, action) {
       state.contactInfo.open = action.payload;
     },
-    updateContactInfoType(state, action) {
-      state.contactInfo.type = action.payload.type;
+    showSharedMessage(state) {
+      state.contactInfo.type = 'SHARED';
+    },
+    showContactInfo(state) {
+      state.contactInfo.type = 'CONTACT';
     }
   }
 });
 
 export default slice.reducer;
-export const { toggleContactInfo, updateContactInfoType, setOpenContact } =
-  slice.actions;
+export const {
+  toggleContactInfo,
+  setOpenContactInfo,
+  showSharedMessage,
+  showContactInfo
+} = slice.actions;
