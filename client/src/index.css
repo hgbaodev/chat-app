@@ -75,3 +75,8 @@ body::-webkit-scrollbar {
 .contacts-tab .ant-tabs-tabpane {
   padding-left: 0 !important;
 }
+
+.popover-reaction .ant-popover-inner {
+  border-radius: 99px;
+  padding: 8px;
+}

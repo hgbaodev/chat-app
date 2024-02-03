@@ -1,13 +1,8 @@
-import { Avatar, Button, Dropdown, Flex, Image, Typography } from 'antd';
+import { Avatar, Button, Flex, Image, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-import { useState } from 'react';
-import {
-  IoArrowUndo,
-  IoEllipsisVerticalSharp,
-  IoHappyOutline
-} from 'react-icons/io5';
 import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
+import MessageAction from '~/section/chats/MessageAction';
 
 export const MessageWrapper = ({ from, children, ...props }) => {
   const userId = '9999';
@@ -34,80 +29,6 @@ export const MessageWrapper = ({ from, children, ...props }) => {
           } ${isHovering ? 'visible' : 'invisible'}`}
         />
       </Flex>
-    </Flex>
-  );
-};
-
-const items = [
-  {
-    key: '1',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Delete
-      </a>
-    )
-  },
-  {
-    key: '2',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Forward
-      </a>
-    )
-  },
-  {
-    key: '3',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Pin
-      </a>
-    )
-  }
-];
-
-const MessageAction = ({ ...props }) => {
-  const [open, setOpen] = useState(false);
-
-  const handleOpenChange = (newOpen) => {
-    setOpen(newOpen);
-  };
-
-  return (
-    <Flex gap={6} {...props}>
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<IoHappyOutline size={18} />}
-        className="text-gray-600 block"
-      />
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<IoArrowUndo size={18} />}
-        className="text-gray-600"
-      />
-      <Dropdown
-        menu={{
-          items
-        }}
-        placement="topLeft"
-        arrow={{
-          pointAtCenter: true
-        }}
-        open={open}
-        onOpenChange={handleOpenChange}
-        className="min-w-[100px]"
-      >
-        <Button
-          type="text"
-          size="small"
-          shape="circle"
-          icon={<IoEllipsisVerticalSharp size={18} />}
-          className="text-gray-600"
-        />
-      </Dropdown>
     </Flex>
   );
 };
