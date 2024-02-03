@@ -3,6 +3,9 @@ import { Button, Col, Flex, Image, Row, Tabs } from 'antd';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showContactInfo } from '~/store/slices/appSlice';
+import pdf from '~/assets/pdf.png';
+import { GoDownload } from 'react-icons/go';
+
 export const SharedMessages = () => {
   const dispatch = useDispatch();
 
@@ -27,9 +30,7 @@ export const SharedMessages = () => {
       children: <Docs />
     }
   ];
-  const onChange = (key) => {
-    console.log(key);
-  };
+  const onChange = (key) => {};
 
   // render
   return (
@@ -94,50 +95,50 @@ export const Media = () => {
 
 export const Links = () => {
   return (
-    <Row gutter={[8, 8]}>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-    </Row>
+    <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
+      Links
+    </Flex>
   );
 };
 
 export const Docs = () => {
   return (
-    <Row gutter={[8, 8]}>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-    </Row>
+    <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+      <DocItem />
+    </Flex>
+  );
+};
+
+export const DocItem = () => {
+  return (
+    <Flex
+      align="center"
+      justify="space-between"
+      className="p-2 w-full hover:bg-blue-50 rounded"
+    >
+      <Flex align="center" gap={4}>
+        <img src={pdf} className="w-[50px] h-[50px]" />
+        <div>
+          <p className="m-0 font-semibold">{faker.lorem.words()}</p>
+          <p className="m-0">32.5 MB</p>
+        </div>
+      </Flex>
+      <Button type="text" shape="circle" icon={<GoDownload size={20} />} />
+    </Flex>
   );
 };
