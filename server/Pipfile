@@ -17,6 +17,7 @@ django-filter = "*"
 markdown = "*"
 mysqlclient = "*"
 cryptography = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
