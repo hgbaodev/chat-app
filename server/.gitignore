@@ -1,4 +1,6 @@
 .idea
 .vscode
-config/.env
 ssl
+
+
+/config/.env
