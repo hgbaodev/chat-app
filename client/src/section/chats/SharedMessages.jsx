@@ -30,7 +30,10 @@ export const SharedMessages = () => {
       children: <Docs />
     }
   ];
-  const onChange = (key) => {};
+  const onChange = (key) => {
+    // eslint-disable-next-line no-console
+    console.log('key', key)
+  };
 
   // render
   return (

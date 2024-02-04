@@ -48,7 +48,7 @@ export const MediaMessage = ({ from, image }) => {
   );
 };
 
-export const DocMessage = ({ from, doc, text }) => {
+export const DocMessage = ({ from, text }) => {
   return (
     <MessageWrapper from={from}>
       <Flex align="center" justify="space-between" className="w-[260px]">
