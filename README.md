@@ -34,12 +34,11 @@
    ```
 
 ## Start Server
-
-### Step 1: Setup Docker (Required: Install Docker)
+### Step 1: Setup Mysql and Redis using docker (Required: Install Docker)
 1. Open a terminal in the project directory.
 2. Change into the project directory:
    ```bash
-   cd server/mysql
+   cd server/database
    ```
 3. Build the Docker image:
    ```bash
@@ -71,33 +70,7 @@
    show databases;
    ```
 
-### Step 2: Setup Redis on Windows
-1. Install WSL2.
-2. Open WSL on Windows.
-3. Install redis-server:
-   - Step 1:
-     ```bash
-     sudo apt-add-repository ppa:redislabs/redis
-     ```
-   - Step 2:
-     ```bash
-     sudo apt-get update
-     ```
-   - Step 3:
-     ```bash
-     sudo apt-get upgrade
-     ```
-   - Step 4:
-     ```bash
-     sudo apt-get install redis-server
-     ```
-
-4. Run redis-server:
-   ```bash
-   sudo service redis-server restart
-   ```
-
-### Step 3: Django Setup
+### Step 2: Django Setup - Use python version 3.12
 1. Change into the project directory:
    ```bash
    cd server
