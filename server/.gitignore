@@ -2,4 +2,4 @@
 .vscode
 ssl
 
-/config/.env
+config/.env
