@@ -62,7 +62,7 @@ const Login = () => {
             >
               <Input
                 prefix={<UserOutlined />}
-                placeholder="Username"
+                placeholder="Email"
                 variant="filled"
               />
             </Form.Item>
