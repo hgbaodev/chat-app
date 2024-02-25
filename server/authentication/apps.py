@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class ChatAppConfig(AppConfig):
+class AuthenticationConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'chat_app'
+    name = 'authentication'
