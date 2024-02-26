@@ -80,3 +80,10 @@ body::-webkit-scrollbar {
   border-radius: 99px;
   padding: 8px;
 }
+
+a.ant-btn,
+button.ant-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

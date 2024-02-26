@@ -5,26 +5,24 @@ import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useState } from 'react';
 import AddFriendsModal from '~/section/common/AddFriendsModal';
 
-export const Contacts = () => {
+export const Contacts = ({ ...props }) => {
   return (
-    <>
-      <Flex className="h-screen" vertical>
-        <ContactsHeader />
-        <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
-          <ContactItem active />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-          <ContactItem />
-        </Space>
-      </Flex>
-    </>
+    <Flex className="h-screen" vertical {...props}>
+      <ContactsHeader />
+      <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
+        <ContactItem active />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+        <ContactItem />
+      </Space>
+    </Flex>
   );
 };
 

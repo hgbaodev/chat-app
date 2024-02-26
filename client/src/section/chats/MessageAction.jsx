@@ -80,7 +80,7 @@ const MessageAction = ({ ...props }) => {
           type="text"
           size="small"
           shape="circle"
-          icon={<IoEllipsisVerticalSharp size={18} />}
+          icon={<IoEllipsisVerticalSharp />}
           className="text-gray-600"
         />
       </Dropdown>

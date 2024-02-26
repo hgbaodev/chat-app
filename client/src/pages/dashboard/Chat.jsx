@@ -1,4 +1,4 @@
-import { Col, Flex, Grid, Row } from 'antd';
+import { Col, Flex, Grid, Row, Space } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ChatContainer } from '~/section/chats/ChatContainer';
@@ -18,27 +18,26 @@ const Chat = () => {
   }, [dispatch, screens]);
 
   return (
-    <Row className="h-full">
-      <Col span={6} style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}>
-        <Contacts />
-      </Col>
-      <Col span={18}>
-        <Flex className="w-full h-full">
-          <ChatContainer />
-          {contactInfo.open &&
-            (() => {
-              switch (contactInfo.type) {
-                case 'CONTACT':
-                  return <ContactInfo />;
-                case 'SHARED':
-                  return <SharedMessages />;
-                default:
-                  return <></>;
-              }
-            })()}
-        </Flex>
-      </Col>
-    </Row>
+    <Flex className="h-full">
+      <Contacts
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        className="min-w-[330px]"
+      />
+      <Flex className="w-full h-full flex-1">
+        <ChatContainer />
+        {contactInfo.open &&
+          (() => {
+            switch (contactInfo.type) {
+              case 'CONTACT':
+                return <ContactInfo />;
+              case 'SHARED':
+                return <SharedMessages />;
+              default:
+                return <></>;
+            }
+          })()}
+      </Flex>
+    </Flex>
   );
 };
 export default Chat;

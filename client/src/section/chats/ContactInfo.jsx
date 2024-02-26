@@ -10,7 +10,7 @@ import {
   Typography
 } from 'antd';
 import Title from 'antd/es/typography/Title';
-import { CloseOutlined, StarOutlined, RightOutlined } from '@ant-design/icons';
+import { CloseOutlined, StarOutlined } from '@ant-design/icons';
 import { IoChevronForward } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showSharedMessage, toggleContactInfo } from '~/store/slices/appSlice';
@@ -100,6 +100,8 @@ export const ContactInfo = () => {
           />
         </Flex>
         <Divider className="my-3" />
+        <Typography className="font-bold m-0">Privacy settings</Typography>
+        <Typography>{faker.lorem.sentence()}</Typography>
       </Space>
     </Flex>
   );
