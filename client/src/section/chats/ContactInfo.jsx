@@ -4,6 +4,7 @@ import {
   Col,
   Divider,
   Flex,
+  Grid,
   Image,
   Row,
   Space,
@@ -19,9 +20,11 @@ import { GrGroup, GrNotification, GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { useState } from 'react';
 import ProfileModal from '~/section/common/ProfileModal';
+const { useBreakpoint } = Grid;
 
 export const ContactInfo = () => {
   const dispatch = useDispatch();
+  const screens = useBreakpoint();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   // handle
@@ -32,7 +35,7 @@ export const ContactInfo = () => {
   return (
     <Flex
       vertical
-      className="w-[350px]"
+      className={`w-[350px] ${!screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''}`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
     >
       <Flex

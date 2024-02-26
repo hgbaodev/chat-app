@@ -23,7 +23,7 @@ const Chat = () => {
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
         className="w-[350px]"
       />
-      <Flex className="w-full h-full flex-1">
+      <Flex className="w-full h-full flex-1 relative">
         <ChatContainer />
         {contactInfo.open &&
           (() => {
