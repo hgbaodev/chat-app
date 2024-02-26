@@ -48,7 +48,7 @@ export const ChatFooter = () => {
       <Button
         type="text"
         shape="circle"
-        icon={<IoSendSharp size={30} />}
+        icon={<IoSendSharp size={20} />}
         size="large"
         className="text-blue-500 hover:text-blue-500"
       />

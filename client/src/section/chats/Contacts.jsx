@@ -31,20 +31,18 @@ const ContactsHeader = () => {
 
   return (
     <>
-      <Space direction="vertical" className="w-[100%] p-4">
-        <Flex justify="space-between" align="center" gap={15}>
-          <Input
-            variant="filled"
-            placeholder="Search"
-            prefix={<SearchOutlined />}
-          />
-          <Button
-            type="text"
-            icon={<MdOutlinePersonAddAlt size={20} />}
-            onClick={() => setIsModalOpen(true)}
-          />
-          <Button type="text" icon={<MdOutlineGroupAdd size={20} />} />
-        </Flex>
+      <Space className="w-[100%] p-4">
+        <Input
+          variant="filled"
+          placeholder="Search here..."
+          prefix={<SearchOutlined />}
+        />
+        <Button
+          type="text"
+          icon={<MdOutlinePersonAddAlt size={20} />}
+          onClick={() => setIsModalOpen(true)}
+        />
+        <Button type="text" icon={<MdOutlineGroupAdd size={20} />} />
       </Space>
       <AddFriendsModal
         isModalOpen={isModalOpen}

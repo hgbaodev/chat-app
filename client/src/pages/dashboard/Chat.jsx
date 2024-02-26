@@ -21,7 +21,7 @@ const Chat = () => {
     <Flex className="h-full">
       <Contacts
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
-        className="min-w-[330px]"
+        className="w-[350px]"
       />
       <Flex className="w-full h-full flex-1">
         <ChatContainer />

@@ -15,17 +15,20 @@ import { IoChevronForward } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showSharedMessage, toggleContactInfo } from '~/store/slices/appSlice';
 import { faker } from '@faker-js/faker';
+import { GrGroup, GrNotification, GrPin } from 'react-icons/gr';
+import { AiOutlineEdit } from 'react-icons/ai';
+import { useState } from 'react';
+import ProfileModal from '~/section/common/ProfileModal';
 
 export const ContactInfo = () => {
   const dispatch = useDispatch();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // handle
-  const handleClose = () => {
-    dispatch(toggleContactInfo());
-  };
-  const handleOpenSharedMessages = () => {
-    dispatch(showSharedMessage());
-  };
+  const handleClose = () => dispatch(toggleContactInfo());
+
+  const handleOpenSharedMessages = () => dispatch(showSharedMessage());
+
   return (
     <Flex
       vertical
@@ -51,13 +54,28 @@ export const ContactInfo = () => {
         <Space className="w-full" direction="vertical" align="center">
           <Avatar
             size={64}
-            style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}
+            onClick={() => setIsModalOpen(true)}
+            className="bg-[#fde3cf] text-[#f56a00] cursor-pointer"
           >
             {faker.person.fullName()[0].toUpperCase()}
           </Avatar>
-          <Title level={5} className="m-0">
-            {faker.person.fullName()}
-          </Title>
+          <ProfileModal
+            isModalOpen={isModalOpen}
+            setIsModalOpen={setIsModalOpen}
+          />
+          <Space align="center" className="mb-4">
+            <Title level={5} className="!m-0">
+              {faker.person.fullName()}
+            </Title>
+            <Button
+              type="text"
+              size="small"
+              shape="circle"
+              icon={<AiOutlineEdit />}
+              className="bg-neutral-100"
+            />
+          </Space>
+          <HeaderInfoTool />
         </Space>
         <Divider className="my-2" />
         <Typography className="font-bold m-0">About</Typography>
@@ -104,5 +122,34 @@ export const ContactInfo = () => {
         <Typography>{faker.lorem.sentence()}</Typography>
       </Space>
     </Flex>
+  );
+};
+
+const HeaderInfoTool = () => {
+  return (
+    <Flex>
+      <ToolButton icon={<GrNotification />} text="Mute" />
+      <ToolButton icon={<GrPin />} text="Pin" />
+      <ToolButton icon={<GrGroup />} text="Create group" />
+    </Flex>
+  );
+};
+
+const ToolButton = ({ text, icon }) => {
+  return (
+    <Space
+      direction="vertical"
+      align="center"
+      className="w-[74px] h-[78px] text-center"
+    >
+      <Button
+        type="text"
+        size="middle"
+        shape="circle"
+        icon={icon}
+        className="bg-neutral-100"
+      />
+      <span className="text-xs text-gray-500">{text}</span>
+    </Space>
   );
 };

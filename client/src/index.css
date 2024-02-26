@@ -1,5 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;600;700;800;900&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -50,7 +48,7 @@ body::-webkit-scrollbar {
 }
 
 .contacts-tab .ant-tabs-nav {
-  width: 25%;
+  width: 350px;
 }
 
 .contacts-tab .ant-tabs-tab + .ant-tabs-tab {
