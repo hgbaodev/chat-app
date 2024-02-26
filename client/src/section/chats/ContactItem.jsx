@@ -71,7 +71,7 @@ export const ContactItem = ({ active }) => {
       <Dropdown
         menu={{ items }}
         placement="bottomLeft"
-        className={`${isHovering ? 'block' : 'hidden'}`}
+        className={`${isHovering ? 'block' : '!hidden'}`}
       >
         <Button
           type="text"

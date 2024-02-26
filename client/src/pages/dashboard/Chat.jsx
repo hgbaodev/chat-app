@@ -1,4 +1,4 @@
-import { Col, Flex, Grid, Row, Space } from 'antd';
+import { Flex, Grid } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ChatContainer } from '~/section/chats/ChatContainer';
