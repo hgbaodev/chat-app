@@ -90,7 +90,7 @@ const FormLogin = () => {
               }
             ]}
           >
-            <Input placeholder="John" variant="filled" size="large" />
+            <Input placeholder="Nhat" variant="filled" size="large" />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -105,7 +105,7 @@ const FormLogin = () => {
               }
             ]}
           >
-            <Input placeholder="Doe" variant="filled" size="large" />
+            <Input placeholder="Sinh" variant="filled" size="large" />
           </Form.Item>
         </Col>
       </Row>

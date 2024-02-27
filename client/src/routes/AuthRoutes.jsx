@@ -3,6 +3,7 @@ import Loadable from '~/components/Loadable';
 
 const Login = Loadable(lazy(() => import('~/pages/auth/Login')));
 const Register = Loadable(lazy(() => import('~/pages/auth/Register')));
+const VerifyEmail = Loadable(lazy(() => import('~/pages/auth/VerifyEmail')));
 const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
 const AuthRoutes = {
@@ -16,6 +17,10 @@ const AuthRoutes = {
     {
       path: 'register',
       element: <Register />
+    },
+    {
+      path: 'verify-email',
+      element: <VerifyEmail />
     }
   ]
 };
