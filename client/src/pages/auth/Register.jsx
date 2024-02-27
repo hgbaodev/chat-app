@@ -1,9 +1,21 @@
 /* eslint-disable no-console */
-import { Button, Form, Input, Flex, Row, Typography, Col, Divider } from 'antd';
-
+import {
+  Button,
+  Form,
+  Input,
+  Flex,
+  Row,
+  Typography,
+  Col,
+  Divider,
+  Space
+} from 'antd';
+import { FcGoogle } from 'react-icons/fc';
+import { FaGithub } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { register } from '~/store/slices/authSlice';
+import { formatErrors } from '~/utils/formatErrors';
 
 const { Text, Paragraph } = Typography;
 
@@ -27,6 +39,15 @@ const RegisterPage = () => {
           <Paragraph className="text-center text-xs text-gray-500">
             Already a member ? <Link to="/auth/login"> Sign In</Link>
           </Paragraph>
+
+          <Space>
+            <Button shape="round" icon={<FcGoogle />} size="large">
+              Google
+            </Button>
+            <Button shape="round" icon={<FaGithub />} size="large">
+              Github
+            </Button>
+          </Space>
           <Divider>Or</Divider>
           <FormLogin />
         </Flex>
@@ -37,21 +58,24 @@ const RegisterPage = () => {
 
 const FormLogin = () => {
   const dispatch = useDispatch();
-  const onFinish = (values) => {
-    dispatch(register(values));
+  const [form] = Form.useForm();
+
+  const onFinish = async (values) => {
+    const response = await dispatch(register(values));
+    if (response.error && response.payload) {
+      form.setFields(formatErrors(response.payload));
+    } else {
+      console.log('ok');
+    }
   };
-  const onFinishFailed = (errorInfo) => {
-    console.log('Failed:', errorInfo);
-  };
+
   return (
     <Form
-      name="normal_login"
-      className="login-form w-full"
+      form={form}
       initialValues={{ remember: true }}
       layout="vertical"
       requiredMark="optional"
       onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
     >
       <Row gutter={16}>
         <Col span={12}>
@@ -115,7 +139,7 @@ const FormLogin = () => {
           size="large"
         />
       </Form.Item>
-      <Form.Item>
+      <Form.Item className="mb-4">
         <Button
           type="primary"
           htmlType="submit"
@@ -125,8 +149,8 @@ const FormLogin = () => {
           Create Account
         </Button>
       </Form.Item>
-      <Form.Item className="mb-0">
-        <Text className="text-center text-xs">
+      <Form.Item className="mb-0 text-center">
+        <Text className="text-xs">
           By signing up, I agree to <Link to="#">Terms of Service</Link> and{' '}
           <Link to="#">Privacy Policy</Link>.
         </Text>

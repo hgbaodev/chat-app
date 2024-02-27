@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework_simplejwt.tokens import RefreshToken
 
 class User(AbstractBaseUser, PermissionsMixin):
-    email = models.EmailField(max_length=255, unique=True, verbose_name=_("Email address"))
+    email = models.EmailField(max_length=255, unique=True)
     phone = models.CharField(max_length=20, blank=True)
     first_name = models.CharField(max_length=255, verbose_name=_("First name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last name"))
@@ -24,6 +24,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['first_name', 'last_name']
     
     objects = UserManager()
+    
+    class Meta:
+        verbose_name = "User"
     
     def __str__(self) -> str:
         return self.email

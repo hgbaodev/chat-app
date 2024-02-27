@@ -13,8 +13,9 @@ import {
 
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import GoogleLoginCustom from '~/components/GoogleLoginCustom';
+import { Link } from 'react-router-dom';
 
-const { Text, Link } = Typography;
+const { Text } = Typography;
 
 const Login = () => {
   return (
@@ -36,11 +37,10 @@ const Login = () => {
             <img src={logo_light} className="object-fill w-[100px] h-[100px]" />
           </Link>
           <GoogleLoginCustom />
-          <Divider>OR</Divider>
+          <Divider>Or</Divider>
           <Text className="text-2xl font-medium mb-5">
             Sign in to your account
           </Text>
-
           <FormLogin />
         </Flex>
       </Col>
@@ -101,13 +101,18 @@ const FormLogin = () => {
       </Form.Item>
 
       <Form.Item>
-        <Button type="primary" htmlType="submit" className="w-full" size='large'>
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="w-full"
+          size="large"
+        >
           Login
         </Button>
       </Form.Item>
       <Form.Item className="text-center">
         <Text>{"Don't have an account?"}</Text>
-        <Link href="/auth/register"> Sign up now</Link>
+        <Link to="/auth/register"> Sign up now</Link>
       </Form.Item>
     </Form>
   );
