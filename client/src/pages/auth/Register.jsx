@@ -13,7 +13,7 @@ import {
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
-import { useDispatch } from '~/store';
+import { useDispatch, useSelector } from '~/store';
 import { register } from '~/store/slices/authSlice';
 import { formatErrors } from '~/utils/formatErrors';
 
@@ -60,12 +60,14 @@ const FormLogin = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const navigate = useNavigate();
+  const { isLoading } = useSelector((state) => state.auth.register);
 
   const onFinish = async (values) => {
     const response = await dispatch(register(values));
     if (response.error && response.payload) {
       form.setFields(formatErrors(response.payload));
     } else {
+      localStorage.setItem('verify_email', values.email);
       navigate('/auth/verify-email');
     }
   };
@@ -148,6 +150,7 @@ const FormLogin = () => {
           htmlType="submit"
           className="w-full"
           size="large"
+          loading={isLoading}
         >
           Create Account
         </Button>

@@ -13,10 +13,27 @@ export const register = createAsyncThunk(
   }
 );
 
+export const verifyEmail = createAsyncThunk(
+  'auth/verifyEmail',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(
+        `auth/verify-email`,
+        credentials
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
-  formRegister: {
-    isLoading: false,
-    errors: null
+  register: {
+    isLoading: false
+  },
+  verifyEmail: {
+    isLoading: false
   }
 };
 
@@ -27,14 +44,22 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(register.pending, (state) => {
-        state.formRegister.isLoading = true;
+        state.register.isLoading = true;
       })
       .addCase(register.fulfilled, (state) => {
-        state.formRegister.isLoading = false;
+        state.register.isLoading = false;
       })
-      .addCase(register.rejected, (state, action) => {
-        state.formRegister.isLoading = false;
-        state.formRegister.errors = action.payload;
+      .addCase(register.rejected, (state) => {
+        state.register.isLoading = false;
+      })
+      .addCase(verifyEmail.pending, (state) => {
+        state.verifyEmail.isLoading = true;
+      })
+      .addCase(verifyEmail.fulfilled, (state) => {
+        state.verifyEmail.isLoading = false;
+      })
+      .addCase(verifyEmail.rejected, (state) => {
+        state.verifyEmail.isLoading = false;
       });
   }
 });

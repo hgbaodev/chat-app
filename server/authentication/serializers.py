@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User
+from .models import User, OneTimePassword
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -29,6 +29,20 @@ class RegisterSerializer(serializers.ModelSerializer):
     
 class VerifyUserEmailSerializer(serializers.Serializer):
     otp = serializers.CharField()
+    
+    def validate_otp(self, value):
+        if not value:
+            raise serializers.ValidationError("Passcode not provided")
+
+        try:
+            user_code_obj = OneTimePassword.objects.get(otp=value)
+        except OneTimePassword.DoesNotExist:
+            raise serializers.ValidationError("Passcode is invalid")
+
+        if user_code_obj.user.is_verified:
+            raise serializers.ValidationError("User is already verified")
+
+        return value
     
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)

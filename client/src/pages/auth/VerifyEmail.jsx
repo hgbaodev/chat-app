@@ -1,10 +1,11 @@
 /* eslint-disable no-console */
-import { Button, Form, Input, Flex, Row, Typography, Col } from 'antd';
-import { Link } from 'react-router-dom';
+import { Button, Form, Input, Flex, Row, Typography, Col, message } from 'antd';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from '~/store';
-import { register } from '~/store/slices/authSlice';
+import { verifyEmail } from '~/store/slices/authSlice';
 import { formatErrors } from '~/utils/formatErrors';
 import VerifyImage from '~/assets/verify.png';
+import { useSelector } from 'react-redux';
 
 const { Text, Paragraph } = Typography;
 
@@ -39,14 +40,18 @@ const VerifyEmail = () => {
 
 const FormLogin = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
+  const { isLoading } = useSelector((state) => state.auth.verifyEmail);
 
   const onFinish = async (values) => {
-    const response = await dispatch(register(values));
+    const response = await dispatch(verifyEmail(values));
+    console.log(response);
     if (response.error && response.payload) {
       form.setFields(formatErrors(response.payload));
     } else {
-      console.log('ok');
+      navigate('/');
+      message.success('Account verified successfully');
     }
   };
 
@@ -69,8 +74,7 @@ const FormLogin = () => {
             whitespace: true,
             message: 'Please input your OTP!'
           },
-          { min: 6, message: 'Code must be at least 6 characters' },
-          { type: 'number' }
+          { min: 6, message: 'Code must be at least 6 characters' }
         ]}
       >
         <Input placeholder="6 characters" variant="filled" size="large" />
@@ -81,6 +85,7 @@ const FormLogin = () => {
           htmlType="submit"
           className="w-full"
           size="large"
+          loading={isLoading}
         >
           Verify
         </Button>

@@ -36,22 +36,20 @@ class LoginUserView(GenericAPIView):
     
 class VerifyUserEmail(GenericAPIView):
     serializer_class = VerifyUserEmailSerializer
+
     def post(self, request):
-        passcode = request.data.get('otp')
-        try:
-            user_code_obj = OneTimePassword.objects.get(otp=passcode)
-            user = user_code_obj.user
-            if not user.is_verified:
-                user.is_verified = True
-                user_code_obj.delete()
-                user.save()
-                return Response({
-                    'message': 'Account email verified successfully'
-                }, status=status.HTTP_200_OK)
-            return Response({'message':'Passcode is invalid user is already verified'}, status=status.HTTP_204_NO_CONTENT)
-        # Bắt lỗi khi không tìm thấy otp trong csdl
-        except OneTimePassword.DoesNotExist as identifier:
-            return Response({'message':'Passcode not provided'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        passcode = serializer.validated_data.get('otp')
+
+        user_code_obj = OneTimePassword.objects.get(otp=passcode)
+        user = user_code_obj.user
+        user.is_verified = True
+        user_code_obj.delete()
+        user.save()
+
+        return Response({'message': 'Account email verified successfully'}, status=status.HTTP_200_OK)
         
 class LogoutView(GenericAPIView):
     serializer_class = LogoutUserSerializer
