@@ -14,17 +14,13 @@ import {
 import { LockOutlined, UserOutlined } from '@ant-design/icons';
 import GoogleLoginCustom from '~/components/GoogleLoginCustom';
 
-const { Paragraph, Text, Link } = Typography;
+const { Text, Link } = Typography;
 
 const Login = () => {
-  const onFinish = (values) => {
-    // eslint-disable-next-line no-console
-    console.log('Received values of form: ', values);
-  };
   return (
-    <Row justify="center" className="h-[100vh] bg-gray-50">
+    <Row justify="center" className="h-[100vh] bg-neutral-100">
       <Col
-        xs={18}
+        xs={24}
         md={12}
         lg={8}
         className="flex flex-col justify-center items-center"
@@ -40,71 +36,80 @@ const Login = () => {
             <img src={logo_light} className="object-fill w-[100px] h-[100px]" />
           </Link>
           <GoogleLoginCustom />
-          <Divider>Or</Divider>
-          <Text className="flex items-center mb-2 text-2xl font-semibold text-gray-900 dark:text-whit">
-            Sign in
+          <Divider>OR</Divider>
+          <Text className="text-2xl font-medium mb-5">
+            Sign in to your account
           </Text>
-          <Paragraph className="text-center">
-            Welcome back to Chat apps! Please enter your details below to sign
-            in.
-          </Paragraph>
-          <Form
-            name="normal_login"
-            className="login-form w-full"
-            initialValues={{ remember: true }}
-            onFinish={onFinish}
-          >
-            <Form.Item
-              name="username"
-              rules={[
-                { required: true, message: 'Please input your username!' }
-              ]}
-            >
-              <Input
-                prefix={<UserOutlined />}
-                placeholder="Email"
-                variant="filled"
-              />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your password!'
-                }
-              ]}
-            >
-              <Input.Password
-                prefix={<LockOutlined />}
-                type="password"
-                placeholder="Password"
-                variant="filled"
-              />
-            </Form.Item>
-            <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
 
-              <Link className="float-right" href="/auth/forgot-password">
-                Forgot password
-              </Link>
-            </Form.Item>
-
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className="w-full">
-                Log in
-              </Button>
-            </Form.Item>
-            <Form.Item className="text-center">
-              <Text>{"Don't have an account?"}</Text>
-              <Link href="/auth/register"> Sign up now</Link>
-            </Form.Item>
-          </Form>
+          <FormLogin />
         </Flex>
       </Col>
     </Row>
+  );
+};
+
+const FormLogin = () => {
+  const onFinish = (values) => {
+    console.log('Received values of form: ', values);
+  };
+  return (
+    <Form
+      name="normal_login"
+      className="login-form w-full"
+      initialValues={{ remember: true }}
+      onFinish={onFinish}
+    >
+      <Form.Item
+        name="email"
+        rules={[
+          { required: true, message: 'Please input your username!' },
+          { type: 'email', message: 'Email is not valid' }
+        ]}
+      >
+        <Input
+          prefix={<UserOutlined />}
+          placeholder="Email address"
+          variant="filled"
+          size="large"
+        />
+      </Form.Item>
+      <Form.Item
+        name="password"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your password!'
+          }
+        ]}
+      >
+        <Input.Password
+          prefix={<LockOutlined />}
+          type="password"
+          placeholder="Password"
+          variant="filled"
+          size="large"
+        />
+      </Form.Item>
+      <Form.Item>
+        <Form.Item name="remember" valuePropName="checked" noStyle>
+          <Checkbox>Remember me</Checkbox>
+        </Form.Item>
+
+        <Link className="float-right" href="/auth/forgot-password">
+          Forgot password
+        </Link>
+      </Form.Item>
+
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className="w-full" size='large'>
+          Login
+        </Button>
+      </Form.Item>
+      <Form.Item className="text-center">
+        <Text>{"Don't have an account?"}</Text>
+        <Link href="/auth/register"> Sign up now</Link>
+      </Form.Item>
+    </Form>
   );
 };
 
