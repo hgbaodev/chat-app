@@ -12,7 +12,7 @@ import {
 } from 'antd';
 import { FcGoogle } from 'react-icons/fc';
 import { FaGithub } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { register } from '~/store/slices/authSlice';
 import { formatErrors } from '~/utils/formatErrors';
@@ -59,13 +59,14 @@ const RegisterPage = () => {
 const FormLogin = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     const response = await dispatch(register(values));
     if (response.error && response.payload) {
       form.setFields(formatErrors(response.payload));
     } else {
-      console.log('ok');
+      navigate('/auth/verify-email');
     }
   };
 
@@ -112,6 +113,7 @@ const FormLogin = () => {
       <Form.Item
         label="Email"
         name="email"
+        validateTrigger="onBlur"
         rules={[
           { required: true, message: 'Please input your email!' },
           { type: 'email', message: 'Email is not valid' }
@@ -122,6 +124,7 @@ const FormLogin = () => {
       <Form.Item
         label="Password"
         name="password"
+        validateTrigger="onBlur"
         rules={[
           {
             required: true,
