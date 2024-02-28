@@ -43,8 +43,11 @@ export const verifyEmail = createAsyncThunk(
 );
 
 const initialState = {
+  isAuthenticated: false,
+  loaded: false,
   email: null,
   fullName: null,
+
   login: {
     isLoading: false
   },
@@ -67,6 +70,8 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         const result = action.payload.data;
+        state.isLoaded = true;
+        state.isAuthenticated = true;
         state.email = result.email;
         state.fullName = result.full_name;
         Cookies.set('token', result.access_token);

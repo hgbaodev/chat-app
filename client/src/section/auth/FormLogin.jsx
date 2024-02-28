@@ -16,8 +16,9 @@ const FormLogin = () => {
     const response = await dispatch(login(values));
     if (response.error && response.payload) {
       toast.error(response.payload?.detail)
+    } else {
+      navigate('/');
     }
-    navigate('/');
   };
   return (
     <Form

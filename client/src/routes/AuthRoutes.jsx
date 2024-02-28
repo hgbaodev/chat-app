@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import Loadable from '~/components/Loadable';
+import AuthRoute from '~/guards/AuthRoute';
 
 const Login = Loadable(lazy(() => import('~/pages/auth/Login')));
 const Register = Loadable(lazy(() => import('~/pages/auth/Register')));
@@ -12,7 +13,7 @@ const AuthRoutes = {
   children: [
     {
       path: 'login',
-      element: <Login />
+      element: <AuthRoute component={Login} />
     },
     {
       path: 'register',
