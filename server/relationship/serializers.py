@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import FriendRequest, FriendRelationship
+from .models import FriendRequest, FriendRelationship, BlockList
 
 
 class SendFriendRequestSerializer(serializers.Serializer):
@@ -74,6 +74,48 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
             return data
         raise serializers.ValidationError("Cannot find this friendrequest.")
     
+class BlockFriendSerializer(serializers.Serializer):
+    
+    blocked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    def validate(self, data):
+        blocked_by = data['blocked_by']
+        user = data['user']
+
+        if blocked_by == user:
+            raise serializers.ValidationError("blocked_by and user should be different")
+        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=user).first()
+        if has_blocked:
+            raise serializers.ValidationError("You have blocked this user.")
+
+        is_friend = FriendRelationship.objects.filter((Q(user_1=blocked_by) & Q(user_2=user)) | (Q(user_1=user) & Q(user_2=blocked_by))).first()
+        if is_friend:
+            block_list_instance = BlockList.objects.create(
+                blocked_by=blocked_by,
+                user=user
+            )
+            return block_list_instance
+        raise serializers.ValidationError("You are not friends")
+    
+
+class UnBlockFriendSerializer(serializers.Serializer):
+    
+    blocked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    def validate(self, data):
+        blocked_by = data['blocked_by']
+        user = data['user']
+
+        if blocked_by == user:
+            raise serializers.ValidationError("blocked_by and user should be different")
+        
+        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=user).first()
+        if has_blocked:
+            has_blocked.delete()
+            return data
+        raise serializers.ValidationError("You haven't blocked this user.") 
 
 class DeleteFriendSerializer(serializers.Serializer):
     
@@ -92,3 +134,12 @@ class DeleteFriendSerializer(serializers.Serializer):
             existing_relationship.delete()
             return data
         raise serializers.ValidationError(f"Cannot find this relationship between {user_1} and {user_2}.")
+
+
+class FriendSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    email = serializers.EmailField()
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+
+

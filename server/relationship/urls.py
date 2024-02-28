@@ -1,5 +1,6 @@
 from django.urls import path
-from .views import SendFriendRequestView, CancelFriendRequestView, RefuseFriendRequestView, AcceptFriendRequestView, DeleteFriendView
+from .views import (SendFriendRequestView, CancelFriendRequestView, RefuseFriendRequestView, 
+                    AcceptFriendRequestView, DeleteFriendView, GetAllFriendsView, BlockFriendView, UnBlockFriendView)
 
 urlpatterns = [
     path('send-friend-request', SendFriendRequestView.as_view(), name='send-friend-request'),
@@ -7,4 +8,7 @@ urlpatterns = [
     path('refuse-friend-request/<int:sender>', RefuseFriendRequestView.as_view(), name='refuse-friend-request'),
     path('accept-friend-request/<int:sender>', AcceptFriendRequestView.as_view(), name='accept-friend-request'),
     path('delete-friend/<int:friend_id>', DeleteFriendView.as_view(), name='delete-friend'),
+    path('get-all-friends', GetAllFriendsView.as_view(), name='get-all-friends'),
+    path('block-friend/<int:friend_id>', BlockFriendView.as_view(), name='block-friend'),
+    path('unblock-friend/<int:friend_id>', UnBlockFriendView.as_view(), name='unblock-friend'),
 ]
