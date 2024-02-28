@@ -33,7 +33,6 @@ class VerifyUserEmailSerializer(serializers.Serializer):
     def validate_otp(self, value):
         if not value:
             raise serializers.ValidationError("Passcode not provided")
-
         try:
             user_code_obj = OneTimePassword.objects.get(otp=value)
         except OneTimePassword.DoesNotExist:
