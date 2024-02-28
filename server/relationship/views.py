@@ -21,8 +21,9 @@ class SendFriendRequestView(CreateAPIView):
 class CancelFriendRequestView(GenericAPIView):
     serializer_class = DeleteFriendRequestSerializer
     permission_classes = [IsAuthenticated]
-    def post(self, request):
+    def delete(self, request, receiver):
         request.data['sender'] = request.user.id
+        request.data['receiver'] = receiver
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
             return Response({"msg": "Successfully"}, status=status.HTTP_201_CREATED)
@@ -32,8 +33,9 @@ class CancelFriendRequestView(GenericAPIView):
 class RefuseFriendRequestView(GenericAPIView):
     serializer_class = DeleteFriendRequestSerializer
     permission_classes = [IsAuthenticated]
-    def post(self, request):
+    def delete(self, request, sender):
         request.data['receiver'] = request.user.id
+        request.data['sender'] = sender
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
             return Response({"msg": "Successfully"}, status=status.HTTP_201_CREATED)
