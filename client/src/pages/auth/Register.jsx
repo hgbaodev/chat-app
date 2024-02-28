@@ -35,13 +35,23 @@ const RegisterPage = () => {
             Already a member ? <Link to="/auth/login"> Sign In</Link>
           </Paragraph>
 
-          <Space>
-            <Button shape="round" icon={<FcGoogle />} size="large">
-              Google
+          <Space direction="vertical" className="w-full">
+            <Button
+              shape="round"
+              icon={<FcGoogle />}
+              size="large"
+              className="w-full"
+            >
+              Sign up with Google
             </Button>
-            <Button shape="round" icon={<FaGithub />} size="large">
-              Github
-            </Button>
+            {/* <Button
+              shape="round"
+              icon={<FaGithub />}
+              size="large"
+              className="w-full"
+            >
+              Sign up with Github
+            </Button> */}
           </Space>
           <Divider>Or</Divider>
           <FormRegister />
