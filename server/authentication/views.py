@@ -99,4 +99,11 @@ class TestingAuthenticatedReq(GenericAPIView):
             'msg':'its works'
         }
         return Response(data, status=status.HTTP_200_OK)
-    
+
+class GetAuthenticatedReq(GenericAPIView):
+    permission_classes=[IsAuthenticated]
+    def get(self, request):
+        data={
+            'Message':'Get Successful'
+        }
+        return Response(data, status=status.HTTP_200_OK)

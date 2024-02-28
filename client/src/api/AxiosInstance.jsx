@@ -3,12 +3,10 @@ import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
 
-
 let accessToken = Cookies.get('token') || '';
 let refresh_token = Cookies.get('refresh_token') || '';
 
 const BASEURL = import.meta.env.VITE_APP_API_URL
-
 
 const AxiosInstance = axios.create({
   baseURL: BASEURL,
@@ -23,10 +21,18 @@ AxiosInstance.interceptors.request.use(async (req) => {
     req.headers.Authorization = Cookies.get('token')
       ? `Bearer ${accessToken}`
       : '';
-    const user = jwtDecode(accessToken);
-    const isExpired = dayjs.unix(user.exp).diff(dayjs()) < 1;
+    const tokenExp = jwtDecode(accessToken);
+    console.log('tokenExp', tokenExp)
+    const isExpired = dayjs.unix(tokenExp.exp).diff(dayjs()) < 1;
     if (!isExpired) return req;
-    const resp = await axios.post(`${BASEURL}auth/token/refresh/`, {
+    const refreshExp = jwtDecode(refresh_token).exp;
+    console.log("refreshExp", refreshExp)
+    if (dayjs.unix(refreshExp).diff(dayjs()) < 1) {
+      // For example, redirect user to login page
+      window.location.href = '/login';
+      return;
+    }
+    const resp = await axios.post(`${BASEURL}auth/token/refresh`, {
       refresh: refresh_token
     });
     Cookies.set('token', resp.data.access)
