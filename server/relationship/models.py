@@ -15,3 +15,10 @@ class FriendRelationship(models.Model):
     user_1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_1_relationship')
     user_2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_2_relationship')
     created_at = models.DateTimeField(auto_now_add=True)
+
+
+class BlockList(models.Model):
+    id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_id')
+    blocked_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_id_blocked')
+    created_at = models.DateTimeField(auto_now_add=True)
