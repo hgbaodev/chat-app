@@ -1,5 +1,19 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
+import Cookies from 'js-cookie';
+
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async (credentials, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/login`, credentials);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
 
 export const register = createAsyncThunk(
   'auth/register',
@@ -29,6 +43,11 @@ export const verifyEmail = createAsyncThunk(
 );
 
 const initialState = {
+  email: null,
+  fullName: null,
+  login: {
+    isLoading: false
+  },
   register: {
     isLoading: false
   },
@@ -43,8 +62,22 @@ const authSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
+      .addCase(login.pending, (state) => {
+        state.login.isLoading = true;
+      })
+      .addCase(login.fulfilled, (state, action) => {
+        const result = action.payload.data;
+        state.email = result.email;
+        state.fullName = result.full_name;
+        Cookies.set('token', result.access_token);
+        Cookies.set('refresh_token', result.refresh_token);
+        state.login.isLoading = false;
+      })
+      .addCase(login.rejected, (state) => {
+        state.login.isLoading = false;
+      })
       .addCase(register.pending, (state) => {
-        state.register.isLoading = true;
+        state.login.isLoading = true;
       })
       .addCase(register.fulfilled, (state) => {
         state.register.isLoading = false;
