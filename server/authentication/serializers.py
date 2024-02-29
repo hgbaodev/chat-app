@@ -40,9 +40,7 @@ class VerifyUserEmailSerializer(serializers.Serializer):
 
         if user_code_obj.user.is_verified:
             raise serializers.ValidationError("User is already verified")
-
         return value
-    
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
