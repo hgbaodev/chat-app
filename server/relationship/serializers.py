@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from authentication.models import User
-from django.db.models import Q, Subquery
+from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 
 
@@ -226,10 +226,7 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         return 0
     
     @staticmethod
-    def get_results(user_id):
-        
-        users = User.objects.exclude(id=user_id)
-
-        
-
+    def get_results(user_id, search_text):
+        users = User.objects.exclude(id=user_id).filter(email__icontains=search_text)
+        print(users)
         return users
