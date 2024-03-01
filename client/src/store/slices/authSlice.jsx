@@ -2,7 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
 import Cookies from 'js-cookie';
 
-
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
@@ -11,6 +10,19 @@ export const login = createAsyncThunk(
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getUserFromToken = createAsyncThunk(
+  'auth/getUserFromToken',
+  async () => {
+    try {
+      const response = await AxiosInstance.get(`auth/get-something`);
+      return response;
+    } catch (error) {
+      Cookies.remove('token');
+      throw error;
     }
   }
 );
@@ -98,6 +110,20 @@ const authSlice = createSlice({
       })
       .addCase(verifyEmail.rejected, (state) => {
         state.verifyEmail.isLoading = false;
+      })
+      .addCase(getUserFromToken.pending, (state) => {
+        state.isLoaded = false;
+        state.isAuthenticated = false;
+      })
+      .addCase(getUserFromToken.fulfilled, (state, action) => {
+        const result = action.payload;
+        console.log('result', result?.data);
+        state.isLoaded = true;
+        state.isAuthenticated = true;
+      })
+      .addCase(getUserFromToken.rejected, (state) => {
+        state.isLoaded = true;
+        state.isAuthenticated = false;
       });
   }
 });

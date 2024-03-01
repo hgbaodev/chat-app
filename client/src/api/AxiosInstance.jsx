@@ -22,11 +22,9 @@ AxiosInstance.interceptors.request.use(async (req) => {
       ? `Bearer ${accessToken}`
       : '';
     const tokenExp = jwtDecode(accessToken);
-    console.log('tokenExp', tokenExp)
     const isExpired = dayjs.unix(tokenExp.exp).diff(dayjs()) < 1;
     if (!isExpired) return req;
     const refreshExp = jwtDecode(refresh_token).exp;
-    console.log("refreshExp", refreshExp)
     if (dayjs.unix(refreshExp).diff(dayjs()) < 1) {
       // For example, redirect user to login page
       window.location.href = '/login';
