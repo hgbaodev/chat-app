@@ -41,6 +41,7 @@ class VerifyUserEmailSerializer(serializers.Serializer):
         if user_code_obj.user.is_verified:
             raise serializers.ValidationError("User is already verified")
         return value
+    
 class LoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(max_length=255)
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -71,6 +72,7 @@ class LoginSerializer(serializers.ModelSerializer):
             'access_token': str(tokens.get('access')),
             'refresh_token': str(tokens.get('refresh'))
         }
+
     
 class LogoutUserSerializer(serializers.Serializer):
     refresh_token=serializers.CharField()
@@ -147,3 +149,18 @@ class SetNewPasswordSerializer(serializers.Serializer):
             return user
         except Exception as e:
             return AuthenticationFailed("Link is invalid or has expired")
+
+class GetAuthenticatedReqSerializer(serializers.Serializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'email'] 
+
+class UserSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['full_name', 'email'] 
+
+    def get_full_name(self, obj):
+        return obj.get_full_name
+

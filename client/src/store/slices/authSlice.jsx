@@ -21,7 +21,7 @@ export const getUserFromToken = createAsyncThunk(
       const response = await AxiosInstance.get(`auth/get-something`);
       return response;
     } catch (error) {
-      Cookies.remove('token');
+      console.error(error)
       throw error;
     }
   }
@@ -82,6 +82,7 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         const result = action.payload.data;
+        state.login.isLoading = false;
         state.isLoaded = true;
         state.isAuthenticated = true;
         state.email = result.email;
@@ -117,9 +118,10 @@ const authSlice = createSlice({
       })
       .addCase(getUserFromToken.fulfilled, (state, action) => {
         const result = action.payload;
-        console.log('result', result?.data);
-        state.isLoaded = true;
         state.isAuthenticated = true;
+        state.isLoaded = true;
+        state.email = result.email;
+        state.fullName = result.full_name
       })
       .addCase(getUserFromToken.rejected, (state) => {
         state.isLoaded = true;

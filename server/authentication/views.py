@@ -1,5 +1,5 @@
 from rest_framework.generics import GenericAPIView
-from .serializers import RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer
+from .serializers import RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import OneTimePassword
@@ -10,6 +10,8 @@ from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.permissions import IsAuthenticated
 from .models import User
+
+from rest_framework_simplejwt.tokens import AccessToken
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -91,19 +93,23 @@ class SetNewPasswordView(GenericAPIView):
         serializer=self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response({'success':True, 'message':"Password reset is succesful"}, status=status.HTTP_200_OK)
+
+ # Các trường bạn muốn trả về 
     
-class TestingAuthenticatedReq(GenericAPIView):
-    permission_classes=[IsAuthenticated]
+class GetAuthenticatedReqView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = UserSerializer
     def get(self, request):
-        data={
-            'msg':'its works'
+        token_str = request.headers.get('Authorization').split(' ')[1]
+        access_token_obj = AccessToken(token_str)
+        user_id = access_token_obj['user_id']
+        user = User.objects.get(id=user_id)
+        serializer = self.serializer_class(user)
+
+
+        data = {
+            'msg': 'Login Success',
+            'user': serializer.data 
         }
         return Response(data, status=status.HTTP_200_OK)
 
-class GetAuthenticatedReq(GenericAPIView):
-    permission_classes=[IsAuthenticated]
-    def get(self, request):
-        data={
-            'Message':'Get Successful'
-        }
-        return Response(data, status=status.HTTP_200_OK)

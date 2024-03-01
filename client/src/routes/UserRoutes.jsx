@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import Loadable from '~/components/Loadable';
+import PrivateRoute from '~/guards/PrivateRoute';
 import DashboardLayout from '~/layouts/DashboardLayout';
 import Chat from '~/pages/dashboard/Chat';
 import Contacts from '~/pages/dashboard/Contacts';
@@ -14,7 +15,7 @@ const UserRoutes = {
   children: [
     {
       path: '/',
-      element: <DashboardLayout />,
+      element: <PrivateRoute component={DashboardLayout} />,
       children: [
         {
           path: '/',
