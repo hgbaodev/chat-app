@@ -2,11 +2,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, GenericAPIView
 from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerializer, AcceptFriendRequestSerializer, 
-                          DeleteFriendSerializer, FriendSerializer, BlockFriendSerializer, UnBlockFriendSerializer)
+                          DeleteFriendSerializer, BlockFriendSerializer, UnBlockFriendSerializer,
+                          RecommendedUserSerializer, GetAllFriensSerializer, SearchUsersSerializer)
 from rest_framework.permissions import IsAuthenticated
 from .models import FriendRelationship
 from django.db.models import Q
-# Create your views here.
 
 class SendFriendRequestView(CreateAPIView):
     serializer_class = SendFriendRequestSerializer
@@ -95,23 +95,34 @@ class UnBlockFriendView(GenericAPIView):
     
 
 class GetAllFriendsView(GenericAPIView):
+    serializer_class = GetAllFriensSerializer
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
         user_id = request.user.id
+        friends = self.serializer_class.get_all_friends(user_id)
+        serializer = self.serializer_class(friends, many=True)
 
-        friend_relationships = FriendRelationship.objects.filter(
-            Q(user_1=user_id) | Q(user_2=user_id)
-        )
+        return Response({'friends': serializer.data}, status=status.HTTP_200_OK)
+    
+class GetRecommendedUserView(GenericAPIView):
+    serializer_class = RecommendedUserSerializer
+    permission_classes = [IsAuthenticated]
 
-        friends = []
-        for relationship in friend_relationships:
-            if relationship.user_1.id != user_id:
-                friends.append(relationship.user_1)
-            if relationship.user_2.id != user_id:
-                friends.append(relationship.user_2)
+    def get(self, request):
+        user_id = request.user.id
+        recommended_users = self.serializer_class.get_recommended_users(user_id)
+        serializer = self.serializer_class(recommended_users, many=True)
 
-        unique_friends = list(set(friends))
-        serialized_friends = FriendSerializer(unique_friends, many=True).data
+        return Response({'users': serializer.data}, status=status.HTTP_200_OK)
 
-        return Response({'friends': serialized_friends}, status=status.HTTP_200_OK)
+class SearchUsersView(GenericAPIView):
+    serializer_class = SearchUsersSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_id = request.user.id
+        users = self.serializer_class.get_results(user_id)
+        serializer = self.serializer_class(users, many=True, context={'request': request})
+
+        return Response({'users': serializer.data}, status=status.HTTP_200_OK)
