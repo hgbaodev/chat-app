@@ -5,8 +5,6 @@ from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerial
                           DeleteFriendSerializer, BlockFriendSerializer, UnBlockFriendSerializer,
                           RecommendedUserSerializer, GetAllFriensSerializer, SearchUsersSerializer)
 from rest_framework.permissions import IsAuthenticated
-from .models import FriendRelationship
-from django.db.models import Q
 
 class SendFriendRequestView(CreateAPIView):
     serializer_class = SendFriendRequestSerializer
@@ -120,9 +118,9 @@ class SearchUsersView(GenericAPIView):
     serializer_class = SearchUsersSerializer
     permission_classes = [IsAuthenticated]
 
-    def get(self, request):
+    def get(self, request, search_text):
         user_id = request.user.id
-        users = self.serializer_class.get_results(user_id)
+        users = self.serializer_class.get_results(user_id, search_text)
         serializer = self.serializer_class(users, many=True, context={'request': request})
 
         return Response({'users': serializer.data}, status=status.HTTP_200_OK)

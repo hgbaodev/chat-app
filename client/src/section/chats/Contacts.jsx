@@ -44,10 +44,12 @@ const ContactsHeader = () => {
         />
         <Button type="text" icon={<MdOutlineGroupAdd size={20} />} />
       </Space>
-      <AddFriendsModal
-        isModalOpen={isModalOpen}
-        setIsModalOpen={setIsModalOpen}
-      />
+      {isModalOpen && (
+        <AddFriendsModal
+          isModalOpen={isModalOpen}
+          setIsModalOpen={setIsModalOpen}
+        />
+      )}
     </>
   );
 };

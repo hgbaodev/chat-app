@@ -2,6 +2,7 @@ import { combineReducers } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
 import appReducer from './slices/appSlice';
 import authReducer from './slices/authSlice';
+import relationshipReducer from './slices/relationshipSlice';
 
 const rootPersistConfig = {
   key: 'root',
@@ -12,7 +13,8 @@ const rootPersistConfig = {
 
 const rootReducer = combineReducers({
   app: appReducer,
-  auth: authReducer
+  auth: authReducer,
+  relationship: relationshipReducer
 });
 
 export { rootPersistConfig, rootReducer };

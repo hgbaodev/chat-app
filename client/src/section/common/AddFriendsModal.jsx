@@ -1,15 +1,44 @@
 import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import useHover from '~/hooks/useHover';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { IoAdd, IoChevronBack } from 'react-icons/io5';
-import { __add_friend_mock__ } from '~/__mock__/add_friend';
 import TextArea from 'antd/es/input/TextArea';
+import { useDispatch } from '~/store';
+import {
+  getRecommendedUsers,
+  searchUsers
+} from '~/store/slices/relationshipSlice';
+import useDebounce from '~/hooks/useDebounce';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
+  const dispatch = useDispatch();
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
+  const debouncedSearchText = useDebounce(search, 500);
   const [userSelected, setUserSelected] = useState(null);
   const [invitationMessage, setInvitationMessage] = useState('');
+
+  // effect
+  useEffect(() => {
+    (async () => {
+      const response = await dispatch(getRecommendedUsers());
+      setUsers(response.payload.data.users);
+    })();
+  }, [dispatch]);
+
+  useEffect(() => {
+    (async () => {
+      if (debouncedSearchText) {
+        const response = await dispatch(searchUsers(debouncedSearchText));
+        setUsers(response.payload.data.users);
+      } else {
+        const response = await dispatch(getRecommendedUsers());
+        setUsers(response.payload.data.users);
+      }
+    })();
+  }, [debouncedSearchText, dispatch]);
+
   // handle
   const handleClose = () => {
     setUserSelected(null);
@@ -17,7 +46,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleSelectUser = (user_id) => {
-    setUserSelected(__add_friend_mock__.find((item) => item.id === user_id));
+    setUserSelected(users.find((user) => user.id === user_id));
     setInvitationMessage("Hello, I'm ...., Let's be friends!");
   };
 
@@ -27,6 +56,10 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
 
   const handleAddFriend = () => {
     console.log('call thunk action');
+  };
+
+  const handleSearchUsers = (e) => {
+    setSearch(e.target.value);
   };
 
   // render
@@ -56,9 +89,9 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
       {userSelected ? (
         <Space direction="vertical" className="w-[100%]">
           <Space gap={12}>
-            <Avatar size="large" src={userSelected.avatarSr} />
+            <Avatar size="large" src={userSelected.avatar} />
             <Space direction="vertical" size={0}>
-              <p className="m-0">{userSelected.fullName}</p>
+              <p className="m-0">{`${userSelected.first_name} ${userSelected.last_name}`}</p>
               <p className="m-0 text-xs text-gray-500">{userSelected.email}</p>
             </Space>
           </Space>
@@ -89,9 +122,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             className="mt-2"
             autoComplete="nope"
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-            }}
+            onChange={handleSearchUsers}
           />
           {search ? (
             <p className="text-xs text-gray-500">Recent searches</p>
@@ -99,15 +130,15 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             <p className="text-xs text-gray-500">Friendship suggestions</p>
           )}
           <div className="max-h-[420px] overflow-y-auto scrollbar">
-            {__add_friend_mock__.map((item) => (
+            {users.map((user) => (
               <UserSearchItem
-                key={item.id}
-                avatarSrc={item.avatarSr}
-                fullName={item.fullName}
-                email={item.email}
-                status={item.status}
+                key={user.id}
+                avatar={user.avatar}
+                fullName={`${user.first_name} ${user.last_name}`}
+                email={user.email}
+                status={user.relationship}
                 handleSelected={() => {
-                  handleSelectUser(item.id);
+                  handleSelectUser(user.id);
                 }}
               />
             ))}
@@ -119,7 +150,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
 };
 
 const UserSearchItem = ({
-  avatarSrc,
+  avatar,
   fullName,
   email,
   status,
@@ -155,7 +186,7 @@ const UserSearchItem = ({
       justify="space-between"
     >
       <Space gap={12}>
-        <Avatar size="large" src={avatarSrc} />
+        <Avatar size="large" src={avatar} />
         <Space direction="vertical" size={0}>
           <p className="m-0">{fullName}</p>
           <p className="m-0 text-xs text-gray-500">{email}</p>

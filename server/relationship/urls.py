@@ -13,5 +13,5 @@ urlpatterns = [
     path('block-friend/<int:friend_id>', BlockFriendView.as_view(), name='block-friend'),
     path('unblock-friend/<int:friend_id>', UnBlockFriendView.as_view(), name='unblock-friend'),
     path('get-recommended-users', GetRecommendedUserView.as_view(), name='get-recommeded-users'),
-    path('search-users', SearchUsersView.as_view(), name='search-users'),
+    path('search-users/<str:search_text>', SearchUsersView.as_view(), name='search-users'),
 ]
