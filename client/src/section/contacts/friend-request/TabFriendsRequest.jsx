@@ -17,8 +17,8 @@ const TabFriendsRequest = () => {
   // effect
   useEffect(() => {
     (async () => {
-      await dispatch(getAllSentFriendRequests());
-      await dispatch(getAllReceivedFriendRequests());
+      dispatch(getAllSentFriendRequests());
+      dispatch(getAllReceivedFriendRequests());
     })();
   }, [dispatch]);
 
