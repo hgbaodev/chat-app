@@ -1,8 +1,27 @@
-import { Col, Empty, Flex, Row, Space, Typography } from 'antd';
+import { Empty, Flex, Row, Space, Typography } from 'antd';
+import { useEffect } from 'react';
 import { IoPersonAddOutline } from 'react-icons/io5';
 import FriendRequestItem from '~/section/contacts/friend-request/FriendRequestItem';
+import { useDispatch, useSelector } from '~/store';
+import {
+  getAllReceivedFriendRequests,
+  getAllSentFriendRequests
+} from '~/store/slices/relationshipSlice';
 
 const TabFriendsRequest = () => {
+  const dispatch = useDispatch();
+  const { sent_friend_requests, received_friend_requests } = useSelector(
+    (state) => state.relationship
+  );
+
+  // effect
+  useEffect(() => {
+    (async () => {
+      await dispatch(getAllSentFriendRequests());
+      await dispatch(getAllReceivedFriendRequests());
+    })();
+  }, []);
+
   return (
     <div className="w-[100%] bg-neutral-100">
       <Flex
@@ -17,41 +36,50 @@ const TabFriendsRequest = () => {
       <Space
         direction="vertical"
         size="middle"
-        className="overflow-y-auto h-[calc(100vh-60px)] pt-4"
+        className="w-[100%] overflow-y-auto h-[calc(100vh-60px)] pt-4"
       >
         <Space direction="vertical" className="w-[100%] px-5">
           <Typography className="font-semibold">
-            Requests Received (3)
+            Received Requests(3)
           </Typography>
-          <Row gutter={[16, 16]}>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-            <Col span={8}>
-              <FriendRequestItem />
-            </Col>
-          </Row>
+          {received_friend_requests.length ? (
+            <Row gutter={[16, 16]}>
+              {received_friend_requests.map((item) => (
+                <FriendRequestItem
+                  key={item.id}
+                  fullName={item.sender}
+                  invitationMessage={item.message}
+                  time={item.created_at}
+                  isSended={false}
+                />
+              ))}
+            </Row>
+          ) : (
+            <Empty
+              description="Your incoming request list is empty"
+              className="py-4 "
+            />
+          )}
         </Space>
         <Space direction="vertical" className="w-[100%] px-5">
-          <Typography className="font-semibold">
-            Requests Received (3)
-          </Typography>
-          <Empty
-            description="Your incoming request list is empty"
-            className="py-4"
-          />
+          <Typography className="font-semibold">Sent Requests (3)</Typography>
+          {sent_friend_requests.length ? (
+            <Row gutter={[16, 16]}>
+              {sent_friend_requests.map((item) => (
+                <FriendRequestItem
+                  key={item.id}
+                  fullName={item.receiver}
+                  invitationMessage={item.message}
+                  time={item.created_at}
+                />
+              ))}
+            </Row>
+          ) : (
+            <Empty
+              description="Your sent request list is empty"
+              className="py-4"
+            />
+          )}
         </Space>
       </Space>
     </div>

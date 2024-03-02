@@ -1,10 +1,10 @@
-import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
+import { Avatar, Button, Flex, Input, Modal, Space, message } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import useHover from '~/hooks/useHover';
 import { useEffect, useState } from 'react';
 import { IoAdd, IoChevronBack } from 'react-icons/io5';
 import TextArea from 'antd/es/input/TextArea';
-import { useDispatch } from '~/store';
+import { useDispatch, useSelector } from '~/store';
 import {
   getRecommendedUsers,
   searchUsers,
@@ -14,6 +14,8 @@ import useDebounce from '~/hooks/useDebounce';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
+  const { fullName } = useSelector((state) => state.auth);
+  const [messageApi, contextHolder] = message.useMessage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const debouncedSearchText = useDebounce(search, 500);
@@ -48,7 +50,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
 
   const handleSelectUser = (user_id) => {
     setUserSelected(users.find((user) => user.id === user_id));
-    setInvitationMessage("Hello, I'm ...., Let's be friends!");
+    setInvitationMessage(`Hello, I'm ${fullName}, Let's be friends!`);
   };
 
   const handleResetSelectedUser = () => {
@@ -62,9 +64,16 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
         message: invitationMessage
       })
     );
-    console.log('====================================');
-    console.log({ response });
-    console.log('====================================');
+    users.map((user) => {
+      if (user.id == userSelected.id) {
+        user.relationship = 1;
+      }
+    });
+    setUserSelected(null);
+    messageApi.open({
+      type: 'success',
+      content: response.payload.data.msg
+    });
   };
 
   const handleSearchUsers = (e) => {
@@ -73,88 +82,93 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
 
   // render
   return (
-    <Modal
-      title={
-        userSelected ? (
-          <Flex align="center">
-            <Button
-              type="text"
-              shape="circle"
-              icon={<IoChevronBack size={22} />}
-              onClick={handleResetSelectedUser}
-              style={{ marginRight: 8 }}
-            />
-            Account Information
-          </Flex>
-        ) : (
-          'Add friend'
-        )
-      }
-      open={isModalOpen}
-      onCancel={handleClose}
-      width={400}
-      footer={null}
-    >
-      {userSelected ? (
-        <Space direction="vertical" className="w-[100%]">
-          <Space gap={12}>
-            <Avatar size="large" src={userSelected.avatar} />
-            <Space direction="vertical" size={0}>
-              <p className="m-0">{`${userSelected.first_name} ${userSelected.last_name}`}</p>
-              <p className="m-0 text-xs text-gray-500">{userSelected.email}</p>
-            </Space>
-          </Space>
-
-          <TextArea
-            rows={4}
-            value={invitationMessage}
-            onChange={(e) => {
-              setInvitationMessage(e.target.value);
-            }}
-          />
-          <Flex align="center" justify="end" gap={10}>
-            <Button type="default" onClick={handleResetSelectedUser}>
-              Cancel
-            </Button>
-            <Button type="primary" onClick={handleAddFriend}>
-              Add friend
-            </Button>
-          </Flex>
-        </Space>
-      ) : (
-        <Space direction="vertical" className="w-[100%]">
-          <Input
-            name="input-search"
-            placeholder="Enter email or phone"
-            variant="filled"
-            prefix={<SearchOutlined />}
-            className="mt-2"
-            autoComplete="nope"
-            value={search}
-            onChange={handleSearchUsers}
-          />
-          {search ? (
-            <p className="text-xs text-gray-500">Recent searches</p>
-          ) : (
-            <p className="text-xs text-gray-500">Friendship suggestions</p>
-          )}
-          <div className="max-h-[420px] overflow-y-auto scrollbar">
-            {users.map((user) => (
-              <UserSearchItem
-                key={user.id}
-                avatar={user.avatar}
-                fullName={`${user.first_name} ${user.last_name}`}
-                email={user.email}
-                status={user.relationship}
-                handleSelected={() => {
-                  handleSelectUser(user.id);
-                }}
+    <>
+      {contextHolder}
+      <Modal
+        title={
+          userSelected ? (
+            <Flex align="center">
+              <Button
+                type="text"
+                shape="circle"
+                icon={<IoChevronBack size={22} />}
+                onClick={handleResetSelectedUser}
+                style={{ marginRight: 8 }}
               />
-            ))}
-          </div>
-        </Space>
-      )}
-    </Modal>
+              Account Information
+            </Flex>
+          ) : (
+            'Add friend'
+          )
+        }
+        open={isModalOpen}
+        onCancel={handleClose}
+        width={400}
+        footer={null}
+      >
+        {userSelected ? (
+          <Space direction="vertical" className="w-[100%]">
+            <Space gap={12}>
+              <Avatar size="large" src={userSelected.avatar} />
+              <Space direction="vertical" size={0}>
+                <p className="m-0">{`${userSelected.first_name} ${userSelected.last_name}`}</p>
+                <p className="m-0 text-xs text-gray-500">
+                  {userSelected.email}
+                </p>
+              </Space>
+            </Space>
+
+            <TextArea
+              rows={4}
+              value={invitationMessage}
+              onChange={(e) => {
+                setInvitationMessage(e.target.value);
+              }}
+            />
+            <Flex align="center" justify="end" gap={10}>
+              <Button type="default" onClick={handleResetSelectedUser}>
+                Cancel
+              </Button>
+              <Button type="primary" onClick={handleAddFriend}>
+                Add friend
+              </Button>
+            </Flex>
+          </Space>
+        ) : (
+          <Space direction="vertical" className="w-[100%]">
+            <Input
+              name="input-search"
+              placeholder="Enter email or phone"
+              variant="filled"
+              prefix={<SearchOutlined />}
+              className="mt-2"
+              autoComplete="nope"
+              value={search}
+              onChange={handleSearchUsers}
+            />
+            {search ? (
+              <p className="text-xs text-gray-500">Recent searches</p>
+            ) : (
+              <p className="text-xs text-gray-500">Friendship suggestions</p>
+            )}
+            <div className="max-h-[420px] overflow-y-auto scrollbar">
+              {users.map((user) => (
+                <UserSearchItem
+                  key={user.id}
+                  avatar={user.avatar}
+                  fullName={`${user.first_name} ${user.last_name}`}
+                  email={user.email}
+                  status={user.relationship}
+                  handleSelected={() => {
+                    handleSelectUser(user.id);
+                  }}
+                />
+              ))}
+            </div>
+          </Space>
+        )}
+      </Modal>
+    </>
   );
 };
 
