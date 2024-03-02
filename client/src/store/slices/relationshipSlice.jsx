@@ -2,7 +2,9 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
 
 const initialState = {
-  isLoading: false
+  isLoading: false,
+  sent_friend_requests: [],
+  received_friend_requests: []
 };
 
 export const getRecommendedUsers = createAsyncThunk(
@@ -40,6 +42,34 @@ export const sendFriendRequest = createAsyncThunk(
       const response = await AxiosInstance.post(
         `relationship/send-friend-request`,
         data
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getAllSentFriendRequests = createAsyncThunk(
+  'relationship/getAllSentFriendRequests',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `relationship/get-all-sent-friend-requests`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getAllReceivedFriendRequests = createAsyncThunk(
+  'relationship/getAllReceivedFriendRequests',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `relationship/get-all-received-friend-requests`
       );
       return response;
     } catch (error) {
@@ -88,6 +118,26 @@ const relationshipSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(sendFriendRequest.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(getAllSentFriendRequests.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllSentFriendRequests.fulfilled, (state, action) => {
+        state.sent_friend_requests = action.payload.data.friend_requests;
+        state.isLoading = false;
+      })
+      .addCase(getAllSentFriendRequests.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(getAllReceivedFriendRequests.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllReceivedFriendRequests.fulfilled, (state, action) => {
+        state.received_friend_requests = action.payload.data.friend_requests;
+        state.isLoading = false;
+      })
+      .addCase(getAllReceivedFriendRequests.rejected, (state) => {
         state.isLoading = false;
       });
   }
