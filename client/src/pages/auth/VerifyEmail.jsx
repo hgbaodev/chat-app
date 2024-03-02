@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { Flex, Row, Typography, Col } from 'antd';
 
 import VerifyImage from '~/assets/verify.png';
@@ -34,7 +33,5 @@ const VerifyEmail = () => {
     </Row>
   );
 };
-
-
 
 export default VerifyEmail;
