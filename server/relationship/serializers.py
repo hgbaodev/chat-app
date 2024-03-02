@@ -176,10 +176,10 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
     
     @staticmethod
     def get_recommended_users(user_id):
-        excluded_ids = []
+        excluded_ids = [user_id]
         user_relationships = FriendRelationship.objects.filter(
             Q(user_1=user_id) | Q(user_2=user_id)
-        ).values('user_1', 'user_2')[:1]
+        ).values('user_1', 'user_2')
 
         for relationship in user_relationships:
             excluded_ids.append(relationship['user_1'])
@@ -187,12 +187,11 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
 
         friend_requests = FriendRequest.objects.filter(
             Q(sender=user_id) | Q(receiver=user_id)
-        ).values('sender', 'receiver')[:1]
+        ).values('sender', 'receiver')
 
         for request in friend_requests:
-            excluded_ids.append(request['sender'])
             excluded_ids.append(request['receiver'])
-        print(excluded_ids)
+            excluded_ids.append(request['sender'])
 
         recommended_users = User.objects.filter(
             is_verified=True
