@@ -14,6 +14,18 @@ export const login = createAsyncThunk(
   }
 );
 
+export const logout = createAsyncThunk('auth/logout', async () => {
+  const refresh = Cookies.get('refresh_token');
+  try {
+    const response = await AxiosInstance.post(`auth/logout`, {
+      refresh_token: refresh
+    });
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
+});
+
 export const getUserFromToken = createAsyncThunk(
   'auth/getUserFromToken',
   async () => {
@@ -21,7 +33,7 @@ export const getUserFromToken = createAsyncThunk(
       const response = await AxiosInstance.get(`auth/get-something`);
       return response;
     } catch (error) {
-      console.error(error)
+      Cookies.remove('token');
       throw error;
     }
   }
@@ -82,7 +94,6 @@ const authSlice = createSlice({
       })
       .addCase(login.fulfilled, (state, action) => {
         const result = action.payload.data;
-        state.login.isLoading = false;
         state.isLoaded = true;
         state.isAuthenticated = true;
         state.email = result.email;
@@ -93,6 +104,15 @@ const authSlice = createSlice({
       })
       .addCase(login.rejected, (state) => {
         state.login.isLoading = false;
+      })
+      .addCase(logout.fulfilled, (state, action) => {
+        if (action.payload.status == 204) {
+          state.isAuthenticated = false;
+          state.email = null;
+          state.fullName = null;
+          Cookies.remove('token');
+          Cookies.remove('refresh_token');
+        }
       })
       .addCase(register.pending, (state) => {
         state.login.isLoading = true;
@@ -121,7 +141,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.isLoaded = true;
         state.email = result.email;
-        state.fullName = result.full_name
+        state.fullName = result.full_name;
       })
       .addCase(getUserFromToken.rejected, (state) => {
         state.isLoaded = true;

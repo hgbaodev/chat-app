@@ -1,13 +1,33 @@
-import { Avatar, Flex, Space, Switch } from 'antd';
+import { Avatar, Dropdown, Flex, Space } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
+import { CgLogOut } from 'react-icons/cg';
 import {
   IoChatbubbleEllipsesOutline,
   IoPeopleOutline,
   IoSettingsOutline
 } from 'react-icons/io5';
+import { useSelector } from 'react-redux';
+import { useDispatch } from '~/store';
+import { logout } from '~/store/slices/authSlice';
+
+const items = [
+  {
+    key: '1',
+    label: 'Logout',
+    icon: <CgLogOut />
+  }
+];
 const DashboardLayout = () => {
-  // render
+  const dispatch = useDispatch();
+  const { fullName } = useSelector((state) => state.auth);
+
+  const onClick = ({ key }) => {
+    if (key == 1) {
+      dispatch(logout());
+    }
+  };
+
   return (
     <Flex className="h-[100vh]">
       <Flex
@@ -37,9 +57,20 @@ const DashboardLayout = () => {
           </Flex>
         </Flex>
         <Space direction="vertical" size={18} align="center" className="mb-4">
-          <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
-            P
-          </Avatar>
+          <Dropdown
+            menu={{
+              items,
+              onClick
+            }}
+            placement="topRight"
+            trigger={['click']}
+          >
+            <a onClick={(e) => e.preventDefault()}>
+              <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
+                {fullName.substring(fullName.lastIndexOf(' ') + 1)}
+              </Avatar>
+            </a>
+          </Dropdown>
         </Space>
       </Flex>
       <div className="h-screen flex-1">
