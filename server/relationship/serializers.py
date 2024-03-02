@@ -141,7 +141,7 @@ class DeleteFriendSerializer(serializers.Serializer):
         raise serializers.ValidationError(f"Cannot find this relationship between {user_1} and {user_2}.")
 
 
-class GetAllFriensSerializer(serializers.ModelSerializer):
+class GetAllFriendsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
@@ -213,7 +213,7 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         user_id = self.context['request'].user.id
         friend_requests = FriendRequest.objects.filter(
             (Q(sender=user_id) & Q(receiver=user)) | 
-            (Q(receiver=user) & Q(sender=user_id))).first()
+            (Q(sender=user) & Q(receiver=user_id))).first()
         if friend_requests: 
             return 1
         relationship = FriendRelationship.objects.filter(
@@ -229,3 +229,24 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         users = User.objects.exclude(id=user_id).filter(email__icontains=search_text)
         print(users)
         return users
+    
+class GetAllSentFriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = '__all__'
+    
+    @staticmethod
+    def get_all_sent_friend_requests(user_id):
+        friend_requests = FriendRequest.objects.filter(sender=user_id)
+        return friend_requests
+    
+
+class GetAllReceivedFriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = '__all__'
+    
+    @staticmethod
+    def get_all_received_friend_requests(user_id):
+        friend_requests = FriendRequest.objects.filter(receiver=user_id)
+        return friend_requests
