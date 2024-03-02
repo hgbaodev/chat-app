@@ -78,6 +78,48 @@ export const getAllReceivedFriendRequests = createAsyncThunk(
   }
 );
 
+export const cancelFriendRequest = createAsyncThunk(
+  'relationship/cancelFriendRequest',
+  async (receiver_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `relationship/cancel-friend-request/${receiver_id}`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const refuseFriendRequest = createAsyncThunk(
+  'relationship/refuseFriendRequest',
+  async (sender_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `relationship/refuse-friend-request/${sender_id}`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const acceptFriendRequest = createAsyncThunk(
+  'relationship/acceptFriendRequest',
+  async (sender_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `relationship/accept-friend-request/${sender_id}`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -87,10 +129,7 @@ const relationshipSlice = createSlice({
       .addCase(getRecommendedUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(getRecommendedUsers.fulfilled, (state, action) => {
-        console.log('====================================');
-        console.log({ action });
-        console.log('====================================');
+      .addCase(getRecommendedUsers.fulfilled, (state) => {
         state.isLoading = false;
       })
       .addCase(getRecommendedUsers.rejected, (state) => {
@@ -99,10 +138,7 @@ const relationshipSlice = createSlice({
       .addCase(searchUsers.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(searchUsers.fulfilled, (state, action) => {
-        console.log('====================================');
-        console.log({ action });
-        console.log('====================================');
+      .addCase(searchUsers.fulfilled, (state) => {
         state.isLoading = false;
       })
       .addCase(searchUsers.rejected, (state) => {
@@ -111,10 +147,7 @@ const relationshipSlice = createSlice({
       .addCase(sendFriendRequest.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(sendFriendRequest.fulfilled, (state, action) => {
-        console.log('====================================');
-        console.log({ action });
-        console.log('====================================');
+      .addCase(sendFriendRequest.fulfilled, (state) => {
         state.isLoading = false;
       })
       .addCase(sendFriendRequest.rejected, (state) => {
@@ -138,6 +171,42 @@ const relationshipSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(getAllReceivedFriendRequests.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(cancelFriendRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(cancelFriendRequest.fulfilled, (state, action) => {
+        state.sent_friend_requests = state.sent_friend_requests.filter(
+          (item) => item.receiver.id !== action.payload.data.data.receiver
+        );
+        state.isLoading = false;
+      })
+      .addCase(cancelFriendRequest.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(refuseFriendRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(refuseFriendRequest.fulfilled, (state, action) => {
+        state.received_friend_requests = state.received_friend_requests.filter(
+          (item) => item.sender.id !== action.payload.data.data.sender
+        );
+        state.isLoading = false;
+      })
+      .addCase(refuseFriendRequest.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(acceptFriendRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(acceptFriendRequest.fulfilled, (state, action) => {
+        state.received_friend_requests = state.received_friend_requests.filter(
+          (item) => item.sender.id !== action.payload.data.data.sender
+        );
+        state.isLoading = false;
+      })
+      .addCase(acceptFriendRequest.rejected, (state) => {
         state.isLoading = false;
       });
   }
