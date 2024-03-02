@@ -27,7 +27,7 @@ class CancelFriendRequestView(GenericAPIView):
         request.data['receiver'] = receiver
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Cancel friend request successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"msg": "Cancel friend request successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 
@@ -39,7 +39,7 @@ class RefuseFriendRequestView(GenericAPIView):
         request.data['sender'] = sender
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Refused friend request successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"msg": "Refused friend request successfully" , "data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 class AcceptFriendRequestView(GenericAPIView):
@@ -50,7 +50,7 @@ class AcceptFriendRequestView(GenericAPIView):
         request.data['sender'] = sender
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
-            return Response({"data": serializer.data}, status=status.HTTP_201_CREATED)
+            return Response({"msg": "Accepted request successfully" , "data": serializer.data}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 
