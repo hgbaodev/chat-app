@@ -3,6 +3,7 @@ import AxiosInstance from '~/api/AxiosInstance';
 
 const initialState = {
   isLoading: false,
+  friends: [],
   sent_friend_requests: [],
   received_friend_requests: []
 };
@@ -120,6 +121,18 @@ export const acceptFriendRequest = createAsyncThunk(
   }
 );
 
+export const getAllFriends = createAsyncThunk(
+  'relationship/getAllFriends',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`relationship/get-all-friends`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -207,6 +220,16 @@ const relationshipSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(acceptFriendRequest.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(getAllFriends.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllFriends.fulfilled, (state, action) => {
+        state.friends = action.payload.data.friends;
+        state.isLoading = false;
+      })
+      .addCase(getAllFriends.rejected, (state) => {
         state.isLoading = false;
       });
   }

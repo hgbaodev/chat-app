@@ -1,57 +1,80 @@
-import { faker } from '@faker-js/faker';
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Space,
-  Typography,
-  message
-} from 'antd';
+import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 
-export const FriendItem = () => {
-  const [messageApi, contextHolder] = message.useMessage();
+const ACTIONS = {
+  CHAT: 'Chat now',
+  VIEW_DETAILS: 'View details',
+  DELETE: 'Delete'
+};
 
+const FriendDropdownItem = ({ action, onClick }) => (
+  <p
+    onClick={onClick}
+    className={`m-0 p-1 ${action === ACTIONS.DELETE ? 'text-red-500' : ''}`}
+  >
+    {action}
+  </p>
+);
+
+export const FriendItem = ({ id, avatar, fullName, email }) => {
+  // handle
   const handleDeleteFriend = () => {
     // logic here
-    messageApi.open({
-      type: 'success',
-      content: 'Delete friend successfully!'
-    });
+    console.log('Delete user', id);
   };
 
-  const items = [
+  const handleShowFriendDetail = () => {
+    // logic here
+    console.log('Show friend detail', id);
+  };
+
+  const handleChatFriend = () => {
+    // logic here
+    console.log('chat friend', id);
+  };
+
+  const dropdownItems = [
     {
       key: '1',
-      label: <p className="m-0 p-1">Chat now</p>
+      label: (
+        <FriendDropdownItem action={ACTIONS.CHAT} onClick={handleChatFriend} />
+      )
     },
     {
       key: '2',
-      label: <p className="m-0 p-1">View details</p>
+      label: (
+        <FriendDropdownItem
+          action={ACTIONS.VIEW_DETAILS}
+          onClick={handleShowFriendDetail}
+        />
+      )
     },
     {
       key: '3',
       label: (
-        <p onClick={handleDeleteFriend} className="text-red-500 m-0 p-1">
-          Delete
-        </p>
+        <FriendDropdownItem
+          action={ACTIONS.DELETE}
+          onClick={handleDeleteFriend}
+        />
       )
     }
   ];
 
+  // render
   return (
     <Flex
       align="center"
       justify="space-between"
-      className="w-full py-2 px-4 hover:bg-blue-50 cursor-pointer rounded"
+      className="w-full py-3 px-4 hover:bg-blue-50 cursor-pointer rounded"
     >
-      {contextHolder}
-      <Space align="center" className="font-semibold">
-        <Avatar size={40} src={faker.image.avatarLegacy()} />
-        <Typography>{faker.person.fullName()}</Typography>
+      <Space align="center">
+        <Avatar size={40} src={avatar} />
+        <div>
+          <Typography className="font-semibold">{fullName}</Typography>
+          <p className="m-0 text-[13px] opacity-70">{email}</p>
+        </div>
       </Space>
-      <Dropdown menu={{ items }} placement="bottomLeft">
+      <Dropdown menu={{ items: dropdownItems }} placement="bottomLeft">
         <Button
           type="text"
           icon={<IoEllipsisHorizontal />}

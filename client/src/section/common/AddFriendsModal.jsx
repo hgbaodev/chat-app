@@ -61,10 +61,13 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const handleAddFriend = async () => {
     const response = await dispatch(
       sendFriendRequest({
-        receiver: 1,
+        receiver: userSelected.id,
         message: invitationMessage
       })
     );
+    console.log('====================================');
+    console.log(response);
+    console.log('====================================');
     if (response.payload.data.msg) success(response.payload.data.msg);
     else error('Some went wrong!');
 
