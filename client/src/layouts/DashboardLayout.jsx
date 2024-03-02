@@ -1,7 +1,6 @@
-import { Avatar, Dropdown, Flex, Space } from 'antd';
+import { Avatar, Dropdown, Flex, Space, Typography } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
-import { CgLogOut } from 'react-icons/cg';
 import {
   IoChatbubbleEllipsesOutline,
   IoPeopleOutline,
@@ -12,19 +11,35 @@ import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
 import { BASEURL } from '~/config';
 
-const items = [
-  {
-    key: '1',
-    label: 'Logout',
-    icon: <CgLogOut />
-  }
-];
+const { Text } = Typography
+
+
 const DashboardLayout = () => {
   const dispatch = useDispatch();
-  const { fullName, avatar } = useSelector((state) => state.auth);
+  const { avatar, fullName } = useSelector((state) => state.auth);
+
+  const items = [
+    {
+      key: '0',
+      label: (<Text>{fullName}</Text>),
+      disabled: true
+    },
+    {
+      key: '2',
+      label: 'Profile',
+    },
+    {
+      key: '3',
+      label: 'Setting',
+    },
+    {
+      key: '4',
+      label: 'Logout',
+    }
+  ];
 
   const onClick = ({ key }) => {
-    if (key == 1) {
+    if (key == 4) {
       dispatch(logout());
     }
   };
@@ -65,6 +80,7 @@ const DashboardLayout = () => {
             }}
             placement="topRight"
             trigger={['click']}
+            arrow='true'
           >
             <a onClick={(e) => e.preventDefault()}>
               <Avatar src={BASEURL + 'assets/avatars/' + avatar} />
