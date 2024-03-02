@@ -115,7 +115,7 @@ const authSlice = createSlice({
         }
       })
       .addCase(register.pending, (state) => {
-        state.login.isLoading = true;
+        state.register.isLoading = true;
       })
       .addCase(register.fulfilled, (state) => {
         state.register.isLoading = false;

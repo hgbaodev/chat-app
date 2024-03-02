@@ -31,14 +31,14 @@ const VerifyEmail = () => {
             We have emailed a 6-digit confirmation code to acb@domain, please
             enter the code in below box to verify your email.
           </Paragraph>
-          <FormLogin />
+          <FormVerifyEmail />
         </Flex>
       </Col>
     </Row>
   );
 };
 
-const FormLogin = () => {
+const FormVerifyEmail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();

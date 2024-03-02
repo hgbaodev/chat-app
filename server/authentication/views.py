@@ -100,12 +100,9 @@ class GetAuthenticatedReqView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = UserSerializer
     def get(self, request):
-        token_str = request.headers.get('Authorization').split(' ')[1]
-        access_token_obj = AccessToken(token_str)
-        user_id = access_token_obj['user_id']
+        user_id = request.user.id
         user = User.objects.get(id=user_id)
         serializer = self.serializer_class(user)
-
 
         data = {
             'msg': 'Login Success',

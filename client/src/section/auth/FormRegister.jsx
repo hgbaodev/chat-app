@@ -51,7 +51,7 @@ const FormRegister = () => {
               }
             ]}
           >
-            <Input placeholder="Nhat" variant="filled" size="large" />
+            <Input placeholder="Jeff" variant="filled" size="large" />
           </Form.Item>
         </Col>
         <Col span={12}>
@@ -66,7 +66,7 @@ const FormRegister = () => {
               }
             ]}
           >
-            <Input placeholder="Sinh" variant="filled" size="large" />
+            <Input placeholder="Bezos" variant="filled" size="large" />
           </Form.Item>
         </Col>
       </Row>
