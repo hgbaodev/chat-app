@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
-from django.utils.encoding import smart_str, force_str, smart_bytes
+from django.utils.encoding import force_str, smart_bytes
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
@@ -51,7 +51,7 @@ class LoginSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['email', 'password', 'full_name', 'access_token', 'refresh_token']
+        fields = ['email', 'password', 'full_name', 'avatar', 'access_token', 'refresh_token']
     
     def validate(self, attrs):
         
@@ -69,6 +69,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'email': user.email,
             'full_name': user.get_full_name,
+            'avatar': user.avatar,
             'access_token': str(tokens.get('access')),
             'refresh_token': str(tokens.get('refresh'))
         }
@@ -150,17 +151,12 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
             return AuthenticationFailed("Link is invalid or has expired")
 
-class GetAuthenticatedReqSerializer(serializers.Serializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'email'] 
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['full_name', 'email'] 
+        fields = ['full_name', 'email', 'avatar'] 
 
     def get_full_name(self, obj):
         return obj.get_full_name
-

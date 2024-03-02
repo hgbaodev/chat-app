@@ -10,6 +10,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
+import { BASEURL } from '~/config';
 
 const items = [
   {
@@ -20,7 +21,7 @@ const items = [
 ];
 const DashboardLayout = () => {
   const dispatch = useDispatch();
-  const { fullName } = useSelector((state) => state.auth);
+  const { fullName, avatar } = useSelector((state) => state.auth);
 
   const onClick = ({ key }) => {
     if (key == 1) {
@@ -66,9 +67,7 @@ const DashboardLayout = () => {
             trigger={['click']}
           >
             <a onClick={(e) => e.preventDefault()}>
-              <Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>
-                {fullName.substring(fullName.lastIndexOf(' ') + 1)}
-              </Avatar>
+              <Avatar src={BASEURL + 'assets/avatars/' + avatar} />
             </a>
           </Dropdown>
         </Space>

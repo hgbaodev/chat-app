@@ -20,7 +20,7 @@ const TabFriendsRequest = () => {
       await dispatch(getAllSentFriendRequests());
       await dispatch(getAllReceivedFriendRequests());
     })();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="w-[100%] bg-neutral-100">

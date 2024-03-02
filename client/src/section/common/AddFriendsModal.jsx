@@ -183,22 +183,22 @@ const UserSearchItem = ({
   // handle
   const renderButton = () => {
     switch (status) {
-      case 0:
-        return (
-          <Button
-            type="primary"
-            size="small"
-            shape="circle"
-            icon={<IoAdd size={22} />}
-            onClick={handleSelected}
-          />
-        );
-      case 1:
-        return <p className="m-0">Pending</p>;
-      case 2:
-        return <p className="m-0">Friend</p>;
-      default:
-        return <></>;
+    case 0:
+      return (
+        <Button
+          type="primary"
+          size="small"
+          shape="circle"
+          icon={<IoAdd size={22} />}
+          onClick={handleSelected}
+        />
+      );
+    case 1:
+      return <p className="m-0">Pending</p>;
+    case 2:
+      return <p className="m-0">Friend</p>;
+    default:
+      return <></>;
     }
   };
   return (

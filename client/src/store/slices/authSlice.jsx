@@ -71,7 +71,7 @@ const initialState = {
   loaded: false,
   email: null,
   fullName: null,
-
+  avatar: null,
   login: {
     isLoading: false
   },
@@ -98,6 +98,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.email = result.email;
         state.fullName = result.full_name;
+        state.avatar = result.avatar;
         Cookies.set('token', result.access_token);
         Cookies.set('refresh_token', result.refresh_token);
         state.login.isLoading = false;
@@ -110,6 +111,7 @@ const authSlice = createSlice({
           state.isAuthenticated = false;
           state.email = null;
           state.fullName = null;
+          state.avatar = null;
           Cookies.remove('token');
           Cookies.remove('refresh_token');
         }
@@ -141,6 +143,7 @@ const authSlice = createSlice({
         state.isAuthenticated = true;
         state.isLoaded = true;
         state.email = result.email;
+        state.avatar = result.avatar;
         state.fullName = result.full_name;
       })
       .addCase(getUserFromToken.rejected, (state) => {

@@ -2,10 +2,9 @@ import axios from 'axios';
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import Cookies from 'js-cookie';
+import { BASEURL } from '~/config';
 
 let accessToken = Cookies.get('token') || '';
-
-const BASEURL = import.meta.env.VITE_APP_API_URL;
 
 const AxiosInstance = axios.create({
   baseURL: BASEURL,
