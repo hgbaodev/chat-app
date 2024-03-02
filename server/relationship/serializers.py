@@ -54,8 +54,9 @@ class DeleteFriendRequestSerializer(serializers.Serializer):
         existing_request = FriendRequest.objects.filter(sender=sender, receiver=receiver).first()
         if existing_request:
             existing_request.delete()
-            return data
+            return existing_request
         raise serializers.ValidationError("Cannot find this friendrequest.")
+    
 
 class AcceptFriendRequestSerializer(serializers.Serializer):
     
@@ -229,8 +230,15 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         users = User.objects.exclude(id=user_id).filter(email__icontains=search_text)
         print(users)
         return users
-    
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id',  'first_name', 'last_name', 'avatar']
+
 class GetAllSentFriendRequestSerializer(serializers.ModelSerializer):
+    receiver = UserSerializer(read_only=True)
     class Meta:
         model = FriendRequest
         fields = '__all__'
@@ -242,6 +250,7 @@ class GetAllSentFriendRequestSerializer(serializers.ModelSerializer):
     
 
 class GetAllReceivedFriendRequestSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
     class Meta:
         model = FriendRequest
         fields = '__all__'

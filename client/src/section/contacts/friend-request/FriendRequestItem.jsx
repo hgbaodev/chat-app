@@ -1,14 +1,41 @@
 import { Avatar, Button, Col, Flex } from 'antd';
 import { IoChatbubblesOutline } from 'react-icons/io5';
+import useCustomMessage from '~/hooks/useCustomMessage';
+import { useDispatch } from '~/store';
+import {
+  acceptFriendRequest,
+  cancelFriendRequest,
+  refuseFriendRequest
+} from '~/store/slices/relationshipSlice';
 
 const FriendRequestItem = ({
+  user_id,
   avatar,
   fullName,
   invitationMessage,
   time,
   isSended = true
 }) => {
+  const dispatch = useDispatch();
+  const { success, error } = useCustomMessage();
   // handle
+
+  const handleCancelFriendRequest = async () => {
+    const response = await dispatch(cancelFriendRequest(user_id));
+    if (response.payload.data.msg) success(response.payload.data.msg);
+    else error('Some went wrong!');
+  };
+  const handleRefuseFriendRequest = async () => {
+    const response = await dispatch(refuseFriendRequest(user_id));
+    if (response.payload.data.msg) success(response.payload.data.msg);
+    else error('Some went wrong!');
+  };
+  const handleAcceptFriendRequest = async () => {
+    const response = await dispatch(acceptFriendRequest(user_id));
+    if (response.payload.data.msg) success(response.payload.data.msg);
+    else error('Some went wrong!');
+  };
+
   function timeFormat(inputTime) {
     const time = new Date(inputTime);
 
@@ -46,15 +73,27 @@ const FriendRequestItem = ({
         </div>
         <Flex align="center" justify="space-between">
           {isSended ? (
-            <Button type="text" className="w-[100%] bg-neutral-200">
+            <Button
+              type="text"
+              className="w-[100%] bg-neutral-200"
+              onClick={handleCancelFriendRequest}
+            >
               Cancel
             </Button>
           ) : (
             <>
-              <Button type="text" className="w-[48%] bg-neutral-200">
+              <Button
+                type="text"
+                className="w-[48%] bg-neutral-200"
+                onClick={handleRefuseFriendRequest}
+              >
                 Reject
               </Button>
-              <Button type="primary" className="w-[48%]">
+              <Button
+                type="primary"
+                className="w-[48%]"
+                onClick={handleAcceptFriendRequest}
+              >
                 Accept
               </Button>
             </>

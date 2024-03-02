@@ -47,7 +47,9 @@ const TabFriendsRequest = () => {
               {received_friend_requests.map((item) => (
                 <FriendRequestItem
                   key={item.id}
-                  fullName={item.sender}
+                  user_id={item.sender.id}
+                  avatar={item.sender.avatar}
+                  fullName={`${item.sender.first_name} ${item.sender.last_name}`}
                   invitationMessage={item.message}
                   time={item.created_at}
                   isSended={false}
@@ -68,7 +70,9 @@ const TabFriendsRequest = () => {
               {sent_friend_requests.map((item) => (
                 <FriendRequestItem
                   key={item.id}
-                  fullName={item.receiver}
+                  user_id={item.receiver.id}
+                  avatar={item.receiver.avatar}
+                  fullName={`${item.receiver.first_name} ${item.receiver.last_name}`}
                   invitationMessage={item.message}
                   time={item.created_at}
                 />

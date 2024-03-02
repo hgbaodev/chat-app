@@ -11,11 +11,12 @@ import {
   sendFriendRequest
 } from '~/store/slices/relationshipSlice';
 import useDebounce from '~/hooks/useDebounce';
+import useCustomMessage from '~/hooks/useCustomMessage';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const { fullName } = useSelector((state) => state.auth);
-  const [messageApi, contextHolder] = message.useMessage();
+  const { success, error } = useCustomMessage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const debouncedSearchText = useDebounce(search, 500);
@@ -60,20 +61,19 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const handleAddFriend = async () => {
     const response = await dispatch(
       sendFriendRequest({
-        receiver: userSelected.id,
+        receiver: 1,
         message: invitationMessage
       })
     );
+    if (response.payload.data.msg) success(response.payload.data.msg);
+    else error('Some went wrong!');
+
     users.map((user) => {
       if (user.id == userSelected.id) {
         user.relationship = 1;
       }
     });
     setUserSelected(null);
-    messageApi.open({
-      type: 'success',
-      content: response.payload.data.msg
-    });
   };
 
   const handleSearchUsers = (e) => {
@@ -83,7 +83,6 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   // render
   return (
     <>
-      {contextHolder}
       <Modal
         title={
           userSelected ? (
