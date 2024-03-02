@@ -7,7 +7,8 @@ import TextArea from 'antd/es/input/TextArea';
 import { useDispatch } from '~/store';
 import {
   getRecommendedUsers,
-  searchUsers
+  searchUsers,
+  sendFriendRequest
 } from '~/store/slices/relationshipSlice';
 import useDebounce from '~/hooks/useDebounce';
 
@@ -54,8 +55,16 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
     setUserSelected(null);
   };
 
-  const handleAddFriend = () => {
-    console.log('call thunk action');
+  const handleAddFriend = async () => {
+    const response = await dispatch(
+      sendFriendRequest({
+        receiver: userSelected.id,
+        message: invitationMessage
+      })
+    );
+    console.log('====================================');
+    console.log({ response });
+    console.log('====================================');
   };
 
   const handleSearchUsers = (e) => {
@@ -171,11 +180,11 @@ const UserSearchItem = ({
           />
         );
       case 1:
-        return <p className="m-0">Friend</p>;
-      case 2:
         return <p className="m-0">Pending</p>;
+      case 2:
+        return <p className="m-0">Friend</p>;
       default:
-        return 0;
+        return <></>;
     }
   };
   return (

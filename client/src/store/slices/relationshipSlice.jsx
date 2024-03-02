@@ -33,6 +33,21 @@ export const searchUsers = createAsyncThunk(
   }
 );
 
+export const sendFriendRequest = createAsyncThunk(
+  'relationship/sendFriendRequest',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(
+        `relationship/send-friend-request`,
+        data
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -61,6 +76,18 @@ const relationshipSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(searchUsers.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(sendFriendRequest.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(sendFriendRequest.fulfilled, (state, action) => {
+        console.log('====================================');
+        console.log({ action });
+        console.log('====================================');
+        state.isLoading = false;
+      })
+      .addCase(sendFriendRequest.rejected, (state) => {
         state.isLoading = false;
       });
   }
