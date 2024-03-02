@@ -17,10 +17,10 @@ const TabFriendsRequest = () => {
   // effect
   useEffect(() => {
     (async () => {
-      await dispatch(getAllSentFriendRequests());
-      await dispatch(getAllReceivedFriendRequests());
+      dispatch(getAllSentFriendRequests());
+      dispatch(getAllReceivedFriendRequests());
     })();
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="w-[100%] bg-neutral-100">
