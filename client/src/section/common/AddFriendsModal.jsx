@@ -59,24 +59,23 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleAddFriend = async () => {
-    const response = await dispatch(
-      sendFriendRequest({
-        receiver: userSelected.id,
-        message: invitationMessage
-      })
-    );
-    console.log('====================================');
-    console.log(response);
-    console.log('====================================');
-    if (response.payload.data.msg) success(response.payload.data.msg);
-    else error('Some went wrong!');
-
-    users.map((user) => {
-      if (user.id == userSelected.id) {
-        user.relationship = 1;
-      }
-    });
-    setUserSelected(null);
+    if (invitationMessage) {
+      const response = await dispatch(
+        sendFriendRequest({
+          receiver: userSelected.id,
+          message: invitationMessage
+        })
+      );
+      if (!response.error) {
+        success(response.payload.data.msg);
+        users.map((user) => {
+          if (user.id == userSelected.id) {
+            user.relationship = 1;
+          }
+        });
+        setUserSelected(null);
+      } else error(response.payload.receiver[0]);
+    } else error('Invitation message cannot be empty!');
   };
 
   const handleSearchUsers = (e) => {
