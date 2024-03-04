@@ -1,10 +1,10 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, GenericAPIView
-from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerializer, AcceptFriendRequestSerializer, 
-                          DeleteFriendSerializer, BlockFriendSerializer, UnBlockFriendSerializer,
-                          RecommendedUserSerializer, GetAllFriendsSerializer, SearchUsersSerializer,
-                          GetAllSentFriendRequestSerializer, GetAllReceivedFriendRequestSerializer)
+from .serializers import (SendFriendRequestSerializer, CancelFriendRequestSerializer, RefuseFriendRequestSerializer,
+                        AcceptFriendRequestSerializer, DeleteFriendSerializer, BlockFriendSerializer, 
+                        UnBlockFriendSerializer,RecommendedUserSerializer, GetAllFriendsSerializer, 
+                        SearchUsersSerializer, GetAllSentFriendRequestSerializer, GetAllReceivedFriendRequestSerializer)
 from rest_framework.permissions import IsAuthenticated
 
 class SendFriendRequestView(CreateAPIView):
@@ -20,7 +20,7 @@ class SendFriendRequestView(CreateAPIView):
     
 
 class CancelFriendRequestView(GenericAPIView):
-    serializer_class = DeleteFriendRequestSerializer
+    serializer_class = CancelFriendRequestSerializer
     permission_classes = [IsAuthenticated]
     def delete(self, request, receiver):
         request.data['sender'] = request.user.id
@@ -32,7 +32,7 @@ class CancelFriendRequestView(GenericAPIView):
     
 
 class RefuseFriendRequestView(GenericAPIView):
-    serializer_class = DeleteFriendRequestSerializer
+    serializer_class = RefuseFriendRequestSerializer
     permission_classes = [IsAuthenticated]
     def delete(self, request, sender):
         request.data['receiver'] = request.user.id

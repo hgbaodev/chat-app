@@ -59,24 +59,23 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   };
 
   const handleAddFriend = async () => {
-    const response = await dispatch(
-      sendFriendRequest({
-        receiver: userSelected.id,
-        message: invitationMessage
-      })
-    );
-    console.log('====================================');
-    console.log(response);
-    console.log('====================================');
-    if (response.payload.data.msg) success(response.payload.data.msg);
-    else error('Some went wrong!');
-
-    users.map((user) => {
-      if (user.id == userSelected.id) {
-        user.relationship = 1;
-      }
-    });
-    setUserSelected(null);
+    if (invitationMessage) {
+      const response = await dispatch(
+        sendFriendRequest({
+          receiver: userSelected.id,
+          message: invitationMessage
+        })
+      );
+      if (!response.error) {
+        success(response.payload.data.msg);
+        users.map((user) => {
+          if (user.id == userSelected.id) {
+            user.relationship = 1;
+          }
+        });
+        setUserSelected(null);
+      } else error(response.payload.receiver[0]);
+    } else error('Invitation message cannot be empty!');
   };
 
   const handleSearchUsers = (e) => {
@@ -185,22 +184,22 @@ const UserSearchItem = ({
   // handle
   const renderButton = () => {
     switch (status) {
-    case 0:
-      return (
-        <Button
-          type="primary"
-          size="small"
-          shape="circle"
-          icon={<IoAdd size={22} />}
-          onClick={handleSelected}
-        />
-      );
-    case 1:
-      return <p className="m-0">Pending</p>;
-    case 2:
-      return <p className="m-0">Friend</p>;
-    default:
-      return <></>;
+      case 0:
+        return (
+          <Button
+            type="primary"
+            size="small"
+            shape="circle"
+            icon={<IoAdd size={22} />}
+            onClick={handleSelected}
+          />
+        );
+      case 1:
+        return <p className="m-0">Pending</p>;
+      case 2:
+        return <p className="m-0">Friend</p>;
+      default:
+        return <></>;
     }
   };
   return (

@@ -10,26 +10,20 @@ class SendFriendRequestSerializer(serializers.Serializer):
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     message = serializers.CharField()
 
-    def validate(self, data):
-        sender = data['sender']
-        receiver = data['receiver']
-
-        if sender == receiver:
-            raise serializers.ValidationError("Sender and receiver should be different users.")
-        
-        is_verified_receiver = User.objects.get(id=receiver.id)
-
+    def validate_receiver(self, value):
+        sender = self.context['request'].user
+        if sender == value:
+            raise serializers.ValidationError('Sender and receiver should be different users.')
+        is_verified_receiver = User.objects.get(id=value.id)
         if not is_verified_receiver.is_verified:
             raise serializers.ValidationError("Receiver account haven't verified")
-        
-        existing_request = FriendRequest.objects.filter((Q(sender=sender) & Q(receiver=receiver)) | (Q(sender=receiver) & Q(receiver=sender))).first()
+        existing_request = FriendRequest.objects.filter((Q(sender=sender) & Q(receiver=value)) | (Q(sender=value) & Q(receiver=sender))).first()
         if existing_request:
             raise serializers.ValidationError("Friend request already exists.")
-        
-        existing_relationship = FriendRelationship.objects.filter((Q(user_1=receiver) & Q(user_2=sender)) | (Q(user_1=sender) & Q(user_2=receiver))).first()
+        existing_relationship = FriendRelationship.objects.filter((Q(user_1=value) & Q(user_2=sender)) | (Q(user_1=sender) & Q(user_2=value))).first()
         if existing_relationship:
             raise serializers.ValidationError("You have been friends.")
-        return data
+        return value
 
     def create(self, validated_data):
         friend_request = FriendRequest.objects.create(
@@ -39,108 +33,121 @@ class SendFriendRequestSerializer(serializers.Serializer):
         )
         return friend_request
     
-class DeleteFriendRequestSerializer(serializers.Serializer):
+class CancelFriendRequestSerializer(serializers.Serializer):
     
     sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    def validate(self, data):
-        sender = data['sender']
-        receiver = data['receiver']
-
-        if sender == receiver:
-            raise serializers.ValidationError("Sender and receiver should be different users.")
+    def validate_receiver(self, value):
+        sender = self.context['request'].user
+        if sender == value:
+            raise serializers.ValidationError('Sender and receiver should be different users.')
         
-        existing_request = FriendRequest.objects.filter(sender=sender, receiver=receiver).first()
-        if existing_request:
-            existing_request.delete()
-            return existing_request
-        raise serializers.ValidationError("Cannot find this friendrequest.")
+        existing_request = FriendRequest.objects.filter(sender=sender, receiver=value).first()
+        if not existing_request:
+            raise serializers.ValidationError("Cannot find this friendrequest.")
+        existing_request.delete()
+        return value
+        
+class RefuseFriendRequestSerializer(serializers.Serializer):
     
+    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    def validate_sender(self, value):
+        receiver = self.context['request'].user
+        if receiver == value:
+            raise serializers.ValidationError('Sender and receiver should be different users.')
+        
+        existing_request = FriendRequest.objects.filter(sender=value, receiver=receiver).first()
+        if not existing_request:
+            raise serializers.ValidationError("Cannot find this friendrequest.")
+        existing_request.delete()
+        return value
 
 class AcceptFriendRequestSerializer(serializers.Serializer):
     
     sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    def validate(self, data):
-        sender = data['sender']
-        receiver = data['receiver']
 
-        if sender == receiver:
+    def validate_sender(self, value):
+        receiver = self.context['request'].user
+        if receiver == value:
             raise serializers.ValidationError("Sender and receiver should be different users.")
         
-        existing_request = FriendRequest.objects.filter(sender=sender, receiver=receiver).first()
-        if existing_request:
-            friend_relationship = FriendRelationship.objects.create(
-                user_1=existing_request.sender,
-                user_2=existing_request.receiver
-            )
-            existing_request.delete()
-            return data
-        raise serializers.ValidationError("Cannot find this friendrequest.")
+        existing_request = FriendRequest.objects.filter(sender=value, receiver=receiver).first()
+        if not existing_request:
+            raise serializers.ValidationError("Cannot find this friendrequest.")
+        
+        friend_relationship = FriendRelationship.objects.create(
+            user_1=existing_request.sender,
+            user_2=existing_request.receiver
+        )
+        existing_request.delete()
+        return value
+       
+
     
 class BlockFriendSerializer(serializers.Serializer):
     
     blocked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    def validate(self, data):
-        blocked_by = data['blocked_by']
-        user = data['user']
-
-        if blocked_by == user:
+    def validate_user(self, value):
+        blocked_by = self.context['request'].user
+        if blocked_by == value:
             raise serializers.ValidationError("blocked_by and user should be different")
-        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=user).first()
+        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=value).first()
         if has_blocked:
             raise serializers.ValidationError("You have blocked this user.")
 
-        is_friend = FriendRelationship.objects.filter((Q(user_1=blocked_by) & Q(user_2=user)) | (Q(user_1=user) & Q(user_2=blocked_by))).first()
-        if is_friend:
-            block_list_instance = BlockList.objects.create(
-                blocked_by=blocked_by,
-                user=user
-            )
-            return block_list_instance
-        raise serializers.ValidationError("You are not friends")
-    
+        is_friend = FriendRelationship.objects.filter((Q(user_1=blocked_by) & Q(user_2=value)) | (Q(user_1=value) & Q(user_2=blocked_by))).first()
+        if not is_friend:
+            raise serializers.ValidationError("You are not friends")
+        
+        block_list_instance = BlockList.objects.create(
+            blocked_by=blocked_by,
+            user=value
+        )
+        return value
+        
 
 class UnBlockFriendSerializer(serializers.Serializer):
     
     blocked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    def validate(self, data):
-        blocked_by = data['blocked_by']
-        user = data['user']
-
-        if blocked_by == user:
+    def validate_user(self, value):
+        blocked_by = self.context['request'].user
+        if blocked_by == value:
             raise serializers.ValidationError("blocked_by and user should be different")
         
-        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=user).first()
-        if has_blocked:
-            has_blocked.delete()
-            return data
-        raise serializers.ValidationError("You haven't blocked this user.") 
+        has_blocked = BlockList.objects.filter(blocked_by=blocked_by, user=value).first()
+        if not has_blocked:
+            raise serializers.ValidationError("You haven't blocked this user.") 
+        
+        has_blocked.delete()
+        return value
+        
+            
 
 class DeleteFriendSerializer(serializers.Serializer):
     
     user_1 = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     user_2 = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
-    def validate(self, data):
-        user_1 = data['user_1']
-        user_2 = data['user_2']
-
-        if user_1 == user_2:
+    def validate_user_2(self, value): 
+        user_1 = self.context['request'].user
+        if user_1 == value:
             raise serializers.ValidationError("User1 and user2 should be different users.")
         
-        existing_relationship = FriendRelationship.objects.filter((Q(user_1=user_1) & Q(user_2=user_2)) | (Q(user_1=user_2) & Q(user_2=user_1))).first()
-        if existing_relationship:
-            existing_relationship.delete()
-            return data
-        raise serializers.ValidationError(f"Cannot find this relationship between {user_1} and {user_2}.")
-
+        existing_relationship = FriendRelationship.objects.filter((Q(user_1=user_1) & Q(user_2=value)) | (Q(user_1=value) & Q(user_2=user_1))).first()
+        if not existing_relationship:
+            raise serializers.ValidationError(f"Cannot find this relationship between {user_1} and {value}.")
+        existing_relationship.delete()
+        return value
+        
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
     
@@ -227,7 +234,7 @@ class SearchUsersSerializer(serializers.ModelSerializer):
     
     @staticmethod
     def get_results(user_id, search_text):
-        users = User.objects.exclude(id=user_id).filter(email__icontains=search_text)
+        users = User.objects.exclude(id=user_id).filter(email__icontains=search_text,  is_verified=True)
         print(users)
         return users
 
