@@ -1,4 +1,4 @@
-import { Avatar, Button, Flex, Input, Modal, Space, message } from 'antd';
+import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import useHover from '~/hooks/useHover';
 import { useEffect, useState } from 'react';
@@ -109,7 +109,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
         footer={null}
       >
         {userSelected ? (
-          <Space direction="vertical" className="w-[100%]">
+          <Space direction="vertical" className="w-[100%]" size="middle">
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
               <Space direction="vertical" size={0}>
@@ -185,22 +185,22 @@ const UserSearchItem = ({
   // handle
   const renderButton = () => {
     switch (status) {
-    case 0:
-      return (
-        <Button
-          type="primary"
-          size="small"
-          shape="circle"
-          icon={<IoAdd size={22} />}
-          onClick={handleSelected}
-        />
-      );
-    case 1:
-      return <p className="m-0">Pending</p>;
-    case 2:
-      return <p className="m-0">Friend</p>;
-    default:
-      return <></>;
+      case 0:
+        return (
+          <Button
+            type="primary"
+            size="small"
+            shape="circle"
+            icon={<IoAdd size={22} />}
+            onClick={handleSelected}
+          />
+        );
+      case 1:
+        return <p className="m-0">Pending</p>;
+      case 2:
+        return <p className="m-0">Friend</p>;
+      default:
+        return <></>;
     }
   };
   return (

@@ -1,7 +1,7 @@
 from django.core.mail import EmailMessage
 import random
 from django.conf import settings
-from .models import User, OneTimePassword
+from .models import User, UserVerification
 from django.contrib.sites.shortcuts import get_current_site
 
 
@@ -13,7 +13,7 @@ def send_generated_otp_to_email(email, request):
     user = User.objects.get(email=email)
     email_body=f"Hi {user.first_name} thanks for signing up on {current_site} please verify your email with the \n one time passcode {otp}"
     from_email=settings.EMAIL_HOST
-    otp_obj=OneTimePassword.objects.create(user=user, otp=otp)
+    otp_obj=UserVerification.objects.create(user=user, otp=otp)
     #send the email 
     d_email=EmailMessage(subject=subject, body=email_body, from_email=from_email, to=[user.email])
     d_email.send()

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, OneTimePassword
+from .models import User, UserVerification
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -34,8 +34,8 @@ class VerifyUserEmailSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError("Passcode not provided")
         try:
-            user_code_obj = OneTimePassword.objects.get(otp=value)
-        except OneTimePassword.DoesNotExist:
+            user_code_obj = UserVerification.objects.get(otp=value)
+        except UserVerification.DoesNotExist:
             raise serializers.ValidationError("Passcode is invalid")
 
         if user_code_obj.user.is_verified:

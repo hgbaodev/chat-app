@@ -42,6 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         'access': str(refresh.access_token),
     }
     
-class OneTimePassword(models.Model):
+class UserVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
+    created_at = models.DateTimeField(auto_now_add=True)

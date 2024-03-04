@@ -2,7 +2,7 @@ from rest_framework.generics import GenericAPIView
 from .serializers import RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .models import OneTimePassword
+from .models import UserVerification
 from .utils import send_generated_otp_to_email
 from rest_framework.permissions import IsAuthenticated
 from django.utils.http import urlsafe_base64_decode
@@ -45,7 +45,7 @@ class VerifyUserEmail(GenericAPIView):
 
         passcode = serializer.validated_data.get('otp')
 
-        user_code_obj = OneTimePassword.objects.get(otp=passcode)
+        user_code_obj = UserVerification.objects.get(otp=passcode)
         user = user_code_obj.user
         user.is_verified = True
         user_code_obj.delete()
