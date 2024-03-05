@@ -11,7 +11,7 @@ const FormVerifyEmail = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const { isLoading } = useSelector((state) => state.auth.verifyEmail);
+  const { isLoadingVerifyEmail } = useSelector((state) => state.auth);
 
   const onFinish = async (values) => {
     const response = await dispatch(verifyEmail(values));
@@ -54,7 +54,7 @@ const FormVerifyEmail = () => {
           htmlType="submit"
           className="w-full"
           size="large"
-          loading={isLoading}
+          loading={isLoadingVerifyEmail}
         >
           Verify
         </Button>

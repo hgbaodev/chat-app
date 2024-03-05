@@ -16,7 +16,7 @@ const { Text } = Typography
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
-  const { avatar, fullName } = useSelector((state) => state.auth);
+  const { avatar, fullName } = useSelector((state) => state.auth.user);
 
   const items = [
     {

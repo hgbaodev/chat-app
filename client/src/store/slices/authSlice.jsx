@@ -69,18 +69,14 @@ export const verifyEmail = createAsyncThunk(
 const initialState = {
   isAuthenticated: false,
   loaded: false,
-  email: null,
-  fullName: null,
-  avatar: null,
-  login: {
-    isLoading: false
+  user: {
+    email: null,
+    fullName: null,
+    avatar: null,
   },
-  register: {
-    isLoading: false
-  },
-  verifyEmail: {
-    isLoading: false
-  }
+  isLoadingLogin: false,
+  isLoadingRegister: false,
+  isLoadingVerifyEmail: false,
 };
 
 const authSlice = createSlice({
@@ -90,49 +86,49 @@ const authSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(login.pending, (state) => {
-        state.login.isLoading = true;
+        state.isLoadingLogin = true;
       })
       .addCase(login.fulfilled, (state, action) => {
         const result = action.payload.data;
         state.isLoaded = true;
         state.isAuthenticated = true;
-        state.email = result.email;
-        state.fullName = result.full_name;
-        state.avatar = result.avatar;
+        state.user.email = result.email;
+        state.user.fullName = result.full_name;
+        state.user.avatar = result.avatar;
         Cookies.set('token', result.access_token);
         Cookies.set('refresh_token', result.refresh_token);
-        state.login.isLoading = false;
+        state.isLoadingLogin = false;
       })
       .addCase(login.rejected, (state) => {
-        state.login.isLoading = false;
+        state.isLoadingLogin = false;
       })
       .addCase(logout.fulfilled, (state, action) => {
         if (action.payload.status == 204) {
           state.isAuthenticated = false;
-          state.email = null;
-          state.fullName = null;
-          state.avatar = null;
+          state.user.email = null;
+          state.user.fullName = null;
+          state.user.avatar = null;
           Cookies.remove('token');
           Cookies.remove('refresh_token');
         }
       })
       .addCase(register.pending, (state) => {
-        state.register.isLoading = true;
+        state.isLoadingRegister = true;
       })
       .addCase(register.fulfilled, (state) => {
-        state.register.isLoading = false;
+        state.isLoadingRegister = false;
       })
       .addCase(register.rejected, (state) => {
-        state.register.isLoading = false;
+        state.isLoadingRegister = false;
       })
       .addCase(verifyEmail.pending, (state) => {
-        state.verifyEmail.isLoading = true;
+        state.isLoadingVerifyEmail = true;
       })
       .addCase(verifyEmail.fulfilled, (state) => {
-        state.verifyEmail.isLoading = false;
+        state.isLoadingVerifyEmail = false;
       })
       .addCase(verifyEmail.rejected, (state) => {
-        state.verifyEmail.isLoading = false;
+        state.isLoadingVerifyEmail = false;
       })
       .addCase(getUserFromToken.pending, (state) => {
         state.isLoaded = false;
@@ -142,9 +138,9 @@ const authSlice = createSlice({
         const result = action.payload.data?.user;
         state.isAuthenticated = true;
         state.isLoaded = true;
-        state.email = result.email;
-        state.avatar = result.avatar;
-        state.fullName = result.full_name;
+        state.user.email = result.email;
+        state.user.avatar = result.avatar;
+        state.user.fullName = result.full_name;
       })
       .addCase(getUserFromToken.rejected, (state) => {
         state.isLoaded = true;
