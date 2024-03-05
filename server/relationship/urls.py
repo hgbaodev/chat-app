@@ -1,19 +1,17 @@
 from django.urls import path
-from .views import (SendFriendRequestView, CancelFriendRequestView, RefuseFriendRequestView, 
-                    AcceptFriendRequestView, DeleteFriendView, GetAllFriendsView, BlockFriendView, UnBlockFriendView,
-                    GetRecommendedUserView, SearchUsersView, GetAllSentFriendRequestsView, GetAllReceivedFriendRequestsView)
+from .views import ( ManageFriendRequestView, DeleteFriendView, GetAllFriendsView, 
+                    BlockUnblockFriendView, GetRecommendedUserView, 
+                    SearchUsersView, FriendRequestsView)
 
 urlpatterns = [
-    path('send-friend-request', SendFriendRequestView.as_view(), name='send-friend-request'),
-    path('cancel-friend-request/<int:receiver>', CancelFriendRequestView.as_view(), name='cancel-friend-request'),
-    path('refuse-friend-request/<int:sender>', RefuseFriendRequestView.as_view(), name='refuse-friend-request'),
-    path('accept-friend-request/<int:sender>', AcceptFriendRequestView.as_view(), name='accept-friend-request'),
-    path('delete-friend/<int:friend_id>', DeleteFriendView.as_view(), name='delete-friend'),
-    path('get-all-friends', GetAllFriendsView.as_view(), name='get-all-friends'),
-    path('block-friend/<int:friend_id>', BlockFriendView.as_view(), name='block-friend'),
-    path('unblock-friend/<int:friend_id>', UnBlockFriendView.as_view(), name='unblock-friend'),
+    path('friend-requests', FriendRequestsView.as_view(), name='friend-requests'),
+    path('friend-requests/<int:friend_request_id>', ManageFriendRequestView.as_view(), name='manage-friend-request'),
+
+    path('friends', GetAllFriendsView.as_view(), name='get-all-friends'),
+    path('friends/<int:friend_id>', DeleteFriendView.as_view(), name='delete-friend'),
+    path('friends/block/<int:friend_id>', BlockUnblockFriendView.as_view(), name='block-friend'),
+
     path('get-recommended-users', GetRecommendedUserView.as_view(), name='get-recommeded-users'),
     path('search-users/<str:search_text>', SearchUsersView.as_view(), name='search-users'),
-    path('get-all-sent-friend-requests', GetAllSentFriendRequestsView.as_view(), name='get-all-sent-friend-requests'),
-    path('get-all-received-friend-requests', GetAllReceivedFriendRequestsView.as_view(), name='get-all-received-friend-requests'),
+   
 ]

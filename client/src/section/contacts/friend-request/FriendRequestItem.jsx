@@ -4,12 +4,11 @@ import useCustomMessage from '~/hooks/useCustomMessage';
 import { useDispatch } from '~/store';
 import {
   acceptFriendRequest,
-  cancelFriendRequest,
-  refuseFriendRequest
+  deleteFriendRequest
 } from '~/store/slices/relationshipSlice';
 
 const FriendRequestItem = ({
-  user_id,
+  id,
   avatar,
   fullName,
   invitationMessage,
@@ -20,18 +19,13 @@ const FriendRequestItem = ({
   const { success, error } = useCustomMessage();
   // handle
 
-  const handleCancelFriendRequest = async () => {
-    const response = await dispatch(cancelFriendRequest(user_id));
-    if (response.payload.data.msg) success(response.payload.data.msg);
-    else error('Some went wrong!');
-  };
-  const handleRefuseFriendRequest = async () => {
-    const response = await dispatch(refuseFriendRequest(user_id));
+  const handleDeleteFriendRequest = async () => {
+    const response = await dispatch(deleteFriendRequest(id));
     if (response.payload.data.msg) success(response.payload.data.msg);
     else error('Some went wrong!');
   };
   const handleAcceptFriendRequest = async () => {
-    const response = await dispatch(acceptFriendRequest(user_id));
+    const response = await dispatch(acceptFriendRequest(id));
     if (response.payload.data.msg) success(response.payload.data.msg);
     else error('Some went wrong!');
   };
@@ -76,7 +70,7 @@ const FriendRequestItem = ({
             <Button
               type="text"
               className="w-[100%] bg-neutral-200"
-              onClick={handleCancelFriendRequest}
+              onClick={handleDeleteFriendRequest}
             >
               Cancel
             </Button>
@@ -85,7 +79,7 @@ const FriendRequestItem = ({
               <Button
                 type="text"
                 className="w-[48%] bg-neutral-200"
-                onClick={handleRefuseFriendRequest}
+                onClick={handleDeleteFriendRequest}
               >
                 Reject
               </Button>
