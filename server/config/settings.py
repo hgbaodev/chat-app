@@ -167,8 +167,8 @@ SIMPLE_JWT = {
 }
 
 cloudinary.config(
-    cloud_name="dw3oj3iju",
-    api_key="346584911978158",
-    api_secret="aNT4FwHG1abs9XcLu7z4neM_fSg",
-    secure=True,
+    cloud_name=env('CLOUD_NAME'),
+    api_key=env('API_KEY'),
+    api_secret=env('API_SECRET'),
+    secure=env('SECURE'),
 )
