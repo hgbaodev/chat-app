@@ -2,6 +2,7 @@ import os
 import environ
 from pathlib import Path
 from datetime import timedelta
+import cloudinary
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -164,3 +165,10 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
 }
+
+cloudinary.config(
+    cloud_name="dw3oj3iju",
+    api_key="346584911978158",
+    api_secret="aNT4FwHG1abs9XcLu7z4neM_fSg",
+    secure=True,
+)
