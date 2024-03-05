@@ -9,6 +9,7 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
+import cloudinary.api
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -48,7 +49,7 @@ class LoginSerializer(serializers.ModelSerializer):
     full_name = serializers.CharField(max_length=255, read_only=True)
     access_token = serializers.CharField(max_length=255, read_only=True)
     refresh_token = serializers.CharField(max_length=255, read_only=True)
-    avatar = serializers.CharField(max_length=255, default='default.jpg', read_only=True)
+    avatar = serializers.CharField(max_length=255, read_only=True)
     
     class Meta:
         model = User
@@ -66,13 +67,14 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_verified:
             raise AuthenticationFailed("Email is not verified")
         
+        result = cloudinary.api.resource_by_asset_id(user.avatar)
         tokens = user.tokens()
         return {
             'email': user.email,
             'full_name': user.get_full_name,
-            'avatar': user.avatar,
+            'avatar': result.get('secure_url'),
             'access_token': str(tokens.get('access')),
-            'refresh_token': str(tokens.get('refresh'))
+            'refresh_token': str(tokens.get('refresh')),
         }
 
     

@@ -18,7 +18,7 @@ const FormRegister = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const navigate = useNavigate();
-  const { isLoading } = useSelector((state) => state.auth.register);
+  const { isLoadingRegister } = useSelector((state) => state.auth);
 
   const onFinish = async (values) => {
     const response = await dispatch(register(values));
@@ -108,7 +108,7 @@ const FormRegister = () => {
           htmlType="submit"
           className="w-full"
           size="large"
-          loading={isLoading}
+          loading={isLoadingRegister}
         >
           Create Account
         </Button>

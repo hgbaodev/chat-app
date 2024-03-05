@@ -1,4 +1,10 @@
-import { Avatar, Dropdown, Flex, Space, Typography } from 'antd';
+import {
+  Avatar,
+  Dropdown,
+  Flex,
+  Space,
+  Typography
+} from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
 import {
@@ -9,34 +15,33 @@ import {
 import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
-import { BASEURL } from '~/config';
 
-const { Text } = Typography
-
+const { Text } = Typography;
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
-  const { avatar, fullName } = useSelector((state) => state.auth);
+  const { avatar, fullName } = useSelector((state) => state.auth.user);
 
   const items = [
     {
       key: '0',
-      label: (<Text>{fullName}</Text>),
+      label: <Text>{fullName}</Text>,
       disabled: true
     },
     {
       key: '2',
-      label: 'Profile',
+      label: 'Profile'
     },
     {
       key: '3',
-      label: 'Setting',
+      label: 'Setting'
     },
     {
       key: '4',
-      label: 'Logout',
+      label: 'Logout'
     }
   ];
+
 
   const onClick = ({ key }) => {
     if (key == 4) {
@@ -80,10 +85,10 @@ const DashboardLayout = () => {
             }}
             placement="topRight"
             trigger={['click']}
-            arrow='true'
+            arrow="true"
           >
             <a onClick={(e) => e.preventDefault()}>
-              <Avatar src={BASEURL + 'assets/avatars/' + avatar} />
+              <Avatar src={avatar} />
             </a>
           </Dropdown>
         </Space>

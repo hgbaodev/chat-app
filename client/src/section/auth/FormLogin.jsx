@@ -11,7 +11,7 @@ const FormLogin = () => {
   const navigate = useNavigate()
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state.auth.login)
+  const { isLoadingLogin } = useSelector((state) => state.auth)
   const onFinish = async (values) => {
     const response = await dispatch(login(values));
     if (response.error && response.payload) {
@@ -76,7 +76,7 @@ const FormLogin = () => {
           htmlType="submit"
           className="w-full"
           size="large"
-          loading={isLoading}
+          loading={isLoadingLogin}
         >
           Login
         </Button>
