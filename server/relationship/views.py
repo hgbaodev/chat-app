@@ -1,59 +1,71 @@
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.generics import CreateAPIView, GenericAPIView
-from .serializers import (SendFriendRequestSerializer, CancelFriendRequestSerializer, RefuseFriendRequestSerializer,
+from rest_framework.generics import GenericAPIView
+from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerializer,
                         AcceptFriendRequestSerializer, DeleteFriendSerializer, BlockFriendSerializer, 
                         UnBlockFriendSerializer,RecommendedUserSerializer, GetAllFriendsSerializer, 
-                        SearchUsersSerializer, GetAllSentFriendRequestSerializer, GetAllReceivedFriendRequestSerializer)
+                        SearchUsersSerializer, GetAllFriendRequestSerializer)
 from rest_framework.permissions import IsAuthenticated
 
-class SendFriendRequestView(CreateAPIView):
-    serializer_class = SendFriendRequestSerializer
+
+class FriendRequestsView(GenericAPIView):
     permission_classes = [IsAuthenticated]
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return GetAllFriendRequestSerializer
+        elif self.request.method == 'POST':
+            return SendFriendRequestSerializer
+        return GetAllFriendRequestSerializer 
+    
+    # get all friend-requests
+    def get(self, request):
+        user_id = request.user.id
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class()
+        friend_requests = serializer.get_all_friend_requests(user_id)
+        serialized_data = serializer_class(friend_requests, many=True).data
+
+        sent_friend_requests = []
+        received_friend_requests = []
+        for friend_request in serialized_data:
+            if friend_request['sender']['id'] == user_id:
+                sent_friend_requests.append(friend_request)
+            else:
+                received_friend_requests.append(friend_request)
+        
+        return Response({'sent_friend_requests': sent_friend_requests, 'received_friend_requests': received_friend_requests}, status=status.HTTP_200_OK)
+
+    #  create friend-request
     def post(self, request):
         request.data['sender'] = request.user.id
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response({"msg": "Sent friend request successfully!"}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
 
-class CancelFriendRequestView(GenericAPIView):
-    serializer_class = CancelFriendRequestSerializer
+
+class ManageFriendRequestView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-    def delete(self, request, receiver):
-        request.data['sender'] = request.user.id
-        request.data['receiver'] = receiver
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Cancel friend request successfully", "data": serializer.data}, status=status.HTTP_201_CREATED)
+
+    #  cancel and refuse friend-request
+    def delete(self, request, friend_request_id):
+        request.data['id'] = friend_request_id
+        serializer = DeleteFriendRequestSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            return Response({"msg": "Deleted friend request successfully", "id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
-
-class RefuseFriendRequestView(GenericAPIView):
-    serializer_class = RefuseFriendRequestSerializer
-    permission_classes = [IsAuthenticated]
-    def delete(self, request, sender):
-        request.data['receiver'] = request.user.id
-        request.data['sender'] = sender
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Refused friend request successfully" , "data": serializer.data}, status=status.HTTP_201_CREATED)
+    #  accept friend-request
+    def get(self, request, friend_request_id):
+        request.data['id'] = friend_request_id
+        serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
+            return Response({"msg": "Accepted request successfully", "id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
-class AcceptFriendRequestView(GenericAPIView):
-    serializer_class = AcceptFriendRequestSerializer
-    permission_classes = [IsAuthenticated]
-    def get(self, request, sender):
-        request.data['receiver'] = request.user.id
-        request.data['sender'] = sender
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Accepted request successfully" , "data": serializer.data}, status=status.HTTP_201_CREATED)
-        return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
-    
-
 
 class DeleteFriendView(GenericAPIView):
     serializer_class = DeleteFriendSerializer
@@ -68,27 +80,22 @@ class DeleteFriendView(GenericAPIView):
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 
-class BlockFriendView(GenericAPIView):
-    serializer_class = BlockFriendSerializer
+class BlockUnblockFriendView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request, friend_id):
         request.data['blocked_by'] = request.user.id
         request.data['user'] = friend_id
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
+        serializer = BlockFriendSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
             return Response({"msg": "Blocked friend successfully"}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
-class UnBlockFriendView(GenericAPIView):
-    serializer_class = UnBlockFriendSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def get(self, request, friend_id):
+    def delete(self, request, friend_id):
         request.data['blocked_by'] = request.user.id
         request.data['user'] = friend_id
-        serializer = self.get_serializer(data=request.data)
-        if  serializer.is_valid(raise_exception=True):
+        serializer = UnBlockFriendSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid(raise_exception=True):
             return Response({"msg": "Unblocked friend successfully"}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
@@ -114,6 +121,7 @@ class GetRecommendedUserView(GenericAPIView):
         serializer = self.serializer_class(recommended_users, many=True)
 
         return Response({'users': serializer.data}, status=status.HTTP_200_OK)
+    
 
 class SearchUsersView(GenericAPIView):
     serializer_class = SearchUsersSerializer
@@ -125,26 +133,4 @@ class SearchUsersView(GenericAPIView):
         serializer = self.serializer_class(users, many=True, context={'request': request})
 
         return Response({'users': serializer.data}, status=status.HTTP_200_OK)
-
-
-class GetAllSentFriendRequestsView(GenericAPIView):
-    serializer_class = GetAllSentFriendRequestSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user_id = request.user.id
-        friend_requests = self.serializer_class.get_all_sent_friend_requests(user_id)
-        serializer = self.serializer_class(friend_requests, many=True)
-
-        return Response({'friend_requests': serializer.data}, status=status.HTTP_200_OK)
     
-class GetAllReceivedFriendRequestsView(GenericAPIView):
-    serializer_class = GetAllReceivedFriendRequestSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request):
-        user_id = request.user.id
-        friend_requests = self.serializer_class.get_all_received_friend_requests(user_id)
-        serializer = self.serializer_class(friend_requests, many=True)
-
-        return Response({'friend_requests': serializer.data}, status=status.HTTP_200_OK)

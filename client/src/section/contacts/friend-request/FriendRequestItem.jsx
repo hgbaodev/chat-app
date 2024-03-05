@@ -4,12 +4,11 @@ import useCustomMessage from '~/hooks/useCustomMessage';
 import { useDispatch } from '~/store';
 import {
   acceptFriendRequest,
-  cancelFriendRequest,
-  refuseFriendRequest
+  deleteFriendRequest
 } from '~/store/slices/relationshipSlice';
 
 const FriendRequestItem = ({
-  user_id,
+  id,
   avatar,
   fullName,
   invitationMessage,
@@ -20,18 +19,13 @@ const FriendRequestItem = ({
   const { success, error } = useCustomMessage();
   // handle
 
-  const handleCancelFriendRequest = async () => {
-    const response = await dispatch(cancelFriendRequest(user_id));
-    if (response.payload.data.msg) success(response.payload.data.msg);
-    else error('Some went wrong!');
-  };
-  const handleRefuseFriendRequest = async () => {
-    const response = await dispatch(refuseFriendRequest(user_id));
+  const handleDeleteFriendRequest = async () => {
+    const response = await dispatch(deleteFriendRequest(id));
     if (response.payload.data.msg) success(response.payload.data.msg);
     else error('Some went wrong!');
   };
   const handleAcceptFriendRequest = async () => {
-    const response = await dispatch(acceptFriendRequest(user_id));
+    const response = await dispatch(acceptFriendRequest(id));
     if (response.payload.data.msg) success(response.payload.data.msg);
     else error('Some went wrong!');
   };
@@ -72,31 +66,21 @@ const FriendRequestItem = ({
           </p>
         </div>
         <Flex align="center" justify="space-between">
-          {isSended ? (
+          <Button
+            type="text"
+            className={` bg-neutral-200 ${isSended ? 'w-[100%]' : 'w-[48%]'}`}
+            onClick={handleDeleteFriendRequest}
+          >
+            Reject
+          </Button>
+          {!isSended && (
             <Button
-              type="text"
-              className="w-[100%] bg-neutral-200"
-              onClick={handleCancelFriendRequest}
+              type="primary"
+              className="w-[48%]"
+              onClick={handleAcceptFriendRequest}
             >
-              Cancel
+              Accept
             </Button>
-          ) : (
-            <>
-              <Button
-                type="text"
-                className="w-[48%] bg-neutral-200"
-                onClick={handleRefuseFriendRequest}
-              >
-                Reject
-              </Button>
-              <Button
-                type="primary"
-                className="w-[48%]"
-                onClick={handleAcceptFriendRequest}
-              >
-                Accept
-              </Button>
-            </>
           )}
         </Flex>
       </div>
