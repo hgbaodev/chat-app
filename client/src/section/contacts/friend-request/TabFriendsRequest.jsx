@@ -3,10 +3,7 @@ import { useEffect } from 'react';
 import { IoPersonAddOutline } from 'react-icons/io5';
 import FriendRequestItem from '~/section/contacts/friend-request/FriendRequestItem';
 import { useDispatch, useSelector } from '~/store';
-import {
-  getAllReceivedFriendRequests,
-  getAllSentFriendRequests
-} from '~/store/slices/relationshipSlice';
+import { getAllFriendRequests } from '~/store/slices/relationshipSlice';
 
 const TabFriendsRequest = () => {
   const dispatch = useDispatch();
@@ -17,8 +14,7 @@ const TabFriendsRequest = () => {
   // effect
   useEffect(() => {
     (async () => {
-      dispatch(getAllSentFriendRequests());
-      dispatch(getAllReceivedFriendRequests());
+      dispatch(getAllFriendRequests());
     })();
   }, [dispatch]);
 
@@ -40,14 +36,14 @@ const TabFriendsRequest = () => {
       >
         <Space direction="vertical" className="w-[100%] px-5">
           <Typography className="font-semibold">
-            Received Requests(3)
+            Received Requests({received_friend_requests.length})
           </Typography>
           {received_friend_requests.length ? (
             <Row gutter={[16, 16]}>
               {received_friend_requests.map((item) => (
                 <FriendRequestItem
                   key={item.id}
-                  user_id={item.sender.id}
+                  id={item.id}
                   avatar={item.sender.avatar}
                   fullName={`${item.sender.first_name} ${item.sender.last_name}`}
                   invitationMessage={item.message}
@@ -64,13 +60,15 @@ const TabFriendsRequest = () => {
           )}
         </Space>
         <Space direction="vertical" className="w-[100%] px-5">
-          <Typography className="font-semibold">Sent Requests (3)</Typography>
+          <Typography className="font-semibold">
+            Sent Requests ({sent_friend_requests.length})
+          </Typography>
           {sent_friend_requests.length ? (
             <Row gutter={[16, 16]}>
               {sent_friend_requests.map((item) => (
                 <FriendRequestItem
                   key={item.id}
-                  user_id={item.receiver.id}
+                  id={item.id}
                   avatar={item.receiver.avatar}
                   fullName={`${item.receiver.first_name} ${item.receiver.last_name}`}
                   invitationMessage={item.message}

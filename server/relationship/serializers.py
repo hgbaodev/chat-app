@@ -4,6 +4,24 @@ from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id',  'first_name', 'last_name', 'avatar']
+
+class GetAllFriendRequestSerializer(serializers.ModelSerializer):
+    sender = UserSerializer(read_only=True)
+    receiver = UserSerializer(read_only=True)
+    class Meta:
+        model = FriendRequest
+        fields = '__all__'
+    
+    @staticmethod
+    def get_all_friend_requests(user_id):
+        friend_requests = friend_requests = FriendRequest.objects.filter(Q(sender=user_id) | Q(receiver=user_id))
+        return friend_requests
+
 class SendFriendRequestSerializer(serializers.Serializer):
     
     sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
@@ -33,50 +51,23 @@ class SendFriendRequestSerializer(serializers.Serializer):
         )
         return friend_request
     
-class CancelFriendRequestSerializer(serializers.Serializer):
-    
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    def validate_receiver(self, value):
-        sender = self.context['request'].user
-        if sender == value:
-            raise serializers.ValidationError('Sender and receiver should be different users.')
-        
-        existing_request = FriendRequest.objects.filter(sender=sender, receiver=value).first()
+class DeleteFriendRequestSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    def validate_id(self, value):
+        user_id = self.context['request'].user
+        existing_request = FriendRequest.objects.filter((Q(id=value) & Q(sender=user_id)) | (Q(id=value) & Q(receiver=user_id))).first()
         if not existing_request:
             raise serializers.ValidationError("Cannot find this friendrequest.")
         existing_request.delete()
         return value
-        
-class RefuseFriendRequestSerializer(serializers.Serializer):
     
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-    def validate_sender(self, value):
-        receiver = self.context['request'].user
-        if receiver == value:
-            raise serializers.ValidationError('Sender and receiver should be different users.')
-        
-        existing_request = FriendRequest.objects.filter(sender=value, receiver=receiver).first()
-        if not existing_request:
-            raise serializers.ValidationError("Cannot find this friendrequest.")
-        existing_request.delete()
-        return value
-
 class AcceptFriendRequestSerializer(serializers.Serializer):
-    
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-
-
-    def validate_sender(self, value):
+    id = serializers.IntegerField()
+    def validate_id(self, value):
         receiver = self.context['request'].user
-        if receiver == value:
-            raise serializers.ValidationError("Sender and receiver should be different users.")
         
-        existing_request = FriendRequest.objects.filter(sender=value, receiver=receiver).first()
+        existing_request = FriendRequest.objects.filter(id=value, receiver=receiver).first()
+        
         if not existing_request:
             raise serializers.ValidationError("Cannot find this friendrequest.")
         
@@ -86,7 +77,7 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
         )
         existing_request.delete()
         return value
-       
+    
 
     
 class BlockFriendSerializer(serializers.Serializer):
@@ -130,7 +121,6 @@ class UnBlockFriendSerializer(serializers.Serializer):
         has_blocked.delete()
         return value
         
-            
 
 class DeleteFriendSerializer(serializers.Serializer):
     
@@ -147,7 +137,6 @@ class DeleteFriendSerializer(serializers.Serializer):
             raise serializers.ValidationError(f"Cannot find this relationship between {user_1} and {value}.")
         existing_relationship.delete()
         return value
-        
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
     
@@ -239,30 +228,6 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         return users
 
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id',  'first_name', 'last_name', 'avatar']
 
-class GetAllSentFriendRequestSerializer(serializers.ModelSerializer):
-    receiver = UserSerializer(read_only=True)
-    class Meta:
-        model = FriendRequest
-        fields = '__all__'
-    
-    @staticmethod
-    def get_all_sent_friend_requests(user_id):
-        friend_requests = FriendRequest.objects.filter(sender=user_id)
-        return friend_requests
-    
 
-class GetAllReceivedFriendRequestSerializer(serializers.ModelSerializer):
-    sender = UserSerializer(read_only=True)
-    class Meta:
-        model = FriendRequest
-        fields = '__all__'
-    
-    @staticmethod
-    def get_all_received_friend_requests(user_id):
-        friend_requests = FriendRequest.objects.filter(receiver=user_id)
-        return friend_requests
+
