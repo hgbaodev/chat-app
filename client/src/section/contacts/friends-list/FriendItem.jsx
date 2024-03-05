@@ -1,6 +1,5 @@
 import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
-
 const ACTIONS = {
   CHAT: 'Chat now',
   VIEW_DETAILS: 'View details',
@@ -20,7 +19,6 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
   // handle
   const handleDeleteFriend = () => {
     // logic here
-    console.log('Delete user', id);
   };
 
   const handleShowFriendDetail = () => {

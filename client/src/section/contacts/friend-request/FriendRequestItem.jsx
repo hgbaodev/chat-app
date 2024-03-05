@@ -66,31 +66,21 @@ const FriendRequestItem = ({
           </p>
         </div>
         <Flex align="center" justify="space-between">
-          {isSended ? (
+          <Button
+            type="text"
+            className={` bg-neutral-200 ${isSended ? 'w-[100%]' : 'w-[48%]'}`}
+            onClick={handleDeleteFriendRequest}
+          >
+            Reject
+          </Button>
+          {!isSended && (
             <Button
-              type="text"
-              className="w-[100%] bg-neutral-200"
-              onClick={handleDeleteFriendRequest}
+              type="primary"
+              className="w-[48%]"
+              onClick={handleAcceptFriendRequest}
             >
-              Cancel
+              Accept
             </Button>
-          ) : (
-            <>
-              <Button
-                type="text"
-                className="w-[48%] bg-neutral-200"
-                onClick={handleDeleteFriendRequest}
-              >
-                Reject
-              </Button>
-              <Button
-                type="primary"
-                className="w-[48%]"
-                onClick={handleAcceptFriendRequest}
-              >
-                Accept
-              </Button>
-            </>
           )}
         </Flex>
       </div>
