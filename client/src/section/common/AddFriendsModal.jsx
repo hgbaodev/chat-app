@@ -1,7 +1,7 @@
 import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
-import { IoAdd, IoChevronBack } from 'react-icons/io5';
+import { IoChevronBack } from 'react-icons/io5';
 import TextArea from 'antd/es/input/TextArea';
 import { useDispatch, useSelector } from '~/store';
 import {

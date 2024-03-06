@@ -1,4 +1,4 @@
-import { Avatar, Dropdown, Flex, Space, Typography } from 'antd';
+import { Avatar, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
 import {
@@ -105,15 +105,17 @@ const DashboardLayout = () => {
     </Tooltip> */
 const NavButton = ({ tooltip, href, icon }) => {
   return (
-    <NavLink
-      to={href}
-      className={({ isActive }) =>
-        (isActive ? 'bg-neutral-300' : 'hover:bg-neutral-200') +
-        ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
-      }
-    >
-      <span className="">{icon}</span>
-    </NavLink>
+    <Tooltip placement="rightTop" title={tooltip}>
+      <NavLink
+        to={href}
+        className={({ isActive }) =>
+          (isActive ? 'bg-neutral-300' : 'hover:bg-neutral-200') +
+          ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
+        }
+      >
+        <span className="">{icon}</span>
+      </NavLink>
+    </Tooltip>
   );
 };
 
