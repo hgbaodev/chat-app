@@ -2,20 +2,20 @@ import { Button, Checkbox, Form, Input, Typography } from 'antd';
 
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from '~/store';
-import { login } from '~/store/slices/authSlice'
-import { toast } from 'react-toastify'
+import { login } from '~/store/slices/authSlice';
+import { toast } from 'react-toastify';
 
 const { Text } = Typography;
 
 const FormLogin = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { isLoadingLogin } = useSelector((state) => state.auth)
+  const { isLoadingLogin } = useSelector((state) => state.auth);
   const onFinish = async (values) => {
     const response = await dispatch(login(values));
     if (response.error && response.payload) {
-      toast.error(response.payload?.detail)
+      toast.error(response.payload?.detail);
     } else {
       navigate('/');
     }
@@ -32,6 +32,7 @@ const FormLogin = () => {
       <Form.Item
         label="Email"
         name="email"
+        validateTrigger="onBlur"
         rules={[
           { required: true, message: 'Please input your username!' },
           { type: 'email', message: 'Email is not valid' }
@@ -42,6 +43,7 @@ const FormLogin = () => {
       <Form.Item
         label="Password"
         name="password"
+        validateTrigger="onBlur"
         rules={[
           {
             required: true,

@@ -195,9 +195,9 @@ const UserSearchItem = ({
           />
         );
       case 1:
-        return <p className="m-0">Pending</p>;
+        return <p className="m-0 text-xs">Pending</p>;
       case 2:
-        return <p className="m-0">Friend</p>;
+        return <p className="m-0 text-xs">Friend</p>;
       default:
         return <></>;
     }
@@ -205,7 +205,7 @@ const UserSearchItem = ({
   return (
     <Flex
       ref={hoverRef}
-      className={`py-2 cursor-pointer rounded ${isHovering && 'bg-gray-100'}`}
+      className={`py-2 cursor-pointer rounded`}
       align="center"
       justify="space-between"
     >

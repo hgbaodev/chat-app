@@ -50,8 +50,6 @@ class MemberConversationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name', 'last_name', 'avatar'] 
     
-
-    
     
 class CreateParticipantsSerializer(serializers.ModelSerializer):
     conversation = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all())

@@ -1,12 +1,17 @@
 asgiref==3.7.2
+certifi==2024.2.2
+cloudinary==1.39.0
 Django==5.0.1
 django-cors-headers==4.3.1
 django-environ==0.11.2
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.3.1
+drf-writable-nested==0.7.0
 mysqlclient==2.2.1
 Pygments==2.17.2
 PyJWT==2.8.0
 pytz==2023.3.post1
+six==1.16.0
 sqlparse==0.4.4
 tzdata==2023.4
+urllib3==2.2.1

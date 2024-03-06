@@ -67,12 +67,12 @@ class LoginSerializer(serializers.ModelSerializer):
         if not user.is_verified:
             raise AuthenticationFailed("Email is not verified")
         
-        result = cloudinary.api.resource_by_asset_id(user.avatar)
+        avatar = cloudinary.api.resource_by_asset_id(user.avatar)
         tokens = user.tokens()
         return {
             'email': user.email,
             'full_name': user.get_full_name,
-            'avatar': result.get('secure_url'),
+            'avatar': avatar.get('secure_url'),
             'access_token': str(tokens.get('access')),
             'refresh_token': str(tokens.get('refresh')),
         }
