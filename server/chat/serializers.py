@@ -50,7 +50,6 @@ class MemberConversationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name', 'last_name', 'avatar'] 
     
-    
 class CreateParticipantsSerializer(serializers.ModelSerializer):
     conversation = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all())
     users = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all(), write_only=True)
@@ -96,3 +95,8 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participants
         fields = ['id','title']
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = ['id','sender', 'message', 'message_type', 'created_at']
