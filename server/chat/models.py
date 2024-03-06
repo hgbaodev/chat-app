@@ -2,6 +2,12 @@ from django.db import models
 from enum import IntEnum
 from authentication.models import User
 
+class OnlineUser(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    def __str__(self) -> str:
+        return f"{self.user.first_name} {self.user.last_name}"
+
 class Conversation(models.Model): #tạo, xoá, update
     title = models.CharField(max_length=255)
     image = models.CharField(max_length=255, blank=True)

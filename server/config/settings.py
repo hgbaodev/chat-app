@@ -24,8 +24,10 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = []
 
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3001",
-    "http://localhost:3001",
+    'http://127.0.0.1:3001',
+    'http://localhost:3001',
+    'ws://127.0.0.1:8000', 
+    'ws://127.0.0.1',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -33,6 +35,7 @@ CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,7 +47,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'authentication',
     'relationship',
-    'chat'
+    'chat',
+    'channels_auth_token_middlewares'
 ]
 
 MIDDLEWARE = [
@@ -145,6 +149,8 @@ MEDIA_URL = '/api/assets/avatars/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+ASGI_APPLICATION = 'config.asgi.application'
+
 EMAIL_HOST=env('EMAIL_HOST')
 EMAIL_HOST_USER=env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD=env('EMAIL_HOST_PASSWORD')
@@ -165,6 +171,12 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
     'AUTH_HEADER_TYPES': ('Bearer',),
+}
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 cloudinary.config(
