@@ -1,6 +1,5 @@
 import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
-import useHover from '~/hooks/useHover';
 import { useEffect, useState } from 'react';
 import { IoAdd, IoChevronBack } from 'react-icons/io5';
 import TextArea from 'antd/es/input/TextArea';
@@ -22,14 +21,6 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const debouncedSearchText = useDebounce(search, 500);
   const [userSelected, setUserSelected] = useState(null);
   const [invitationMessage, setInvitationMessage] = useState('');
-
-  // effect
-  useEffect(() => {
-    (async () => {
-      const response = await dispatch(getRecommendedUsers());
-      setUsers(response.payload.data.users);
-    })();
-  }, [dispatch]);
 
   useEffect(() => {
     (async () => {
@@ -180,7 +171,6 @@ const UserSearchItem = ({
   status,
   handleSelected
 }) => {
-  const [hoverRef, isHovering] = useHover();
   // handle
   const renderButton = () => {
     switch (status) {
@@ -204,7 +194,6 @@ const UserSearchItem = ({
   };
   return (
     <Flex
-      ref={hoverRef}
       className={`py-2 cursor-pointer rounded`}
       align="center"
       justify="space-between"
