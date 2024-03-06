@@ -18,6 +18,8 @@ sqlparse = "==0.4.4"
 tzdata = "==2023.4"
 cloudinary = "*"
 drf-writable-nested = "*"
+daphne = "*"
+channels-auth-token-middlewares = "*"
 
 [dev-packages]
 
