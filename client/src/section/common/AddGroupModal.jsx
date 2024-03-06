@@ -4,8 +4,9 @@ import { faker } from '@faker-js/faker';
 import useHover from '~/hooks/useHover';
 import { useMemo } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
+import UserSearchItem from '~/section/common/UserSearchItem';
 
-const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
+const AddGroupModal = ({ isModalOpen, setIsModalOpen }) => {
   const handleClose = () => {
     setIsModalOpen(false);
   };
@@ -40,34 +41,5 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   );
 };
 
-const UserSearchItem = () => {
-  const [hoverRef, isHovering] = useHover();
-  const avatarSrc = useMemo(() => faker.image.avatarLegacy(), []);
-  const fullName = useMemo(() => faker.person.fullName(), []);
-  const email = useMemo(() => faker.internet.email(), []);
-  return (
-    <Flex
-      ref={hoverRef}
-      className="py-2 cursor-pointer"
-      align="center"
-      justify="space-between"
-    >
-      <Space gap={12}>
-        <Avatar size="large" src={avatarSrc} />
-        <Space direction="vertical" size={0}>
-          <p className="m-0">{fullName}</p>
-          <p className="m-0 text-xs text-gray-500">{email}</p>
-        </Space>
-      </Space>
-      {isHovering && (
-        <Button
-          type="text"
-          shape="circle"
-          icon={<IoCloseOutline size={22} />}
-        />
-      )}
-    </Flex>
-  );
-};
 
-export default AddFriendsModal;
+export default AddGroupModal;

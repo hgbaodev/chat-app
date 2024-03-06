@@ -157,9 +157,15 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 class UserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['full_name', 'email', 'avatar'] 
 
     def get_full_name(self, obj):
         return obj.get_full_name
+    def get_avatar(self, obj):
+        if obj.avatar:
+            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+            return avatar
+        return None

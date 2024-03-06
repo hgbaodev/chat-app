@@ -1,28 +1,50 @@
-import { Modal } from 'antd';
+import { Avatar, Button, Flex, Image, Modal, Space, Typography } from 'antd';
+import { AiOutlineEdit } from 'react-icons/ai';
 
-const ProfileModal = ({ isModalOpen, setIsModalOpen }) => {
+const { Text } = Typography;
+
+const ProfileModal = ({ open, setOpen }) => {
   const handleClose = () => {
-    setIsModalOpen(false);
+    setOpen(false);
   };
   return (
     <Modal
-      title="Profile"
-      open={isModalOpen}
+      title="Account Information"
+      open={open}
       onCancel={handleClose}
-      footer={null}
-      width={400}
+      footer={
+        <Button
+          type="text"
+          size="middle"
+          icon={<AiOutlineEdit />}
+          className="w-full"
+        >
+          Edit
+        </Button>
+      }
+      width={500}
     >
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem sit iusto
-      velit consequatur libero ad minima aut, est vitae saepe, ut maxime
-      dolorum, asperiores vel? Numquam voluptate voluptas, molestiae iusto ex
-      reprehenderit id itaque. Facilis exercitationem expedita ullam alias
-      suscipit dolorem recusandae animi consequuntur repudiandae temporibus
-      officiis, minima corporis quam aspernatur accusantium? Assumenda esse
-      neque quisquam exercitationem laborum laudantium, reprehenderit ipsa
-      aliquid voluptatibus in doloribus harum ratione modi odio fugit qui
-      tempora odit veniam animi molestiae deleniti architecto nulla magnam.
-      Molestiae distinctio voluptatum nihil in nemo, natus similique sunt,
-      quidem unde iusto animi neque, quod minima voluptates cum excepturi modi?
+      <Flex vertical>
+        <Image
+          height={150}
+          src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709748276/chat_app/t0aytyt93yhgj5yb3fce.jpg"
+        />
+        <Space>
+          <Avatar
+            style={{
+              marginTop: '-20px',
+              borderStyle: 'solid',
+              borderWidth: '2px',
+              borderColor: 'white'
+            }}
+            draggable={true}
+            alt="Avatar"
+            size={64}
+            src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709628794/chat_app/b6pswhnwsreustbzr8d0.jpg"
+          />
+          <Text strong>Hoàng Gia Bảo</Text>
+        </Space>
+      </Flex>
     </Modal>
   );
 };
