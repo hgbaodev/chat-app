@@ -6,12 +6,12 @@ import { getUserFromToken } from '~/store/slices/authSlice';
 import { useDispatch } from '~/store';
 
 function App() {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useLayoutEffect(() => {
     const fetchUser = async () => {
       await dispatch(getUserFromToken());
-    }
-    fetchUser()
+    };
+    fetchUser();
   }, [dispatch]);
   // eslint-disable-next-line no-console
   console.info(
