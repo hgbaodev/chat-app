@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4cfaf65416d6ada7351c0bd637d15aedb4094b500ab875e79f5179c295f0dd93"
+            "sha256": "b4fd6b3263f20298291f0ad5183b901c7729f06a6a7a2e6b1c3181717aba302b"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -84,6 +84,14 @@
             "index": "pypi",
             "markers": "python_version >= '3.8'",
             "version": "==5.3.1"
+        },
+        "drf-writable-nested": {
+            "hashes": [
+                "sha256:154c0381e8a3a477e0fd539d5e1caf8ff4c1097a9c0c0fe741d4858b11b0455b"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.7.0"
         },
         "mysqlclient": {
             "hashes": [
