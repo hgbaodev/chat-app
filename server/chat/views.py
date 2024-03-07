@@ -6,17 +6,6 @@ from .serializers import MemberConversationSerializer, ParticipantDetailSerializ
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants
 from django.http import Http404
-
-class SendMessageView(APIView):
-    serializer_class = SendMessageSerializer
-    permission_classes = [IsAuthenticated]
-    
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class ConversationList(APIView):
     serializer_class = ConversationSerializer

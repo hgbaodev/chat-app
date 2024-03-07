@@ -35,7 +35,8 @@ const ProfileModal = ({ open, setOpen }) => {
               marginTop: '-20px',
               borderStyle: 'solid',
               borderWidth: '2px',
-              borderColor: 'white'
+              borderColor: 'white',
+              objectFit: 'cover'
             }}
             draggable={true}
             alt="Avatar"
