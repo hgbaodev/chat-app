@@ -1,7 +1,7 @@
 import { jwtDecode } from 'jwt-decode';
 import { GoogleLogin } from '@react-oauth/google';
 
-const GoogleLoginCustom = () => {
+const GoogleLoginComponent = () => {
   const responseMessage = async (response) => {
     var userObject = jwtDecode(response.credential);
     const value = { user_email: userObject.email };
@@ -13,4 +13,4 @@ const GoogleLoginCustom = () => {
   return <GoogleLogin onSuccess={responseMessage} onError={errorMessage} />;
 };
 
-export default GoogleLoginCustom;
+export default GoogleLoginComponent;

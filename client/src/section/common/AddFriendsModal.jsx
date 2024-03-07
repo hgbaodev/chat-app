@@ -104,7 +104,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
               <Space direction="vertical" size={0}>
-                <p className="m-0">{`${userSelected.first_name} ${userSelected.last_name}`}</p>
+                <p className="m-0">{userSelected.full_name}</p>
                 <p className="m-0 text-xs text-gray-500">
                   {userSelected.email}
                 </p>
@@ -149,7 +149,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
                 <UserSearchItem
                   key={user.id}
                   avatar={user.avatar}
-                  fullName={`${user.first_name} ${user.last_name}`}
+                  fullName={user.full_name}
                   email={user.email}
                   status={user.relationship}
                   handleSelected={() => {

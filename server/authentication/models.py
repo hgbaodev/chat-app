@@ -9,7 +9,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone = models.CharField(max_length=20, blank=True)
     first_name = models.CharField(max_length=255, verbose_name=_("First name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last name"))
-    avatar = models.CharField(max_length=255, blank=True, default='2bede7ea931b845598bcdb48a0c34b7d')
+    avatar = models.CharField(max_length=255, blank=True, default='0d8cac6ba79b4210ab3bd6bc1ea38454')
     birthday = models.DateField(null=True, blank=True)
     about = models.CharField(blank=True,max_length=255)
     is_staff = models.BooleanField(default=False)

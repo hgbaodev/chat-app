@@ -2,13 +2,25 @@ from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
+import cloudinary.api
 
 
 
 class UserSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id',  'first_name', 'last_name', 'avatar']
+        fields = ['id',  'full_name', 'avatar']
+    
+    def get_full_name(self, obj):
+        return obj.get_full_name
+
+    def get_avatar(self, obj):
+        if obj.avatar:
+            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+            return avatar
+        return None
 
 class GetAllFriendRequestSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
@@ -139,7 +151,6 @@ class DeleteFriendSerializer(serializers.Serializer):
         return value
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about']
@@ -164,12 +175,22 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
 
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+    avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about', 'relationship']
+        fields = ['id', 'email', 'full_name', 'avatar' ,'birthday' ,'about', 'relationship']
 
     def get_relationship(self, user):
         return 0
+    
+    def get_full_name(self, obj):
+        return obj.get_full_name
+    def get_avatar(self, obj):
+        if obj.avatar:
+            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+            return avatar
+        return None
     
     @staticmethod
     def get_recommended_users(user_id):

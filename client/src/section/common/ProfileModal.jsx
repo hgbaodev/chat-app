@@ -1,5 +1,6 @@
-import { Avatar, Button, Flex, Image, Modal, Space, Typography } from 'antd';
+import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { AiOutlineEdit } from 'react-icons/ai';
+import ModalComponent from '~/components/ModalComponent';
 
 const { Text } = Typography;
 
@@ -8,7 +9,7 @@ const ProfileModal = ({ open, setOpen }) => {
     setOpen(false);
   };
   return (
-    <Modal
+    <ModalComponent
       title="Account Information"
       open={open}
       onCancel={handleClose}
@@ -29,7 +30,11 @@ const ProfileModal = ({ open, setOpen }) => {
           height={150}
           src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709748276/chat_app/t0aytyt93yhgj5yb3fce.jpg"
         />
-        <Space>
+        <Space
+          style={{
+            paddingLeft: '14px'
+          }}
+        >
           <Avatar
             style={{
               marginTop: '-20px',
@@ -43,9 +48,10 @@ const ProfileModal = ({ open, setOpen }) => {
             src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709628794/chat_app/b6pswhnwsreustbzr8d0.jpg"
           />
           <Text strong>Hoàng Gia Bảo</Text>
+          <Button style={{ border: 0 }} type='round' icon={<AiOutlineEdit />} />
         </Space>
       </Flex>
-    </Modal>
+    </ModalComponent>
   );
 };
 

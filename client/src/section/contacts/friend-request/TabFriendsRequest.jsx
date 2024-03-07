@@ -45,7 +45,7 @@ const TabFriendsRequest = () => {
                   key={item.id}
                   id={item.id}
                   avatar={item.sender.avatar}
-                  fullName={`${item.sender.first_name} ${item.sender.last_name}`}
+                  fullName={item.sender.full_name}
                   invitationMessage={item.message}
                   time={item.created_at}
                   isSended={false}
@@ -70,7 +70,7 @@ const TabFriendsRequest = () => {
                   key={item.id}
                   id={item.id}
                   avatar={item.receiver.avatar}
-                  fullName={`${item.receiver.first_name} ${item.receiver.last_name}`}
+                  fullName={item.receiver.full_name}
                   invitationMessage={item.message}
                   time={item.created_at}
                 />
