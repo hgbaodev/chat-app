@@ -86,3 +86,9 @@ body::-webkit-scrollbar {
   border-radius: 99px;
   padding: 8px;
 }
+
+.ant-upload {
+  width: 52px !important;
+  height: 52px !important;
+  margin: 0 !important;
+}

@@ -1,5 +1,5 @@
-import { Avatar, Button, Flex, Space } from "antd";
-import { IoAdd } from "react-icons/io5";
+import { Avatar, Button, Flex, Space } from 'antd';
+import { IoAdd } from 'react-icons/io5';
 
 const UserSearchItem = ({
   avatar,
@@ -11,22 +11,22 @@ const UserSearchItem = ({
   // handle
   const renderButton = () => {
     switch (status) {
-    case 0:
-      return (
-        <Button
-          type="primary"
-          size="small"
-          shape="circle"
-          icon={<IoAdd size={22} />}
-          onClick={handleSelected}
-        />
-      );
-    case 1:
-      return <p className="m-0 text-xs">Pending</p>;
-    case 2:
-      return <p className="m-0 text-xs">Friend</p>;
-    default:
-      return <></>;
+      case 0:
+        return (
+          <Button
+            type="primary"
+            size="small"
+            shape="circle"
+            icon={<IoAdd size={22} />}
+            onClick={handleSelected}
+          />
+        );
+      case 1:
+        return <p className="m-0 text-xs">Pending</p>;
+      case 2:
+        return <p className="m-0 text-xs">Friend</p>;
+      default:
+        return <></>;
     }
   };
   return (
