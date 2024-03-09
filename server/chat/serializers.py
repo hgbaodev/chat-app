@@ -3,15 +3,18 @@ from authentication.models import User
 from django.db.models import Q
 from .models import Conversation, Message, Participants
     
+class NewestMessage(serializers.ModelSerializer):
+    class Meta: 
+        model = Message
+        fields = ['id','message', 'created_at']
+    
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
-    message = serializers.CharField(max_length=255, read_only=True)
-    created_at = serializers.DateTimeField(read_only=True)
-    message_type = serializers.IntegerField(read_only=True)
+    newest_message = NewestMessage(read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'message', 'message_type', 'created_at', 'participants']
+        fields = ['id', 'title', 'image', 'newest_message', 'participants']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')

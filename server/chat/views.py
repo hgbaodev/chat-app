@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import MemberConversationSerializer, ParticipantDetailSerializer, SendMessageSerializer, ConversationSerializer, CreateParticipantsSerializer
+from .serializers import MemberConversationSerializer, ParticipantDetailSerializer, ConversationSerializer, CreateParticipantsSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Conversation, Participants
+from .models import Conversation, Participants, Message
 from django.http import Http404
     
 class ConversationList(APIView):
@@ -14,6 +14,11 @@ class ConversationList(APIView):
     # Lấy danh sách cuộc hội thoại (Chưa lấy được tin nhắn mới nhất)
     def get(self, request):
         conversations = Conversation.objects.filter(participants__user=request.user)
+        
+        for conversation in conversations:
+            messages = Message.objects.filter(conversation=conversation)
+            
+        
         serializer = self.serializer_class(conversations, many=True)
         return Response(serializer.data)
     

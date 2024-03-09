@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import SendMessageView,ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, GetMemberConversation
+from .views import ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, GetMemberConversation
 
 urlpatterns = [
     path('conversations/', ConversationList.as_view(), name='conversations'),
