@@ -4,6 +4,7 @@ import { SearchOutlined } from '@ant-design/icons';
 import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
 import { useState } from 'react';
 import AddFriendsModal from '~/section/common/AddFriendsModal';
+import NewGroupModel from '../common/NewGroupModal';
 
 export const Contacts = ({ ...props }) => {
   return (
@@ -27,7 +28,8 @@ export const Contacts = ({ ...props }) => {
 };
 
 const ContactsHeader = () => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
+  const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
 
   return (
     <>
@@ -40,14 +42,24 @@ const ContactsHeader = () => {
         <Button
           type="text"
           icon={<MdOutlinePersonAddAlt size={20} />}
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => setIsAddFriendModalOpen(true)}
         />
-        <Button type="text" icon={<MdOutlineGroupAdd size={20} />} />
+        <Button
+          type="text"
+          icon={<MdOutlineGroupAdd size={20} />}
+          onClick={() => setIsNewGroupModalOpen(true)}
+        />
       </Space>
-      {isModalOpen && (
+      {isAddFriendModalOpen && (
         <AddFriendsModal
-          isModalOpen={isModalOpen}
-          setIsModalOpen={setIsModalOpen}
+          isModalOpen={isAddFriendModalOpen}
+          setIsModalOpen={setIsAddFriendModalOpen}
+        />
+      )}
+      {isNewGroupModalOpen && (
+        <NewGroupModel
+          isModalOpen={isNewGroupModalOpen}
+          setIsModalOpen={setIsNewGroupModalOpen}
         />
       )}
     </>

@@ -1,4 +1,4 @@
-import { Avatar, Button, Flex, Input, Modal, Space } from 'antd';
+import { Avatar, Button, Empty, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { IoChevronBack } from 'react-icons/io5';
@@ -12,10 +12,12 @@ import {
 import useDebounce from '~/hooks/useDebounce';
 import useCustomMessage from '~/hooks/useCustomMessage';
 import UserSearchItem from '~/section/common/UserSearchItem';
+import Loader from '~/components/Loader';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const { fullName } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.relationship);
   const { success, error } = useCustomMessage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
@@ -104,7 +106,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
               <Space direction="vertical" size={0}>
-                <p className="m-0">{`${userSelected.first_name} ${userSelected.last_name}`}</p>
+                <p className="m-0">{userSelected.full_name}</p>
                 <p className="m-0 text-xs text-gray-500">
                   {userSelected.email}
                 </p>
@@ -144,19 +146,25 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             ) : (
               <p className="text-xs text-gray-500">Friendship suggestions</p>
             )}
-            <div className="max-h-[420px] overflow-y-auto scrollbar">
-              {users.map((user) => (
-                <UserSearchItem
-                  key={user.id}
-                  avatar={user.avatar}
-                  fullName={`${user.first_name} ${user.last_name}`}
-                  email={user.email}
-                  status={user.relationship}
-                  handleSelected={() => {
-                    handleSelectUser(user.id);
-                  }}
-                />
-              ))}
+            <div className="h-[380px] overflow-y-auto scrollbar">
+              {isLoading ? (
+                <Loader />
+              ) : users.length ? (
+                users.map((user) => (
+                  <UserSearchItem
+                    key={user.id}
+                    avatar={user.avatar}
+                    fullName={user.full_name}
+                    email={user.email}
+                    status={user.relationship}
+                    handleSelected={() => {
+                      handleSelectUser(user.id);
+                    }}
+                  />
+                ))
+              ) : (
+                <Empty description="Result List is empty" className="py-4" />
+              )}
             </div>
           </Space>
         )}
@@ -164,6 +172,5 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
     </>
   );
 };
-
 
 export default AddFriendsModal;

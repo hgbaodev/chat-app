@@ -1,4 +1,4 @@
-import { Flex, Input, Select, Space } from 'antd';
+import { Empty, Flex, Input, Select, Space } from 'antd';
 import { useEffect } from 'react';
 import { IoSearchOutline } from 'react-icons/io5';
 import { FriendItem } from '~/section/contacts/friends-list/FriendItem';
@@ -45,15 +45,19 @@ const TabFriendsList = () => {
           />
         </Flex>
         <div>
-          {friends.map((friend) => (
-            <FriendItem
-              key={friend.id}
-              id={friend.id}
-              avatar={friend.avatar}
-              fullName={`${friend.first_name} ${friend.last_name}`}
-              email={friend.email}
-            />
-          ))}
+          {friends.length ? (
+            friends.map((friend) => (
+              <FriendItem
+                key={friend.id}
+                id={friend.id}
+                avatar={friend.avatar}
+                fullName={`${friend.first_name} ${friend.last_name}`}
+                email={friend.email}
+              />
+            ))
+          ) : (
+            <Empty description="Friends List is empty" className="py-4" />
+          )}
         </div>
       </Space>
     </>

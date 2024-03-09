@@ -44,7 +44,7 @@ const FriendRequestItem = ({
     return timeFormatted;
   }
   return (
-    <Col sm={12} md={8} lg={8} xl={6}>
+    <Col sm={12} md={8} lg={8} xl={8}>
       <div className="bg-white p-4 rounded-md">
         <Flex align="center" justify="space-between">
           <Flex align="center" gap={10}>
