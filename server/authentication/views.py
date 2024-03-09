@@ -10,8 +10,7 @@ from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.permissions import IsAuthenticated
 from .models import User
-
-from rest_framework_simplejwt.tokens import AccessToken
+from utils.responses import SuccessResponse
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -34,7 +33,7 @@ class LoginUserView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return SuccessResponse(data=serializer.data)
     
 class VerifyUserEmail(GenericAPIView):
     serializer_class = VerifyUserEmailSerializer

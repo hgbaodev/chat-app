@@ -34,6 +34,7 @@ export const getUserFromToken = createAsyncThunk(
       return response;
     } catch (error) {
       Cookies.remove('token');
+      Cookies.remove('refresh_token');
       throw error;
     }
   }

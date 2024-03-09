@@ -88,7 +88,7 @@ const DashboardLayout = () => {
               arrow="true"
             >
               <a onClick={(e) => e.preventDefault()}>
-                <Avatar src={avatar} />
+                <Avatar size={40} src={avatar} />
               </a>
             </Dropdown>
           </Space>

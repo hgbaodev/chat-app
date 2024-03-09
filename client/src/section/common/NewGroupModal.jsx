@@ -5,6 +5,7 @@ import { IoAdd, IoCloseOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 import Loader from '~/components/Loader';
+import { FaCamera } from "react-icons/fa";
 
 const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -26,7 +27,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
       open={isModalOpen}
       onOk={handleClose}
       onCancel={handleClose}
-      width={400}
+      width={500}
     >
       <Flex horizontal align="center" gap={10} className="py-2 w-full">
         <div>
@@ -37,7 +38,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
             onPreview={null}
             onChange={null}
           >
-            <IoAdd size={22} />
+            <FaCamera size={20} />
           </Upload>
         </div>
         <Input
