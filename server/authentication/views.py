@@ -25,7 +25,7 @@ class RegisterUserView(GenericAPIView):
                 'data': user,
                 'message': 'User created successfully'
             }, status=status.HTTP_201_CREATED)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class LoginUserView(GenericAPIView):
     serializer_class = LoginSerializer
@@ -33,7 +33,7 @@ class LoginUserView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        return SuccessResponse(data=serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
 class VerifyUserEmail(GenericAPIView):
     serializer_class = VerifyUserEmailSerializer
