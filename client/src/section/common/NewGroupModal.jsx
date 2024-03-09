@@ -39,7 +39,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
             onChange={null}
             accept="image/*"
           >
-            <FaCamera size={20} />
+            <FaCamera size={20} className='text-gray-400'/>
           </Upload>
         </div>
         <Input
