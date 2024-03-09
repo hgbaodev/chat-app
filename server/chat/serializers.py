@@ -2,31 +2,19 @@ from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
 from .models import Conversation, Message, Participants
-from drf_writable_nested.serializers import WritableNestedModelSerializer
-
-class SendMessageSerializer(serializers.ModelSerializer):
-    conversation = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all())
-    sender = serializers.PrimaryKeyRelatedField(read_only=True)
-    message = serializers.CharField()
     
-    class Meta:
-        model = Conversation
-        fields = ['conversation', 'sender', 'message']
-        
-    def create(self, validated_data):
-        sender = self.context['request'].user
-        conversation = validated_data['conversation']
-        message_content = validated_data['message']
-        new_message = Message.objects.create(conversation=conversation, sender=sender, message=message_content)
-        # send broadcast
-        return new_message
+class NewestMessage(serializers.ModelSerializer):
+    class Meta: 
+        model = Message
+        fields = ['id','message', 'created_at']
     
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
+    newest_message = NewestMessage(read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'participants']
+        fields = ['id', 'title', 'image', 'newest_message', 'participants']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')
@@ -96,7 +84,14 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
         model = Participants
         fields = ['id','title']
 
+
+class SenderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name', 'avatar']
+
 class MessageSerializer(serializers.ModelSerializer):
+    sender = SenderSerializer()
     class Meta:
         model = Message
-        fields = ['id','sender', 'message', 'message_type', 'created_at']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender']
