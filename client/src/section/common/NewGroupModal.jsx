@@ -5,7 +5,7 @@ import { IoAdd, IoCloseOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 import Loader from '~/components/Loader';
-import { FaCamera } from "react-icons/fa";
+import { FaCamera } from 'react-icons/fa';
 
 const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -37,6 +37,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
             fileList={[]}
             onPreview={null}
             onChange={null}
+            accept="image/*"
           >
             <FaCamera size={20} />
           </Upload>
