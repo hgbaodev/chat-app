@@ -6,7 +6,8 @@ from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerial
                         UnBlockFriendSerializer,RecommendedUserSerializer, GetAllFriendsSerializer, 
                         SearchUsersSerializer, GetAllFriendRequestSerializer)
 from rest_framework.permissions import IsAuthenticated
-
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
 
 class FriendRequestsView(GenericAPIView):
     permission_classes = [IsAuthenticated]
@@ -43,6 +44,13 @@ class FriendRequestsView(GenericAPIView):
         serializer = serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'user_%s' % serializer.validated_data['receiver'].pk, {
+                    'type': 'send_friend_request',
+                    'message': serializer.data
+                }
+            )
             return Response({"msg": "Sent friend request successfully!"}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

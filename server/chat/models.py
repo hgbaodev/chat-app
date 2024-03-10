@@ -22,6 +22,9 @@ class Participants(models.Model): #tham gia, out
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+    def __str__(self) -> str:
+        return f" id: {self.pk} | ConversationID: {self.conversation.pk} |User: {self.user}"
+    
 class Message(models.Model): # gửi, xoá
     class MessageType(IntEnum):
         TEXT = 1
