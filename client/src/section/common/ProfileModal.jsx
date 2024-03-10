@@ -9,16 +9,26 @@ import {
   Space,
   Typography
 } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { IoChevronBack } from 'react-icons/io5';
+import { useDispatch } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
+import { getInfoUser } from '~/store/slices/authSlice';
 
 const { Text } = Typography;
 
 const ProfileModal = ({ open, setOpen }) => {
   const [type, setType] = useState(0);
+  const dispatch = useDispatch()
+  useEffect(() => {
+    const fetch = () => {
+      dispatch(getInfoUser())
+    }
+    fetch()
+  })
   const handleClose = () => {
+    setType(0);
     setOpen(false);
   };
   if (type == 0)
