@@ -1,5 +1,5 @@
 from rest_framework.generics import GenericAPIView
-from .serializers import RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer
+from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import UserVerification
@@ -10,7 +10,7 @@ from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.permissions import IsAuthenticated
 from .models import User
-from utils.responses import SuccessResponse
+from utils.responses import SuccessResponse, ErrorResponse
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -33,7 +33,7 @@ class LoginUserView(GenericAPIView):
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         serializer.is_valid(raise_exception=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return SuccessResponse(serializer.data)
     
 class VerifyUserEmail(GenericAPIView):
     serializer_class = VerifyUserEmailSerializer
@@ -102,10 +102,14 @@ class GetAuthenticatedReqView(GenericAPIView):
         user_id = request.user.id
         user = User.objects.get(id=user_id)
         serializer = self.serializer_class(user)
+        return SuccessResponse(data=serializer.data)
 
-        data = {
-            'msg': 'Login Success',
-            'user': serializer.data 
-        }
-        return Response(data, status=status.HTTP_200_OK)
+class GetInforUserView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = GetInfoUserSerializer
 
+    def get(self, request):
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        serializer = self.serializer_class(user)
+        return SuccessResponse(data=serializer.data)

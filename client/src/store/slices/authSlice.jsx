@@ -67,17 +67,29 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
+export const getInfoUser = createAsyncThunk(
+  'auth/getInforUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`auth/get-info-user`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   isAuthenticated: false,
   loaded: false,
   user: {
     email: null,
     fullName: null,
-    avatar: null,
+    avatar: null
   },
   isLoadingLogin: false,
   isLoadingRegister: false,
-  isLoadingVerifyEmail: false,
+  isLoadingVerifyEmail: false
 };
 
 const authSlice = createSlice({
@@ -90,7 +102,7 @@ const authSlice = createSlice({
         state.isLoadingLogin = true;
       })
       .addCase(login.fulfilled, (state, action) => {
-        const result = action.payload.data;
+        const result = action.payload.data.result;
         state.isLoaded = true;
         state.isAuthenticated = true;
         state.user.email = result.email;
@@ -136,7 +148,7 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
       })
       .addCase(getUserFromToken.fulfilled, (state, action) => {
-        const result = action.payload.data?.user;
+        const result = action.payload.data?.result;
         state.isAuthenticated = true;
         state.isLoaded = true;
         state.user.email = result.email;
