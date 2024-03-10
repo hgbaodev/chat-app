@@ -36,7 +36,7 @@ const ProfileModal = ({ open, setOpen }) => {
               className="w-full"
               onClick={() => setType(1)}
             >
-              Edit
+              Update Profile
             </Button>
           </Flex>
         }
@@ -44,7 +44,7 @@ const ProfileModal = ({ open, setOpen }) => {
       >
         <Flex vertical>
           <Image
-            height={150}
+            height={180}
             src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709748276/chat_app/t0aytyt93yhgj5yb3fce.jpg"
           />
           <Space
@@ -72,27 +72,27 @@ const ProfileModal = ({ open, setOpen }) => {
               style={{
                 border: 0
               }}
+              size="small"
               shape="circle"
               icon={<AiOutlineEdit />}
             />
           </Space>
-          <Space className="px-[20px] py-[14px]" direction="vertical">
+          <Space className="px-5 py-4" direction="vertical">
             <Text strong>Information</Text>
             <ItemInfo label="Bio" value="https://github.com/hgbaodev" />
             <ItemInfo label="Email" value="hgbaodev@gmail.com" />
             <ItemInfo label="Birthday" value="01/01/2003" />
             <ItemInfo label="Phone" value="0355374322" />
-            <Divider
-              style={{
-                margin: 0,
-                border: '0.5px solid #edebeb'
-              }}
-            />
           </Space>
+          <Divider
+            style={{
+              margin: 0,
+              border: '0.5px solid #edebeb'
+            }}
+          />
         </Flex>
       </ModalComponent>
     );
-
 
   if (type == 1)
     return (
@@ -139,7 +139,7 @@ const ProfileModal = ({ open, setOpen }) => {
               src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709749732/chat_app/b1rj7epnhdqo6t7mcu5w.jpg"
             />
           </Flex>
-          <Space size='middle'>
+          <Space size="middle">
             <Space direction="vertical">
               <Text>FirtName</Text>
               <Input value="Hoàng Gia"></Input>
@@ -177,14 +177,7 @@ const ProfileModal = ({ open, setOpen }) => {
 const ItemInfo = ({ label, value }) => {
   return (
     <Space>
-      <span
-        style={{
-          display: 'block',
-          width: '100px'
-        }}
-      >
-        {label}:
-      </span>
+      <span className="block w-[100px] text-sm">{label}</span>
       <Text>{value}</Text>
     </Space>
   );

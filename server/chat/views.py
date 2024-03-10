@@ -6,6 +6,7 @@ from .serializers import MemberConversationSerializer, ParticipantDetailSerializ
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message
 from django.http import Http404
+from django.db.models import Max
     
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
@@ -15,11 +16,19 @@ class ConversationList(APIView):
     def get(self, request):
         conversations = Conversation.objects.filter(participants__user=request.user)
         
+        conversation_data = []
         for conversation in conversations:
-            messages = Message.objects.filter(conversation=conversation)
-            
+            latest_message = Message.objects.filter(conversation=conversation).aggregate(Max('created_at'))
+            if latest_message['created_at__max'] is not None:
+                latest_message_instance = Message.objects.filter(conversation=conversation, created_at=latest_message['created_at__max']).first()
+                conversation_data.append({
+                    'id': conversation.id, 
+                    'title': conversation.title, 
+                    'image': conversation.image, 
+                    'latest_message': latest_message_instance
+                })
         
-        serializer = self.serializer_class(conversations, many=True)
+        serializer = self.serializer_class(conversation_data, many=True)
         return Response(serializer.data)
     
     # Tạo cuộc hội thoại

@@ -3,6 +3,7 @@ import storage from 'redux-persist/lib/storage';
 import appReducer from './slices/appSlice';
 import authReducer from './slices/authSlice';
 import relationshipReducer from './slices/relationshipSlice';
+import chatReducer from './slices/chatSlice';
 
 const rootPersistConfig = {
   key: 'root',
@@ -14,7 +15,8 @@ const rootPersistConfig = {
 const rootReducer = combineReducers({
   app: appReducer,
   auth: authReducer,
-  relationship: relationshipReducer
+  relationship: relationshipReducer,
+  chat: chatReducer
 });
 
 export { rootPersistConfig, rootReducer };

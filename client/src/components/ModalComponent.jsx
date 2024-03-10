@@ -21,6 +21,7 @@ const ModalComponent = ({
       padding: 0
     },
     footer: {
+      marginTop: 0,
       borderTop: BorderFooter ? '1px solid #edebeb' : ''
     }
   };

@@ -35,3 +35,6 @@ class Message(models.Model): # gửi, xoá
     message = models.TextField()
     message_type = models.IntegerField(choices=[(tag.value, tag.name) for tag in MessageType], default=MessageType.TEXT)
     created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self) -> str:
+        return f"{self.conversation_id}:{self.message_type}:{self.created_at}:{self.message}"

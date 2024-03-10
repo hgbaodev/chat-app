@@ -2,26 +2,39 @@ import { Button, Flex, Input, Space } from 'antd';
 import { ContactItem } from './ContactItem';
 import { SearchOutlined } from '@ant-design/icons';
 import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import AddFriendsModal from '~/section/common/AddFriendsModal';
 import NewGroupModel from '../common/NewGroupModal';
+import { useDispatch, useSelector } from '~/store';
+import { getConversations } from '~/store/slices/chatSlice';
+import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
 
 export const Contacts = ({ ...props }) => {
+  const dispatch = useDispatch();
+  const { conversations, isLoading } = useSelector((state) => state.chat);
+
+  useEffect(() => {
+    dispatch(getConversations());
+  }, [dispatch]);
+
   return (
     <Flex className="h-screen" vertical {...props}>
       <ContactsHeader />
       <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
-        <ContactItem active />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
-        <ContactItem />
+        {!isLoading
+          ? conversations.map((conversation) => (
+            <ContactItem
+              key={conversation.id}
+              title={conversation.title}
+              image={conversation.image}
+              lastestMessage={conversation.latest_message}
+            />
+          ))
+          : Array.from({
+            length: 10
+          }).map((_, i) => {
+            return <ContactItemSkeleton key={i} />;
+          })}
       </Space>
     </Flex>
   );

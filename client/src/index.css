@@ -9,6 +9,8 @@ body {
   font-family: 'Inter', sans-serif;
 }
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
@@ -91,4 +93,8 @@ body::-webkit-scrollbar {
   width: 52px !important;
   height: 52px !important;
   margin: 0 !important;
+}
+
+.ant-skeleton-paragraph {
+  margin-block-start: 8px !important;
 }

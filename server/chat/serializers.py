@@ -6,15 +6,15 @@ from .models import Conversation, Message, Participants
 class NewestMessage(serializers.ModelSerializer):
     class Meta: 
         model = Message
-        fields = ['id','message', 'created_at']
+        fields = ['id','message','sender','message_type','created_at']
     
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
-    newest_message = NewestMessage(read_only=True)
+    latest_message = NewestMessage(read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'newest_message', 'participants']
+        fields = ['id', 'title', 'image', 'latest_message', 'participants']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')

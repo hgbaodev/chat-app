@@ -7,16 +7,12 @@ import {
   Typography,
   message
 } from 'antd';
-import { faker } from '@faker-js/faker';
 import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
-import { useMemo } from 'react';
-export const ContactItem = ({ active }) => {
-  const [hoverRef, isHovering] = useHover();
+import { formatTimeAgo } from '~/utils/formatTimeAgo';
 
-  const avatarSrc = useMemo(() => faker.image.avatarLegacy(), []);
-  const fullName = useMemo(() => faker.person.fullName(), []);
-  const messageContent = useMemo(() => faker.lorem.sentence(), []);
+export const ContactItem = ({ title, image, lastestMessage, active }) => {
+  const [hoverRef, isHovering] = useHover();
 
   const handleDeleteConversation = () => {
     message.success('Delete conversation successfully!');
@@ -58,13 +54,13 @@ export const ContactItem = ({ active }) => {
       justify="space-between"
     >
       <Space className="flex-1">
-        <Avatar size={42} src={avatarSrc} />
+        <Avatar size={42} src={image} />
         <Flex vertical justify="center">
           <Typography className="text-gray-700 font-semibold overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
-            {fullName}
+            {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {messageContent}
+            {lastestMessage.message}
           </Typography>
         </Flex>
       </Space>
@@ -84,11 +80,9 @@ export const ContactItem = ({ active }) => {
           isHovering ? 'hidden' : 'block'
         } text-[10px] text-neutral-500`}
       >
-        {faker.date.anytime().toLocaleTimeString('en-US', {
-          hour: 'numeric',
-          minute: 'numeric'
-        })}
+        {formatTimeAgo(lastestMessage.created_at)}
       </Typography>
     </Flex>
   );
 };
+
