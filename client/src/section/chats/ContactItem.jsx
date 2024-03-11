@@ -60,7 +60,7 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
             {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {lastestMessage.message}
+            {lastestMessage?.message}
           </Typography>
         </Flex>
       </Space>
@@ -80,9 +80,8 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
           isHovering ? 'hidden' : 'block'
         } text-[10px] text-neutral-500`}
       >
-        {formatTimeAgo(lastestMessage.created_at)}
+        {formatTimeAgo(lastestMessage?.created_at)}
       </Typography>
     </Flex>
   );
 };
-

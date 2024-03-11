@@ -21,14 +21,25 @@ export const SocketProvider = ({ children }) => {
     setSocket(socket);
 
     socket.onopen = function (e) {
-      socket.send(JSON.stringify({ type: 'has_connected' }));
+      socket.send(
+        JSON.stringify({
+          source: 'message_send',
+          message: 'Nội dung tin nhắn',
+          message_type: '1',
+          conversation_id: '1'
+        })
+      );
       console.log('socket connected');
     };
 
     socket.onmessage = function (event) {
-      const data = JSON.parse(event.data);
-      if (data.type === 'connected_response') {
-        console.log('Server response:', data.message);
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'chat_message') {
+          console.log('Server response:', data);
+        }
+      } catch (error) {
+        console.error('Error parsing message:', error);
       }
     };
 
