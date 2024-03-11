@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message
 from django.http import Http404, HttpResponseForbidden
 from django.db.models import Max
-    
+from rest_framework.pagination import PageNumberPagination
+
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
@@ -111,14 +112,25 @@ class GetMemberConversation(generics.ListAPIView):
 
 class GetMessagesConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
+    serializer_class = MessageSerializer
 
-    def get(self, request, pk, format=None):
-
-        participant = Participants.objects.filter(conversation_id=pk, user_id=request.user.id).first()
-        print(participant)
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        participant = Participants.objects.filter(conversation_id=pk, user_id=self.request.user.id).first()
         if participant:
             messages = Message.objects.filter(conversation=pk).order_by('created_at')
-            serializer = MessageSerializer(messages, many=True)
-            return Response(serializer.data)
-        return Response({'error': 'You can not access this conversation.'}, status=403)
+            return messages
+        else:
+            return Message.objects.none()  # Return an empty queryset if the user doesn't have access
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
        
