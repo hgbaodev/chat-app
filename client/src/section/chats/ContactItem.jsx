@@ -50,7 +50,7 @@ export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
 
   // handle get all messages
   const getAllMessages = () => {
-    dispatch(setCurrentConversation(id));
+    dispatch(setCurrentConversation({ id, title, image }));
   };
   return (
     <Flex

@@ -5,7 +5,7 @@ from rest_framework import generics
 from .serializers import MemberConversationSerializer, ParticipantDetailSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message
-from django.http import Http404
+from django.http import Http404, HttpResponseForbidden
 from django.db.models import Max
     
 class ConversationList(APIView):
@@ -115,7 +115,12 @@ class GetMessagesConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, pk, format=None):
-        conversation = Conversation.objects.get(pk=pk)
-        messages = Message.objects.filter(conversation=conversation)
-        serializer = MessageSerializer(messages, many=True)
-        return Response(serializer.data)
+
+        participant = Participants.objects.filter(conversation_id=pk, user_id=request.user.id).first()
+        print(participant)
+        if participant:
+            messages = Message.objects.filter(conversation=pk)
+            serializer = MessageSerializer(messages, many=True)
+            return Response(serializer.data)
+        return Response({'error': 'You can not access this conversation.'}, status=403)
+       

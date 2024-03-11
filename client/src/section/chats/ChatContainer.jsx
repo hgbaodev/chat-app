@@ -13,8 +13,8 @@ export const ChatContainer = () => {
   const scrollRef = useRef(null);
   // effect
   useEffect(() => {
-    if (chat.currentConversation) {
-      dispatch(getMessagesOfConversation(chat.currentConversation));
+    if (chat.currentConversation.id) {
+      dispatch(getMessagesOfConversation(chat.currentConversation.id));
     }
   }, [dispatch, chat.currentConversation]);
 
@@ -33,7 +33,7 @@ export const ChatContainer = () => {
       <ChatHeader />
       <Space
         direction="vertical"
-        className="p-4 overflow-y-auto "
+        className="p-4 overflow-y-auto custom-scrollbar"
         style={{
           height: 'calc(100vh - 120px)',
           boxShadow:
