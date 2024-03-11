@@ -44,7 +44,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       socket.close();
     };
-  }, [isAuthenticated]);
+  }, [dispatch, isAuthenticated]);
   return (
     <SocketContext.Provider value={{ socketInstance }}>
       {children}

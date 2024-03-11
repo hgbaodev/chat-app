@@ -3,13 +3,14 @@ import { ChatHeader } from './ChatHeader';
 import { ChatFooter } from './ChatFooter';
 import { TextMessage } from './MessageTypes';
 import { useDispatch, useSelector } from '~/store';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { getMessagesOfConversation } from '~/store/slices/chatSlice';
 import Loader from '~/components/Loader';
 export const ChatContainer = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
 
+  const scrollRef = useRef(null);
   // effect
   useEffect(() => {
     if (chat.currentConversation) {
@@ -17,6 +18,15 @@ export const ChatContainer = () => {
     }
   }, [dispatch, chat.currentConversation]);
 
+  // effect
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo({
+        top: scrollRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  }, [scrollRef, chat.messages]);
   // render
   return (
     <Flex vertical className="h-full flex-1">
@@ -29,6 +39,7 @@ export const ChatContainer = () => {
           boxShadow:
             '0px 2px 2px -2px rgba(0,0,0,.2), 0px -2px 2px -2px rgba(0,0,0,.2)'
         }}
+        ref={scrollRef}
       >
         {chat.isLoading ? (
           <Loader />
