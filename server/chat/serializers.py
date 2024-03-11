@@ -88,7 +88,7 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
 class SenderSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['first_name', 'last_name', 'avatar']
+        fields = ['id', 'first_name', 'last_name', 'avatar']
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()

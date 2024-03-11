@@ -1,15 +1,16 @@
 import Cookies from 'js-cookie';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { useSelector } from '~/store';
+import { useDispatch, useSelector } from '~/store';
+import { receiverMessage } from '~/store/slices/chatSlice';
 export const SocketContext = createContext({
-  socket: null,
-  isConnected: false
+  socketInstance: null
 });
 
 export const SocketProvider = ({ children }) => {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const [socket, setSocket] = useState(null);
+  const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
   useEffect(() => {
@@ -18,17 +19,18 @@ export const SocketProvider = ({ children }) => {
     const endpoint = `ws://127.0.0.1:8000/ws/chat/${token}/`;
     var socket = new ReconnectingWebSocket(endpoint);
 
-    setSocket(socket);
-
     socket.onopen = function (e) {
-      socket.send(JSON.stringify({ type: 'has_connected' }));
       console.log('socket connected');
     };
 
     socket.onmessage = function (event) {
-      const data = JSON.parse(event.data);
-      if (data.type === 'connected_response') {
-        console.log('Server response:', data.message);
+      try {
+        const data = JSON.parse(event.data);
+        if (data.type === 'chat_message') {
+          dispatch(receiverMessage(data.message));
+        }
+      } catch (error) {
+        console.error('Error parsing message:', error);
       }
     };
 
@@ -36,12 +38,16 @@ export const SocketProvider = ({ children }) => {
       console.log('socket disconnected');
     };
 
+    setSocketInstance(socket);
+
     // clean up
     return () => {
       socket.close();
     };
-  }, [isAuthenticated]);
+  }, [dispatch, isAuthenticated]);
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{ socketInstance }}>
+      {children}
+    </SocketContext.Provider>
   );
 };

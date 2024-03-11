@@ -29,17 +29,11 @@ class ChatConsumer(WebsocketConsumer):
             self.close()
 
     def disconnect(self, close_code):
-        OnlineUser.objects.get(user=self.scope["user"]).delete()
+        OnlineUser.objects.filter(user=self.scope["user"]).delete()
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
-        pass
 
-    def receive_connected(self, event):
-        self.send(text_data=json.dumps({
-            'type': 'connected_response',
-            'message': 'You have successfully connected to the server.'
-        }))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -54,7 +48,6 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         sender = self.scope["user"]
         conversation = Conversation.objects.get(id=conversation_id)
-        
         # Create message
         message = Message.objects.create(
             conversation=conversation,
@@ -64,24 +57,24 @@ class ChatConsumer(WebsocketConsumer):
         )
         
         # Get member of conversation
-        online_users = OnlineUser.objects.all()
-        participants_online = Participants.objects.filter(
-            conversation=conversation
-        ).select_related('user').filter(user__in=online_users.values_list('user', flat=True))
+        # online_users = OnlineUser.objects.all()
+
+        # participants_online = Participants.objects.filter(
+        #     conversation=conversation
+        # ).select_related('user').filter(user__in=online_users.values_list('user', flat=True))
         
+        participants = Participants.objects.filter(conversation_id=conversation_id)
         message_serializer = MessageSerializer(instance=message)
-        for participant in participants_online:
+       
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
-                f"user_{participant.user.pk}", {"type": "chat.message", "message": message_serializer.data}
+               room_group_name, {"type": "chat_message", "message": message_serializer.data}
             )
 
-    def chat_message(self, event):
-        message = event["message"]
-        # Send message to WebSocket
-        self.send(text_data=json.dumps(message))
 
-    def send_friend_request(self, event):
-        message = event['message']
-        self.send(text_data=json.dumps({
-            'message': message,
-        }))
+    def chat_message(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def receive_send_friend_request(self, event):
+        print('oke')

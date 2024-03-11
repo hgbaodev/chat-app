@@ -10,9 +10,13 @@ import {
 import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
+import { useDispatch } from '~/store';
+import { setCurrentConversation } from '~/store/slices/chatSlice';
 
-export const ContactItem = ({ title, image, lastestMessage, active }) => {
+export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
   const [hoverRef, isHovering] = useHover();
+
+  const dispatch = useDispatch();
 
   const handleDeleteConversation = () => {
     message.success('Delete conversation successfully!');
@@ -44,6 +48,10 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
     }
   ];
 
+  // handle get all messages
+  const getAllMessages = () => {
+    dispatch(setCurrentConversation(id));
+  };
   return (
     <Flex
       ref={hoverRef}
@@ -52,6 +60,7 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
       } px-4 py-3 cursor-pointer`}
       align="center"
       justify="space-between"
+      onClick={getAllMessages}
     >
       <Space className="flex-1">
         <Avatar size={42} src={image} />
@@ -60,7 +69,7 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
             {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {lastestMessage.message}
+            {lastestMessage?.message}
           </Typography>
         </Flex>
       </Space>
@@ -80,9 +89,8 @@ export const ContactItem = ({ title, image, lastestMessage, active }) => {
           isHovering ? 'hidden' : 'block'
         } text-[10px] text-neutral-500`}
       >
-        {formatTimeAgo(lastestMessage.created_at)}
+        {formatTimeAgo(lastestMessage?.created_at)}
       </Typography>
     </Flex>
   );
 };
-
