@@ -13,11 +13,11 @@ export const SocketProvider = ({ children }) => {
 
   // effect
   useEffect(() => {
-    const endpoint = 'ws://127.0.0.1:8000/ws/chat/';
+    if (!Cookies.get('token')) return;
+    const endpoint = `ws://127.0.0.1:8000/ws/chat/?token=${Cookies.get(
+      'token'
+    )}`;
     var socket = new ReconnectingWebSocket(endpoint);
-    socket.headers = {
-      authorization: `Bearer ${Cookies.get('token')}`
-    };
 
     setSocket(socket);
 
