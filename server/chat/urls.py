@@ -1,6 +1,5 @@
 from django.urls import path
 from .views import ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, GetMemberConversation
-
 urlpatterns = [
     path('conversations/', ConversationList.as_view(), name='conversations'),
     path('conversations/<int:pk>/', ConversationDetail.as_view(), name='conversation-detail'),

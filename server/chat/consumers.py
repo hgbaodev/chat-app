@@ -3,10 +3,14 @@ from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from .serializers import MessageSerializer
 from .models import Message, Conversation, Participants, OnlineUser, OnlineUser
-from django.db.models import Q
 
 class ChatConsumer(WebsocketConsumer):
     def connect(self):
+        
+        # test
+        authorization_header = next((value.decode('utf-8') for name, value in self.scope.get('headers', []) if name == b'authorization'), None)
+        print('token', authorization_header)
+        
         user_id = self.scope["user"].id
         if user_id is not None:
             self.room_name = user_id
@@ -20,11 +24,20 @@ class ChatConsumer(WebsocketConsumer):
         else:
             self.close()
 
+        
+
     def disconnect(self, close_code):
         OnlineUser.objects.get(user=self.scope["user"]).delete()
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
+        pass
+
+    def receive_connected(self, event):
+        self.send(text_data=json.dumps({
+            'type': 'connected_response',
+            'message': 'You have successfully connected to the server.'
+        }))
 
     def receive(self, text_data):
         data = json.loads(text_data)
@@ -62,7 +75,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def chat_message(self, event):
         message = event["message"]
-
         # Send message to WebSocket
         self.send(text_data=json.dumps(message))
 
