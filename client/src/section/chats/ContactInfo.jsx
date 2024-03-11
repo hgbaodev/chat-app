@@ -35,7 +35,9 @@ export const ContactInfo = () => {
   return (
     <Flex
       vertical
-      className={`w-[350px] ${!screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''}`}
+      className={`w-[350px] ${
+        !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
+      }`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
     >
       <Flex
@@ -85,7 +87,7 @@ export const ContactInfo = () => {
         <Typography>{faker.lorem.sentence()}</Typography>
 
         <Divider className="my-2" />
-        <Flex justify="space-between">
+        <Flex justify="space-between" align="center">
           <Typography className="font-bold m-0">
             Media, Links and Docs
           </Typography>
