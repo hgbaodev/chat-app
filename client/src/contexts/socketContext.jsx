@@ -1,12 +1,14 @@
 import Cookies from 'js-cookie';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { useSelector } from '~/store';
+import { useDispatch, useSelector } from '~/store';
+import { receiverMessage } from '~/store/slices/chatSlice';
 export const SocketContext = createContext({
   socketInstance: null
 });
 
 export const SocketProvider = ({ children }) => {
+  const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
   const [socketInstance, setSocketInstance] = useState(null);
 
@@ -25,7 +27,7 @@ export const SocketProvider = ({ children }) => {
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'chat_message') {
-          console.log('Server response:', data);
+          dispatch(receiverMessage(data.message));
         }
       } catch (error) {
         console.error('Error parsing message:', error);

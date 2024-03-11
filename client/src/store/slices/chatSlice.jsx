@@ -44,6 +44,9 @@ const chatSlice = createSlice({
   reducers: {
     setCurrentConversation(state, action) {
       state.chat.currentConversation = action.payload;
+    },
+    receiverMessage(state, action) {
+      state.chat.messages.push(action.payload);
     }
   },
   extraReducers: (builder) => {
@@ -72,4 +75,4 @@ const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
-export const { setCurrentConversation } = chatSlice.actions;
+export const { setCurrentConversation, receiverMessage } = chatSlice.actions;

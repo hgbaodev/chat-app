@@ -3,14 +3,32 @@ import EmojiPicker from 'emoji-picker-react';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import { IoHappyOutline, IoSendSharp } from 'react-icons/io5';
+import { useSocket } from '~/hooks/useSocket';
+import { useSelector } from '~/store';
 export const ChatFooter = () => {
+  const { chat } = useSelector((state) => state.chat);
+  const { emitMessage } = useSocket();
+
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
+
   // handle
   const handleEmojiClick = (emoji) => {
     setText((pre) => pre + emoji.emoji);
   };
 
+  // handle send message
+  const handleSendMessage = () => {
+    if (text) {
+      emitMessage({
+        conversation_id: chat.currentConversation,
+        message: text,
+        message_type: 1 // default
+      });
+      // reset text
+      setText('');
+    }
+  };
   // render
   return (
     <Flex className="relative h-[60px] p-3" align="center" gap="small">
@@ -51,6 +69,7 @@ export const ChatFooter = () => {
         icon={<IoSendSharp size={20} />}
         size="large"
         className="text-blue-500 hover:text-blue-500"
+        onClick={handleSendMessage}
       />
     </Flex>
   );
