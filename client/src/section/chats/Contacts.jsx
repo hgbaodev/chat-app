@@ -29,7 +29,7 @@ export const Contacts = ({ ...props }) => {
                 title={conversation.title}
                 image={conversation.image}
                 lastestMessage={conversation.latest_message}
-                active={conversation.id == chat.currentConversation}
+                active={conversation.id == chat.currentConversation.id}
               />
             ))
           : Array.from({

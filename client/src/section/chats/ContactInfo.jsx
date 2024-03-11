@@ -20,10 +20,12 @@ import { GrGroup, GrNotification, GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { useState } from 'react';
 import ProfileModal from '~/section/common/ProfileModal';
+import { useSelector } from '~/store';
 const { useBreakpoint } = Grid;
 
 export const ContactInfo = () => {
   const dispatch = useDispatch();
+  const { chat } = useSelector((state) => state.chat);
   const screens = useBreakpoint();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -35,7 +37,9 @@ export const ContactInfo = () => {
   return (
     <Flex
       vertical
-      className={`w-[350px] ${!screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''}`}
+      className={`w-[350px] ${
+        !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
+      }`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
     >
       <Flex
@@ -58,17 +62,15 @@ export const ContactInfo = () => {
           <Avatar
             size={64}
             onClick={() => setIsModalOpen(true)}
-            className="bg-[#fde3cf] text-[#f56a00] cursor-pointer"
-          >
-            {faker.person.fullName()[0].toUpperCase()}
-          </Avatar>
+            src={chat.currentConversation.image}
+          />
           <ProfileModal
             isModalOpen={isModalOpen}
             setIsModalOpen={setIsModalOpen}
           />
           <Space align="center" className="mb-4">
             <Title level={5} className="!m-0">
-              {faker.person.fullName()}
+              {chat.currentConversation.title}
             </Title>
             <Button
               type="text"

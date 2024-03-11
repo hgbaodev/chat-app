@@ -31,7 +31,11 @@ export const getMessagesOfConversation = createAsyncThunk(
 const initialState = {
   conversations: [],
   chat: {
-    currentConversation: null,
+    currentConversation: {
+      id: null,
+      title: null,
+      image: null
+    },
     messages: [],
     isLoading: false
   },
@@ -47,6 +51,11 @@ const chatSlice = createSlice({
     },
     receiverMessage(state, action) {
       state.chat.messages.push(action.payload);
+      state.conversations.map((conversation) => {
+        if (conversation.id === action.payload.conversation_id) {
+          conversation.latest_message = action.payload;
+        }
+      });
     }
   },
   extraReducers: (builder) => {
