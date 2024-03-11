@@ -2,29 +2,31 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from .serializers import MessageSerializer
-from .models import Message, Conversation, Participants, OnlineUser, OnlineUser
+from .models import Message, Conversation, Participants, OnlineUser
+from authentication.models import User
+from rest_framework_simplejwt.tokens import AccessToken
 
 class ChatConsumer(WebsocketConsumer):
+    
     def connect(self):
+        token = self.scope["url_route"]["kwargs"]["token"]
         
-        # test
-        authorization_header = next((value.decode('utf-8') for name, value in self.scope.get('headers', []) if name == b'authorization'), None)
-        print('token', authorization_header)
-        
-        user_id = self.scope["user"].id
-        if user_id is not None:
-            self.room_name = user_id
+        access_token_obj = AccessToken(token)
+        user_id = access_token_obj['user_id']
+        user = User.objects.get(id=user_id)
+
+        self.scope["user"] = user
+        print(self.scope["user"])
+        if user.is_authenticated:
+            self.room_name = user.id
             self.room_group_name = f"user_{self.room_name}"
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name, self.channel_name
             )
-            OnlineUser.objects.create(user=self.scope["user"])
-            print(self.scope["user"])
+            OnlineUser.objects.create(user=user)
             self.accept()
         else:
             self.close()
-
-        
 
     def disconnect(self, close_code):
         OnlineUser.objects.get(user=self.scope["user"]).delete()

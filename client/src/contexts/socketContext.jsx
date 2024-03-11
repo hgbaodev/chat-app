@@ -13,10 +13,9 @@ export const SocketProvider = ({ children }) => {
 
   // effect
   useEffect(() => {
-    if (!Cookies.get('token')) return;
-    const endpoint = `ws://127.0.0.1:8000/ws/chat/?token=${Cookies.get(
-      'token'
-    )}`;
+    let token = Cookies.get('token');
+    if (!token) return;
+    const endpoint = `ws://127.0.0.1:8000/ws/chat/${token}/`;
     var socket = new ReconnectingWebSocket(endpoint);
 
     setSocket(socket);
