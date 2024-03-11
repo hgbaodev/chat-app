@@ -12,23 +12,21 @@ class ConversationList(APIView):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
     
-    # Lấy danh sách cuộc hội thoại (Chưa lấy được tin nhắn mới nhất)
     def get(self, request):
         conversations = Conversation.objects.filter(participants__user=request.user)
         # 
-        print('conversations', conversations)
-
-        # 
         conversation_data = []
         for conversation in conversations:
-            latest_message = Message.objects.filter(conversation=conversation).aggregate(Max('created_at'))
-            if latest_message['created_at__max'] is not None:
-                latest_message_instance = Message.objects.filter(conversation=conversation, created_at=latest_message['created_at__max']).first()
+            sorted_messages = Message.objects.filter(conversation=conversation.id).order_by('-created_at')
+
+            latest_message = sorted_messages.first()
+
+            if latest_message is not None:
                 conversation_data.append({
                     'id': conversation.id, 
                     'title': conversation.title, 
                     'image': conversation.image, 
-                    'latest_message': latest_message_instance
+                    'latest_message': latest_message
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
@@ -119,7 +117,7 @@ class GetMessagesConversation(generics.ListAPIView):
         participant = Participants.objects.filter(conversation_id=pk, user_id=request.user.id).first()
         print(participant)
         if participant:
-            messages = Message.objects.filter(conversation=pk)
+            messages = Message.objects.filter(conversation=pk).order_by('created_at')
             serializer = MessageSerializer(messages, many=True)
             return Response(serializer.data)
         return Response({'error': 'You can not access this conversation.'}, status=403)
