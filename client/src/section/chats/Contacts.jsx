@@ -11,7 +11,7 @@ import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
 
 export const Contacts = ({ ...props }) => {
   const dispatch = useDispatch();
-  const { conversations, isLoading } = useSelector((state) => state.chat);
+  const { conversations, isLoading, chat } = useSelector((state) => state.chat);
 
   useEffect(() => {
     dispatch(getConversations());
@@ -23,18 +23,20 @@ export const Contacts = ({ ...props }) => {
       <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
         {!isLoading
           ? conversations.map((conversation) => (
-            <ContactItem
-              key={conversation.id}
-              title={conversation.title}
-              image={conversation.image}
-              lastestMessage={conversation.latest_message}
-            />
-          ))
+              <ContactItem
+                key={conversation.id}
+                id={conversation.id}
+                title={conversation.title}
+                image={conversation.image}
+                lastestMessage={conversation.latest_message}
+                active={conversation.id == chat.currentConversation}
+              />
+            ))
           : Array.from({
-            length: 10
-          }).map((_, i) => {
-            return <ContactItemSkeleton key={i} />;
-          })}
+              length: 10
+            }).map((_, i) => {
+              return <ContactItemSkeleton key={i} />;
+            })}
       </Space>
     </Flex>
   );

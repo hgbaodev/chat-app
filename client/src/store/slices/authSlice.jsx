@@ -83,6 +83,7 @@ const initialState = {
   isAuthenticated: false,
   loaded: false,
   user: {
+    id: null,
     email: null,
     fullName: null,
     avatar: null
@@ -105,6 +106,7 @@ const authSlice = createSlice({
         const result = action.payload.data.result;
         state.isLoaded = true;
         state.isAuthenticated = true;
+        state.user.id = result.id;
         state.user.email = result.email;
         state.user.fullName = result.full_name;
         state.user.avatar = result.avatar;
@@ -151,6 +153,7 @@ const authSlice = createSlice({
         const result = action.payload.data?.result;
         state.isAuthenticated = true;
         state.isLoaded = true;
+        state.user.id = result.id;
         state.user.email = result.email;
         state.user.avatar = result.avatar;
         state.user.fullName = result.full_name;

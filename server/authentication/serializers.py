@@ -52,7 +52,7 @@ class LoginSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        fields = ['email', 'password', 'full_name', 'avatar', 'access_token', 'refresh_token']
+        fields = ['id', 'email', 'password', 'full_name', 'avatar', 'access_token', 'refresh_token']
     
     def validate(self, attrs):
         
@@ -69,6 +69,7 @@ class LoginSerializer(serializers.ModelSerializer):
         avatar = cloudinary.api.resource_by_asset_id(user.avatar)
         tokens = user.tokens()
         return {
+            'id': user.id,
             'email': user.email,
             'full_name': user.get_full_name,
             'avatar': avatar.get('secure_url'),
@@ -161,7 +162,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'full_name', 'avatar'] 
+        fields = ['id', 'email', 'full_name', 'avatar'] 
 
     def get_full_name(self, obj):
         return obj.get_full_name
@@ -183,7 +184,7 @@ class GetInfoUserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'first_name', 'last_name', 'full_name', 'avatar', 'phone', 'birthday', 'about'] 
+        fields = ['id', 'email', 'first_name', 'last_name', 'full_name', 'avatar', 'phone', 'birthday', 'about'] 
 
     def get_full_name(self, obj):
         return obj.get_full_name
