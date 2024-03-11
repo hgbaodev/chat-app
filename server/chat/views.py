@@ -15,7 +15,10 @@ class ConversationList(APIView):
     # Lấy danh sách cuộc hội thoại (Chưa lấy được tin nhắn mới nhất)
     def get(self, request):
         conversations = Conversation.objects.filter(participants__user=request.user)
-        
+        # 
+        print('conversations', conversations)
+
+        # 
         conversation_data = []
         for conversation in conversations:
             latest_message = Message.objects.filter(conversation=conversation).aggregate(Max('created_at'))
