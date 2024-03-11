@@ -66,19 +66,15 @@ class ChatConsumer(WebsocketConsumer):
         participants = Participants.objects.filter(conversation_id=conversation_id)
         message_serializer = MessageSerializer(instance=message)
        
-        
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
                room_group_name, {"type": "chat_message", "message": message_serializer.data}
             )
-        
 
 
     def chat_message(self, event):
         self.send(text_data=json.dumps(event))
 
-    def send_friend_request(self, event):
-        message = event['message']
-        # Send message to WebSocket
-        self.send(text_data=json.dumps(message))
+    def receive_send_friend_request(self, event):
+        print('oke')

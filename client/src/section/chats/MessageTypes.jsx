@@ -3,13 +3,14 @@ import { GoDownload } from 'react-icons/go';
 import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
+import { useSelector } from '~/store';
 
 export const MessageWrapper = ({ from, children, ...props }) => {
-  const userId = '9999';
+  const { user } = useSelector((state) => state.auth);
   const [hoverRef, isHovering] = useHover();
   return (
-    <Flex ref={hoverRef} justify={from === userId ? 'end' : 'start'}>
-      {from !== userId && (
+    <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
+      {from !== user.id && (
         <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
           B
         </Avatar>
@@ -17,7 +18,7 @@ export const MessageWrapper = ({ from, children, ...props }) => {
       <Flex align="center" gap={20}>
         <Flex
           className={`${
-            from === userId ? 'bg-blue-500 text-white' : 'bg-gray-100'
+            from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
           }  p-2 rounded-lg cursor-pointer`}
           {...props}
         >
@@ -25,7 +26,7 @@ export const MessageWrapper = ({ from, children, ...props }) => {
         </Flex>
         <MessageAction
           className={`${
-            from === userId ? '-order-last flex-row-reverse' : ''
+            from === user.id ? '-order-last flex-row-reverse' : ''
           } ${isHovering ? 'visible' : 'invisible'}`}
         />
       </Flex>
@@ -33,10 +34,10 @@ export const MessageWrapper = ({ from, children, ...props }) => {
   );
 };
 
-export const TextMessage = ({ from, text }) => {
+export const TextMessage = ({ sender, message }) => {
   return (
-    <MessageWrapper from={from}>
-      <Typography className="text-inherit">{text}</Typography>
+    <MessageWrapper from={sender.id}>
+      <Typography className="text-inherit">{message}</Typography>
     </MessageWrapper>
   );
 };

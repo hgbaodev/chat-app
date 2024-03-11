@@ -3,13 +3,12 @@ import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useSelector } from '~/store';
 export const SocketContext = createContext({
-  socket: null,
-  isConnected: false
+  socketInstance: null
 });
 
 export const SocketProvider = ({ children }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const [socket, setSocket] = useState(null);
+  const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
   useEffect(() => {
@@ -18,17 +17,7 @@ export const SocketProvider = ({ children }) => {
     const endpoint = `ws://127.0.0.1:8000/ws/chat/${token}/`;
     var socket = new ReconnectingWebSocket(endpoint);
 
-    setSocket(socket);
-
     socket.onopen = function (e) {
-      socket.send(
-        JSON.stringify({
-          source: 'message_send',
-          message: 'Nội dung tin nhắn',
-          message_type: '1',
-          conversation_id: '1'
-        })
-      );
       console.log('socket connected');
     };
 
@@ -47,12 +36,16 @@ export const SocketProvider = ({ children }) => {
       console.log('socket disconnected');
     };
 
+    setSocketInstance(socket);
+
     // clean up
     return () => {
       socket.close();
     };
   }, [isAuthenticated]);
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={{ socketInstance }}>
+      {children}
+    </SocketContext.Provider>
   );
 };

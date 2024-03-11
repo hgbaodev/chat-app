@@ -1,4 +1,4 @@
-import { Flex, Grid } from 'antd';
+import { Empty, Flex, Grid } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { ChatContainer } from '~/section/chats/ChatContainer';
@@ -10,6 +10,7 @@ const { useBreakpoint } = Grid;
 
 const Chat = () => {
   const { contactInfo } = useSelector((state) => state.app);
+  const { chat } = useSelector((state) => state.chat);
   const screens = useBreakpoint();
   const dispatch = useDispatch();
 
@@ -24,18 +25,24 @@ const Chat = () => {
         className="w-[350px]"
       />
       <Flex className="w-full h-full flex-1 relative">
-        <ChatContainer />
-        {contactInfo.open &&
-          (() => {
-            switch (contactInfo.type) {
-            case 'CONTACT':
-              return <ContactInfo />;
-            case 'SHARED':
-              return <SharedMessages />;
-            default:
-              return <></>;
-            }
-          })()}
+        {chat.currentConversation ? (
+          <>
+            <ChatContainer />
+            {contactInfo.open &&
+              (() => {
+                switch (contactInfo.type) {
+                  case 'CONTACT':
+                    return <ContactInfo />;
+                  case 'SHARED':
+                    return <SharedMessages />;
+                  default:
+                    return <></>;
+                }
+              })()}{' '}
+          </>
+        ) : (
+          <Empty />
+        )}
       </Flex>
     </Flex>
   );

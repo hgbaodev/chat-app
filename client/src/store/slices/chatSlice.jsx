@@ -14,15 +14,38 @@ export const getConversations = createAsyncThunk(
   }
 );
 
+export const getMessagesOfConversation = createAsyncThunk(
+  'auth/getMessagesOfConversation',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `/chat/conversations/${conversation_id}/messages`
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
+  chat: {
+    currentConversation: null,
+    messages: [],
+    isLoading: false
+  },
   isLoading: true
 };
 
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
-  reducers: {},
+  reducers: {
+    setCurrentConversation(state, action) {
+      state.chat.currentConversation = action.payload;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state) => {
@@ -34,8 +57,19 @@ const chatSlice = createSlice({
       })
       .addCase(getConversations.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getMessagesOfConversation.pending, (state) => {
+        state.chat.isLoading = true;
+      })
+      .addCase(getMessagesOfConversation.fulfilled, (state, action) => {
+        state.chat.messages = action.payload.data;
+        state.chat.isLoading = false;
+      })
+      .addCase(getMessagesOfConversation.rejected, (state) => {
+        state.chat.isLoading = false;
       });
   }
 });
 
 export default chatSlice.reducer;
+export const { setCurrentConversation } = chatSlice.actions;
