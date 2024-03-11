@@ -12,6 +12,7 @@ import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
 
 export const Contacts = ({ ...props }) => {
   const dispatch = useDispatch();
+  const [find, setFind] = useState(false);
   const { conversations, isLoading, chat } = useSelector((state) => state.chat);
   const conversationsList = [...conversations];
   useEffect(() => {
@@ -20,7 +21,8 @@ export const Contacts = ({ ...props }) => {
 
   return (
     <Flex className="h-screen" vertical {...props}>
-      <ContactsHeader />
+      {!find ? <>
+      <ContactsHeader setFind={setFind} />
       <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
         {!isLoading
           ? conversationsList
@@ -49,11 +51,12 @@ export const Contacts = ({ ...props }) => {
               return <ContactItemSkeleton key={i} />;
             })}
       </Space>
+      </> : <><ContactsHeaderFind setFind={setFind} /></>}
     </Flex>
   );
 };
 
-const ContactsHeader = () => {
+const ContactsHeader = ({ setFind }) => {
   const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
 
@@ -64,6 +67,7 @@ const ContactsHeader = () => {
           variant="filled"
           placeholder="Search here..."
           prefix={<SearchOutlined />}
+          onClick={() => setFind(true)}
         />
         <Button
           type="text"
@@ -88,6 +92,22 @@ const ContactsHeader = () => {
           setIsModalOpen={setIsNewGroupModalOpen}
         />
       )}
+    </>
+  );
+};
+
+const ContactsHeaderFind = ({ setFind }) => {
+  return (
+    <>
+      <Space className="w-[100%] p-4">
+        <Input
+          variant="filled"
+          placeholder="Search here..."
+          prefix={<SearchOutlined />}
+          autoFocus
+        />
+        <Button type="text" onClick={() => setFind(false)}>Close</Button>
+      </Space>
     </>
   );
 };
