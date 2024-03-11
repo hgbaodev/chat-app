@@ -22,7 +22,7 @@ export const ChatFooter = () => {
     e.preventDefault();
     if (text) {
       emitMessage({
-        conversation_id: chat.currentConversation,
+        conversation_id: chat.currentConversation.id,
         message: text,
         message_type: 1 // default
       });

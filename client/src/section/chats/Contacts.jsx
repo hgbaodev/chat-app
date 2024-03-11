@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { Button, Flex, Input, Space } from 'antd';
 import { ContactItem } from './ContactItem';
 import { SearchOutlined } from '@ant-design/icons';
@@ -12,7 +13,7 @@ import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
 export const Contacts = ({ ...props }) => {
   const dispatch = useDispatch();
   const { conversations, isLoading, chat } = useSelector((state) => state.chat);
-
+  const conversationsList = [...conversations];
   useEffect(() => {
     dispatch(getConversations());
   }, [dispatch]);
@@ -22,16 +23,26 @@ export const Contacts = ({ ...props }) => {
       <ContactsHeader />
       <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
         {!isLoading
-          ? conversations.map((conversation) => (
-              <ContactItem
-                key={conversation.id}
-                id={conversation.id}
-                title={conversation.title}
-                image={conversation.image}
-                lastestMessage={conversation.latest_message}
-                active={conversation.id == chat.currentConversation.id}
-              />
-            ))
+          ? conversationsList
+              .sort((a, b) => {
+                const createdA = new Date(
+                  a.latest_message.created_at
+                ).getTime();
+                const createdB = new Date(
+                  b.latest_message.created_at
+                ).getTime();
+                return createdB - createdA;
+              })
+              .map((conversation) => (
+                <ContactItem
+                  key={conversation.id}
+                  id={conversation.id}
+                  title={conversation.title}
+                  image={conversation.image}
+                  lastestMessage={conversation.latest_message}
+                  active={conversation.id == chat.currentConversation.id}
+                />
+              ))
           : Array.from({
               length: 10
             }).map((_, i) => {
