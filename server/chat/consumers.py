@@ -72,9 +72,10 @@ class ChatConsumer(WebsocketConsumer):
                room_group_name, {"type": "chat_message", "message": message_serializer.data}
             )
 
+    def receive_friend_request(self, event):
+        self.send(text_data=json.dumps(event))
 
     def chat_message(self, event):
         self.send(text_data=json.dumps(event))
 
-    def receive_send_friend_request(self, event):
-        print('oke')
+    

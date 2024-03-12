@@ -63,6 +63,20 @@ export const getAllFriendRequests = createAsyncThunk(
   }
 );
 
+export const getNumberOfReceiveFriendRequests = createAsyncThunk(
+  'relationship/getNumberOfReceiveFriendRequests',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `relationship/friend-requests/receive-friend-requests/count`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const deleteFriendRequest = createAsyncThunk(
   'relationship/deleteFriendRequest',
   async (friend_request_id, { rejectWithValue }) => {
@@ -107,7 +121,11 @@ export const getAllFriends = createAsyncThunk(
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
-  reducers: {},
+  reducers: {
+    receiveFriendRequest(state, action) {
+      state.received_friend_requests.push(action.payload);
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getRecommendedUsers.pending, (state) => {
@@ -186,8 +204,22 @@ const relationshipSlice = createSlice({
       })
       .addCase(getAllFriends.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getNumberOfReceiveFriendRequests.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getNumberOfReceiveFriendRequests.fulfilled, (state, action) => {
+        state.received_friend_requests = Array.from(
+          { length: action.payload.data.result },
+          (_, index) => index
+        );
+        state.isLoading = false;
+      })
+      .addCase(getNumberOfReceiveFriendRequests.rejected, (state) => {
+        state.isLoading = false;
       });
   }
 });
 
 export default relationshipSlice.reducer;
+export const { receiveFriendRequest } = relationshipSlice.actions;

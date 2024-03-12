@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
 import { receiverMessage } from '~/store/slices/chatSlice';
+import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
 export const SocketContext = createContext({
   socketInstance: null
 });
@@ -28,6 +29,11 @@ export const SocketProvider = ({ children }) => {
         const data = JSON.parse(event.data);
         if (data.type === 'chat_message') {
           dispatch(receiverMessage(data.message));
+        } else if (data.type === 'receive_friend_request') {
+          console.log('====================================');
+          console.log(data.message);
+          console.log('====================================');
+          dispatch(receiveFriendRequest(data.message));
         }
       } catch (error) {
         console.error('Error parsing message:', error);
