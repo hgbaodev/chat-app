@@ -121,7 +121,11 @@ export const getAllFriends = createAsyncThunk(
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
-  reducers: {},
+  reducers: {
+    receiveFriendRequest(state, action) {
+      state.received_friend_requests.push(action.payload);
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getRecommendedUsers.pending, (state) => {
@@ -218,3 +222,4 @@ const relationshipSlice = createSlice({
 });
 
 export default relationshipSlice.reducer;
+export const { receiveFriendRequest } = relationshipSlice.actions;
