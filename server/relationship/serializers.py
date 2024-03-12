@@ -37,11 +37,14 @@ class GetAllFriendRequestSerializer(serializers.ModelSerializer):
         friend_requests = friend_requests = FriendRequest.objects.filter(Q(sender=user_id) | Q(receiver=user_id))
         return friend_requests
 
+
+
 class SendFriendRequestSerializer(serializers.Serializer):
-    
+    id = serializers.IntegerField(read_only=True)
     sender = UserSerializer(read_only=True)
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     message = serializers.CharField()
+    created_at = serializers.DateTimeField(read_only=True)
 
     def validate(self, data):
         data['sender'] = self.context['request'].user
