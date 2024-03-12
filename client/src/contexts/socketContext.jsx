@@ -28,6 +28,8 @@ export const SocketProvider = ({ children }) => {
         const data = JSON.parse(event.data);
         if (data.type === 'chat_message') {
           dispatch(receiverMessage(data.message));
+        } else if (data.type === 'receive_friend_request') {
+          console.log(data.message);
         }
       } catch (error) {
         console.error('Error parsing message:', error);

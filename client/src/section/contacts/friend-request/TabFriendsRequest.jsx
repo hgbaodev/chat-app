@@ -46,12 +46,12 @@ const TabFriendsRequest = () => {
                 <Row gutter={[16, 16]}>
                   {received_friend_requests.map((item) => (
                     <FriendRequestItem
-                      key={item.id}
-                      id={item.id}
-                      avatar={item.sender.avatar}
-                      fullName={item.sender.full_name}
-                      invitationMessage={item.message}
-                      time={item.created_at}
+                      key={item?.id}
+                      id={item?.id}
+                      avatar={item?.sender?.avatar}
+                      fullName={item?.sender?.full_name}
+                      invitationMessage={item?.message}
+                      time={item?.created_at}
                       isSended={false}
                     />
                   ))}
@@ -71,12 +71,12 @@ const TabFriendsRequest = () => {
                 <Row gutter={[16, 16]}>
                   {sent_friend_requests.map((item) => (
                     <FriendRequestItem
-                      key={item.id}
-                      id={item.id}
-                      avatar={item.receiver.avatar}
-                      fullName={item.receiver.full_name}
-                      invitationMessage={item.message}
-                      time={item.created_at}
+                      key={item?.id}
+                      id={item?.id}
+                      avatar={item?.receiver?.avatar}
+                      fullName={item?.receiver?.full_name}
+                      invitationMessage={item?.message}
+                      time={item?.created_at}
                     />
                   ))}
                 </Row>

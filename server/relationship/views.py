@@ -9,23 +9,17 @@ from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 
+from .models import FriendRequest
+
 class FriendRequestsView(GenericAPIView):
     permission_classes = [IsAuthenticated]
-
-    def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return GetAllFriendRequestSerializer
-        elif self.request.method == 'POST':
-            return SendFriendRequestSerializer
-        return GetAllFriendRequestSerializer 
     
     # get all friend-requests
     def get(self, request):
         user_id = request.user.id
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class()
+        serializer = GetAllFriendRequestSerializer()
         friend_requests = serializer.get_all_friend_requests(user_id)
-        serialized_data = serializer_class(friend_requests, many=True).data
+        serialized_data = GetAllFriendRequestSerializer(friend_requests, many=True).data
 
         sent_friend_requests = []
         received_friend_requests = []
@@ -40,14 +34,13 @@ class FriendRequestsView(GenericAPIView):
     #  create friend-request
     def post(self, request):
         request.data['sender'] = request.user.id
-        serializer_class = self.get_serializer_class()
-        serializer = serializer_class(data=request.data, context={'request': request})
+        serializer = SendFriendRequestSerializer(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             channel_layer = get_channel_layer()
             async_to_sync(channel_layer.group_send)(
                 'user_%s' % serializer.validated_data['receiver'].pk, {
-                    'type': 'send_friend_request',
+                    'type': 'receive_friend_request',
                     'message': serializer.data
                 }
             )
@@ -142,3 +135,10 @@ class SearchUsersView(GenericAPIView):
 
         return Response({'users': serializer.data}, status=status.HTTP_200_OK)
     
+class GetNumberOfReceiveFriendRequestsView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user_id = request.user.id
+        friend_requests = FriendRequest.objects.filter(receiver=user_id).count()
+        return Response({'result': friend_requests}, status=status.HTTP_200_OK)

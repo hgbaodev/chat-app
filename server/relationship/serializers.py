@@ -36,12 +36,17 @@ class GetAllFriendRequestSerializer(serializers.ModelSerializer):
 
 class SendFriendRequestSerializer(serializers.Serializer):
     
-    sender = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    sender = UserSerializer(read_only=True)
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     message = serializers.CharField()
 
+    def validate(self, data):
+        data['sender'] = self.context['request'].user
+        return data
+    
     def validate_receiver(self, value):
         sender = self.context['request'].user
+        self.context['request'].data['sender'] = sender.id
         if sender == value:
             raise serializers.ValidationError('Sender and receiver should be different users.')
         is_verified_receiver = User.objects.get(id=value.id)

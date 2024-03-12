@@ -1,23 +1,41 @@
-import { Avatar, Dropdown, Flex, Space, Tooltip, Typography } from 'antd';
+import {
+  Avatar,
+  Badge,
+  Dropdown,
+  Flex,
+  Space,
+  Tooltip,
+  Typography
+} from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
 import {
   IoChatbubbleEllipsesOutline,
+  IoNotificationsOutline,
   IoPeopleOutline,
   IoSettingsOutline
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ProfileModal from '~/section/common/ProfileModal';
+import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 
 const { Text } = Typography;
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
   const { avatar, fullName } = useSelector((state) => state.auth.user);
+  const { received_friend_requests } = useSelector(
+    (state) => state.relationship
+  );
   const [openProfile, setOpenProfile] = useState(false);
+
+  // effect
+  useEffect(() => {
+    dispatch(getNumberOfReceiveFriendRequests());
+  }, [dispatch]);
 
   const items = [
     {
@@ -64,16 +82,25 @@ const DashboardLayout = () => {
                 href="/"
                 tooltip="Messages"
                 icon={<IoChatbubbleEllipsesOutline size={27} />}
+                badge={0}
               />
               <NavButton
                 href="/contacts"
                 tooltip="Contacts"
                 icon={<IoPeopleOutline size={27} />}
+                badge={received_friend_requests.length}
+              />
+              <NavButton
+                href="/notifications"
+                tooltip="Notifications"
+                icon={<IoNotificationsOutline size={27} />}
+                badge={0}
               />
               <NavButton
                 href="/settings"
                 tooltip="Settings"
                 icon={<IoSettingsOutline size={27} />}
+                badge={0}
               />
             </Flex>
           </Flex>
@@ -103,7 +130,7 @@ const DashboardLayout = () => {
 };
 /* <Tooltip placement="right" title={tooltip}>
     </Tooltip> */
-const NavButton = ({ tooltip, href, icon }) => {
+const NavButton = ({ tooltip, href, icon, badge }) => {
   return (
     <Tooltip placement="rightTop" title={tooltip}>
       <NavLink
@@ -113,7 +140,9 @@ const NavButton = ({ tooltip, href, icon }) => {
           ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
         }
       >
-        <span className="">{icon}</span>
+        <Badge count={badge} overflowCount={10} offset={[0, 5]}>
+          <span className="">{icon}</span>
+        </Badge>
       </NavLink>
     </Tooltip>
   );
