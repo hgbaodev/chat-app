@@ -4,8 +4,6 @@ from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
 
-
-
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
@@ -18,8 +16,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         if obj.avatar:
-            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-            return avatar
+            try:
+              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+              return avatar
+            except:
+              return None
         return None
 
 class GetAllFriendRequestSerializer(serializers.ModelSerializer):
@@ -34,11 +35,13 @@ class GetAllFriendRequestSerializer(serializers.ModelSerializer):
         friend_requests = friend_requests = FriendRequest.objects.filter(Q(sender=user_id) | Q(receiver=user_id))
         return friend_requests
 
+
 class SendFriendRequestSerializer(serializers.Serializer):
-    
+    id = serializers.IntegerField(read_only=True)
     sender = UserSerializer(read_only=True)
     receiver = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     message = serializers.CharField()
+    created_at = serializers.DateTimeField(read_only=True)
 
     def validate(self, data):
         data['sender'] = self.context['request'].user
@@ -199,8 +202,11 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
         return obj.get_full_name
     def get_avatar(self, obj):
         if obj.avatar:
-            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-            return avatar
+            try:
+              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+              return avatar
+            except:
+              return None
         return None
     
     @staticmethod

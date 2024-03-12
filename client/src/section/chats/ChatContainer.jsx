@@ -5,7 +5,7 @@ import { TextMessage } from './MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { useEffect, useRef } from 'react';
 import { getMessagesOfConversation } from '~/store/slices/chatSlice';
-import Loader from '~/components/Loader';
+import CustomLoader from '~/components/CustomLoader';
 export const ChatContainer = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
@@ -42,7 +42,9 @@ export const ChatContainer = () => {
         ref={scrollRef}
       >
         {chat.isLoading ? (
-          <Loader />
+          <div className="w-full h-[calc(100vh-152px)]">
+            <CustomLoader />
+          </div>
         ) : (
           chat.messages.map((message) => {
             switch (message.message_type) {

@@ -13,6 +13,7 @@ import useDebounce from '~/hooks/useDebounce';
 import useCustomMessage from '~/hooks/useCustomMessage';
 import UserSearchItem from '~/section/common/UserSearchItem';
 import Loader from '~/components/Loader';
+import CustomLoader from '~/components/CustomLoader';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
@@ -103,6 +104,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
       >
         {userSelected ? (
           <Space direction="vertical" className="w-[100%]" size="middle">
+            {isLoading && <Loader />}
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
               <Space direction="vertical" size={0}>
@@ -148,7 +150,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             )}
             <div className="h-[380px] overflow-y-auto scrollbar">
               {isLoading ? (
-                <Loader />
+                <CustomLoader />
               ) : users.length ? (
                 users.map((user) => (
                   <UserSearchItem
