@@ -5,7 +5,8 @@ const initialState = {
   isLoading: false,
   friends: [],
   sent_friend_requests: [],
-  received_friend_requests: []
+  received_friend_requests: [],
+  isLoadingGetAll: false,
 };
 
 export const getRecommendedUsers = createAsyncThunk(
@@ -197,13 +198,16 @@ const relationshipSlice = createSlice({
       })
       .addCase(getAllFriends.pending, (state) => {
         state.isLoading = true;
+        state.isLoadingGetAll = true;
       })
       .addCase(getAllFriends.fulfilled, (state, action) => {
         state.friends = action.payload.data.friends;
         state.isLoading = false;
+        state.isLoadingGetAll = false;
       })
       .addCase(getAllFriends.rejected, (state) => {
         state.isLoading = false;
+        state.isLoadingGetAll = false;
       })
       .addCase(getNumberOfReceiveFriendRequests.pending, (state) => {
         state.isLoading = true;

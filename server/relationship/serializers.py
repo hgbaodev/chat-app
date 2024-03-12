@@ -156,6 +156,7 @@ class DeleteFriendSerializer(serializers.Serializer):
         return value
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about']
@@ -177,6 +178,11 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
         unique_friends = list(set(friends))
 
         return unique_friends  
+    def get_avatar(self, obj):
+        if obj.avatar:
+            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+            return avatar
+        return None
 
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()

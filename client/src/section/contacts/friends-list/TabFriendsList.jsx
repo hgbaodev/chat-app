@@ -1,13 +1,16 @@
-import { Empty, Flex, Input, Select, Space } from 'antd';
+import { Empty, Flex, Input, Select, Space, Spin } from 'antd';
 import { useEffect } from 'react';
 import { IoSearchOutline } from 'react-icons/io5';
+import { LoadingOutlined } from '@ant-design/icons';
 import { FriendItem } from '~/section/contacts/friends-list/FriendItem';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 
 const TabFriendsList = () => {
   const dispatch = useDispatch();
-  const { friends } = useSelector((state) => state.relationship);
+  const { friends, isLoadingGetAll } = useSelector(
+    (state) => state.relationship
+  );
 
   // effect
   useEffect(() => {
@@ -44,21 +47,32 @@ const TabFriendsList = () => {
             ]}
           />
         </Flex>
-        <div>
-          {friends.length ? (
-            friends.map((friend) => (
-              <FriendItem
-                key={friend.id}
-                id={friend.id}
-                avatar={friend.avatar}
-                fullName={`${friend.first_name} ${friend.last_name}`}
-                email={friend.email}
-              />
-            ))
-          ) : (
-            <Empty description="Friends List is empty" className="py-4" />
-          )}
-        </div>
+        {isLoadingGetAll ? (
+          <Flex
+            align="center"
+            justify="center"
+          >
+            <Spin
+              indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />}
+            />
+          </Flex>
+        ) : (
+          <div>
+            {friends.length ? (
+              friends.map((friend) => (
+                <FriendItem
+                  key={friend.id}
+                  id={friend.id}
+                  avatar={friend.avatar}
+                  fullName={`${friend.first_name} ${friend.last_name}`}
+                  email={friend.email}
+                />
+              ))
+            ) : (
+              <Empty description="Friends List is empty" className="py-4" />
+            )}
+          </div>
+        )}
       </Space>
     </>
   );
