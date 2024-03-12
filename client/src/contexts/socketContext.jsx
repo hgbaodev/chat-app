@@ -30,9 +30,6 @@ export const SocketProvider = ({ children }) => {
         if (data.type === 'chat_message') {
           dispatch(receiverMessage(data.message));
         } else if (data.type === 'receive_friend_request') {
-          console.log('====================================');
-          console.log(data.message);
-          console.log('====================================');
           dispatch(receiveFriendRequest(data.message));
         }
       } catch (error) {

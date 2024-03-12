@@ -4,8 +4,6 @@ from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
 
-
-
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
@@ -36,7 +34,6 @@ class GetAllFriendRequestSerializer(serializers.ModelSerializer):
     def get_all_friend_requests(user_id):
         friend_requests = friend_requests = FriendRequest.objects.filter(Q(sender=user_id) | Q(receiver=user_id))
         return friend_requests
-
 
 
 class SendFriendRequestSerializer(serializers.Serializer):
@@ -199,8 +196,11 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
         return obj.get_full_name
     def get_avatar(self, obj):
         if obj.avatar:
-            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-            return avatar
+            try:
+              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+              return avatar
+            except:
+              return None
         return None
     
     @staticmethod
