@@ -18,8 +18,11 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_avatar(self, obj):
         if obj.avatar:
-            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-            return avatar
+            try:
+              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
+              return avatar
+            except:
+              return None
         return None
 
 class GetAllFriendRequestSerializer(serializers.ModelSerializer):
