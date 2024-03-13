@@ -15,7 +15,11 @@ export const MessageWrapper = ({ from, children, ...props }) => {
           B
         </Avatar>
       )}
-      <Flex align="center" gap={20}>
+      <Flex
+        align="center"
+        gap={20}
+        className={`${from !== user.id ? 'flex-1' : ''}`}
+      >
         <Flex
           className={`${
             from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
