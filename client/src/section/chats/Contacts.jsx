@@ -58,7 +58,10 @@ export const Contacts = ({ ...props }) => {
         </>
       ) : (
         <>
-          <ContactsHeaderFind setFind={setFind} />
+          <ContactsHeaderFind
+            setFind={setFind}
+            conversations={conversationsList}
+          />
         </>
       )}
     </Flex>
@@ -105,11 +108,11 @@ const ContactsHeader = ({ setFind }) => {
   );
 };
 
-const ContactsHeaderFind = ({ setFind }) => {
+const ContactsHeaderFind = ({ setFind, conversations }) => {
   return (
     <>
-      <Flex vertical className="w-[100%] p-4">
-        <Space>
+      <Flex vertical>
+        <Space className="w-[100%] p-4">
           <Input
             variant="filled"
             placeholder="Search here..."
@@ -120,11 +123,34 @@ const ContactsHeaderFind = ({ setFind }) => {
             Close
           </Button>
         </Space>
-        <Space direction="vertical" className='py-4'>
-          <Typography.Text strong>Friends</Typography.Text>
+        <Space direction="vertical">
+          <Typography.Text strong className='p-4'>Friends</Typography.Text>
         </Space>
-        <Space direction="vertical" className='py-4'>
-          <Typography.Text strong>Groups</Typography.Text>
+        <Space direction="vertical">
+          {conversations.length > 0 && (
+            <>
+              <Typography.Text className="p-4" strong>Groups</Typography.Text>
+              {conversations
+                .sort((a, b) => {
+                  const createdA = new Date(
+                    a.latest_message.created_at
+                  ).getTime();
+                  const createdB = new Date(
+                    b.latest_message.created_at
+                  ).getTime();
+                  return createdB - createdA;
+                })
+                .map((conversation) => (
+                  <ContactItem
+                    key={conversation.id}
+                    id={conversation.id}
+                    title={conversation.title}
+                    image={conversation.image}
+                    lastestMessage={conversation.latest_message}
+                  />
+                ))}
+            </>
+          )}
         </Space>
       </Flex>
     </>

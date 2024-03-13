@@ -4,58 +4,67 @@ import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
+import { formatDateTime } from '~/utils/formatTimeAgo';
 
-export const MessageWrapper = ({ from, children, ...props }) => {
+export const MessageWrapper = ({
+  from,
+  created = null,
+  children,
+  ...props
+}) => {
   const { user } = useSelector((state) => state.auth);
   const [hoverRef, isHovering] = useHover();
   return (
-    <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
-      {from !== user.id && (
-        <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
-          B
-        </Avatar>
+    <Flex vertical>
+      {created && (
+        <Typography.Text code className="text-center py-2">
+          {formatDateTime(created)}
+        </Typography.Text>
       )}
-      <Flex
-        align="center"
-        gap={20}
-        className={`${from !== user.id ? 'flex-1' : ''}`}
-      >
-        <Flex
-          className={`${
-            from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
-          }  p-2 rounded-lg cursor-pointer`}
-          {...props}
-        >
-          {children}
+      <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
+        {from !== user.id && (
+          <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
+            B
+          </Avatar>
+        )}
+        <Flex align="center" gap={20}>
+          <Flex
+            className={`${
+              from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
+            }  p-2 rounded-lg cursor-pointer`}
+            {...props}
+          >
+            {children}
+          </Flex>
+          <MessageAction
+            className={`${
+              from === user.id ? '-order-last flex-row-reverse' : ''
+            } ${isHovering ? 'visible' : 'invisible'}`}
+          />
         </Flex>
-        <MessageAction
-          className={`${
-            from === user.id ? '-order-last flex-row-reverse' : ''
-          } ${isHovering ? 'visible' : 'invisible'}`}
-        />
       </Flex>
     </Flex>
   );
 };
 
-export const TextMessage = ({ sender, message }) => {
+export const TextMessage = ({ sender, message, created }) => {
   return (
-    <MessageWrapper from={sender.id}>
+    <MessageWrapper from={sender.id} created={created}>
       <Typography className="text-inherit">{message}</Typography>
     </MessageWrapper>
   );
 };
-export const MediaMessage = ({ from, image }) => {
+export const MediaMessage = ({ from, image, created }) => {
   return (
-    <MessageWrapper from={from} className="p-0 rounded-lg overflow-hidden">
+    <MessageWrapper from={from} created={created} className="p-0 rounded-lg overflow-hidden">
       <Image width={320} className="w-full" src={image} />
     </MessageWrapper>
   );
 };
 
-export const DocMessage = ({ from, text }) => {
+export const DocMessage = ({ from, text, created }) => {
   return (
-    <MessageWrapper from={from}>
+    <MessageWrapper from={from} created={created}>
       <Flex align="center" justify="space-between" className="w-[260px]">
         <Flex align="center" gap={5}>
           <img src={pdf} className="w-[60px] h-[60px] " />{' '}
