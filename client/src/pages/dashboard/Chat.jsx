@@ -7,17 +7,41 @@ import { Contacts } from '~/section/chats/Contacts';
 import { EmptyChat } from '~/section/chats/EmptyChat';
 import { SharedMessages } from '~/section/chats/SharedMessages';
 import { setOpenContactInfo } from '~/store/slices/appSlice';
+import {
+  getMessagesOfConversation,
+  setCurrentConversation
+} from '~/store/slices/chatSlice';
+import { getInfoData } from '~/utils/getInfoData';
 const { useBreakpoint } = Grid;
 
 const Chat = () => {
   const { contactInfo } = useSelector((state) => state.app);
-  const { chat } = useSelector((state) => state.chat);
+  const { conversations, chat } = useSelector((state) => state.chat);
+
   const screens = useBreakpoint();
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(setOpenContactInfo(screens.xl));
   }, [dispatch, screens]);
+
+  useEffect(() => {
+    if (conversations.length > 0) {
+      const converstationLast = conversations[0];
+      const fetch = () => {
+        dispatch(getMessagesOfConversation(converstationLast.id));
+        dispatch(
+          setCurrentConversation(
+            getInfoData({
+              fields: ['id', 'title', 'image'],
+              object: converstationLast
+            })
+          )
+        );
+      };
+      fetch();
+    }
+  }, [conversations, dispatch]);
 
   return (
     <Flex className="h-full">

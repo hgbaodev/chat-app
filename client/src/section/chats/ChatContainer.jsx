@@ -1,4 +1,4 @@
-import { Flex, Space } from 'antd';
+import { Avatar, Flex, Space } from 'antd';
 import { ChatHeader } from './ChatHeader';
 import { ChatFooter } from './ChatFooter';
 import { TextMessage } from './MessageTypes';
@@ -17,6 +17,8 @@ export const ChatContainer = () => {
       dispatch(getMessagesOfConversation(chat.currentConversation.id));
     }
   }, [dispatch, chat.currentConversation]);
+
+  console.table(chat.messages);
 
   // effect
   useEffect(() => {
@@ -46,12 +48,25 @@ export const ChatContainer = () => {
             <CustomLoader />
           </div>
         ) : (
-          chat.messages.map((message) => {
+          chat.messages.map((message, index) => {
+            if (index < chat.messages.length - 1 && chat.messages.length >= 2) {
+              const currentMessageTime = new Date(message.created_at);
+              const nextMessageTime = new Date(
+                chat.messages[index + 1].created_at
+              );
+              const timeDiff = Math.abs(nextMessageTime - currentMessageTime);
+              const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+
+              if (hoursDiff >= 1) {
+                return <TextMessage key={message.id} {...message} created={message.created_at} />
+              }
+            }
+
             switch (message.message_type) {
               case 1:
                 return <TextMessage key={message.id} {...message} />;
               default:
-                return <>123</>;
+                return <span key={message.id}>123</span>;
             }
           })
         )}
