@@ -7,6 +7,9 @@ import Contacts from '~/pages/dashboard/Contacts';
 
 // dynamic import
 const Settings = Loadable(lazy(() => import('~/pages/dashboard/Settings')));
+const Notification = Loadable(
+  lazy(() => import('~/pages/dashboard/Notification'))
+);
 const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
 const UserRoutes = {
@@ -24,6 +27,10 @@ const UserRoutes = {
         {
           path: 'contacts',
           element: <Contacts />
+        },
+        {
+          path: 'notifications',
+          element: <Notification />
         },
         {
           path: 'settings',
