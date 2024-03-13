@@ -44,6 +44,7 @@ class FriendRequestsView(GenericAPIView):
             # create notification
             notification =  Notification.objects.create(
                 receiver=serializer.validated_data['receiver'],
+                title = "Friend request notification",
                 message=f"{serializer.validated_data['sender'].get_full_name} sent you a friend request"
             )
             # socket response
