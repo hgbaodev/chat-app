@@ -1,12 +1,15 @@
 import { Flex, Space } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import CustomLoader from '~/components/CustomLoader';
 import { NotificationItem } from '~/section/notifications/NotificationItem';
 import { getAllNotifications } from '~/store/slices/notificationSlice';
 
 const Notification = () => {
   const dispatch = useDispatch();
-  const { notifications } = useSelector((state) => state.notifications);
+  const { notifications, isLoading } = useSelector(
+    (state) => state.notifications
+  );
   useEffect(() => {
     dispatch(getAllNotifications());
   }, [dispatch]);
@@ -20,15 +23,19 @@ const Notification = () => {
       >
         <h1 className="text-[16px] mb-4">Notifications</h1>
         <Space direction="vertical" className="w-full">
-          {notifications.map((notification) => (
-            <NotificationItem
-              key={notification.id}
-              title={notification.title}
-              message={notification.message}
-              created_at={notification.created_at}
-              seen={notification.seen}
-            />
-          ))}
+          {isLoading ? (
+            <CustomLoader />
+          ) : (
+            notifications.map((notification) => (
+              <NotificationItem
+                key={notification.id}
+                title={notification.title}
+                message={notification.message}
+                created_at={notification.created_at}
+                seen={notification.seen}
+              />
+            ))
+          )}
         </Space>
       </Flex>
       <Flex></Flex>

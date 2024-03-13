@@ -53,7 +53,7 @@ const TabFriendsRequest = () => {
                       avatar={item?.sender?.avatar}
                       fullName={item?.sender?.full_name}
                       invitationMessage={item?.message}
-                      time={item?.created_at}
+                      time={item?.created_at || null}
                       isSended={false}
                     />
                   ))}
