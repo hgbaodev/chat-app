@@ -1,5 +1,4 @@
 import { Avatar, Button, Flex, Image, Typography } from 'antd';
-import { create } from 'lodash';
 import { GoDownload } from 'react-icons/go';
 import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
@@ -55,17 +54,17 @@ export const TextMessage = ({ sender, message, created }) => {
     </MessageWrapper>
   );
 };
-export const MediaMessage = ({ from, image }) => {
+export const MediaMessage = ({ from, image, created }) => {
   return (
-    <MessageWrapper from={from} className="p-0 rounded-lg overflow-hidden">
+    <MessageWrapper from={from} created={created} className="p-0 rounded-lg overflow-hidden">
       <Image width={320} className="w-full" src={image} />
     </MessageWrapper>
   );
 };
 
-export const DocMessage = ({ from, text }) => {
+export const DocMessage = ({ from, text, created }) => {
   return (
-    <MessageWrapper from={from}>
+    <MessageWrapper from={from} created={created}>
       <Flex align="center" justify="space-between" className="w-[260px]">
         <Flex align="center" gap={5}>
           <img src={pdf} className="w-[60px] h-[60px] " />{' '}

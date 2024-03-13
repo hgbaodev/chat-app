@@ -1,4 +1,4 @@
-import { Avatar, Flex, Space } from 'antd';
+import { Flex, Space } from 'antd';
 import { ChatHeader } from './ChatHeader';
 import { ChatFooter } from './ChatFooter';
 import { TextMessage } from './MessageTypes';
