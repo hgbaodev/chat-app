@@ -11,7 +11,9 @@ import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
-import { setCurrentConversation } from '~/store/slices/chatSlice';
+import {
+  setCurrentConversation
+} from '~/store/slices/chatSlice';
 
 export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
   const [hoverRef, isHovering] = useHover();

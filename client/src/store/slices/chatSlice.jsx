@@ -50,6 +50,9 @@ const chatSlice = createSlice({
   reducers: {
     setCurrentConversation(state, action) {
       state.chat.currentConversation = action.payload;
+      state.chat.lastPage = 0,
+      state.chat.currentPage = 1,
+      state.chat.messages = []
     },
     receiverMessage(state, action) {
       state.chat.messages.push(action.payload);
