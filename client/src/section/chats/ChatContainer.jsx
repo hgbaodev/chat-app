@@ -63,7 +63,7 @@ export const ChatContainer = () => {
           }}
           inverse={true}
           hasMore={chat.currentPage < chat.lastPage}
-          loader={<Spin />}
+          loader={<Spin className="py-2" />}
           endMessage={
             <p className="text-sm font-semibold text-center text-gray-500">
               Yay! You have seen it all

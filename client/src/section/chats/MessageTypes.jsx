@@ -27,7 +27,11 @@ export const MessageWrapper = ({
             B
           </Avatar>
         )}
-        <Flex align="center" gap={20}>
+        <Flex
+          align="center"
+          gap={20}
+          className={`${from !== user.id ? 'flex-1' : ''}`}
+        >
           <Flex
             className={`${
               from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
@@ -56,7 +60,11 @@ export const TextMessage = ({ sender, message, created }) => {
 };
 export const MediaMessage = ({ from, image, created }) => {
   return (
-    <MessageWrapper from={from} created={created} className="p-0 rounded-lg overflow-hidden">
+    <MessageWrapper
+      from={from}
+      created={created}
+      className="p-0 rounded-lg overflow-hidden"
+    >
       <Image width={320} className="w-full" src={image} />
     </MessageWrapper>
   );
