@@ -7,6 +7,18 @@ const initialState = {
   notifications: []
 };
 
+export const getAllNotifications = createAsyncThunk(
+  'relationship/getAllNotifications',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`notifications/`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const getNumberOfUnseenNotifications = createAsyncThunk(
   'relationship/getNumberOfUnseenNotifications',
   async (_, { rejectWithValue }) => {
@@ -38,6 +50,16 @@ const notificationSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(getNumberOfUnseenNotifications.rejected, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(getAllNotifications.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getAllNotifications.fulfilled, (state, action) => {
+        state.notifications = action.payload.data.result;
+        state.isLoading = false;
+      })
+      .addCase(getAllNotifications.rejected, (state) => {
         state.isLoading = false;
       });
   }
