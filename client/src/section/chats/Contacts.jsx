@@ -1,5 +1,5 @@
 /* eslint-disable indent */
-import { Button, Flex, Input, Space } from 'antd';
+import { Button, Flex, Input, Space, Typography } from 'antd';
 import { ContactItem } from './ContactItem';
 import { SearchOutlined } from '@ant-design/icons';
 import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
@@ -21,37 +21,46 @@ export const Contacts = ({ ...props }) => {
 
   return (
     <Flex className="h-screen" vertical {...props}>
-      {!find ? <>
-      <ContactsHeader setFind={setFind} />
-      <Space direction="vertical" className="overflow-y-auto scrollbar gap-0">
-        {!isLoading
-          ? conversationsList
-              .sort((a, b) => {
-                const createdA = new Date(
-                  a.latest_message.created_at
-                ).getTime();
-                const createdB = new Date(
-                  b.latest_message.created_at
-                ).getTime();
-                return createdB - createdA;
-              })
-              .map((conversation) => (
-                <ContactItem
-                  key={conversation.id}
-                  id={conversation.id}
-                  title={conversation.title}
-                  image={conversation.image}
-                  lastestMessage={conversation.latest_message}
-                  active={conversation.id == chat.currentConversation.id}
-                />
-              ))
-          : Array.from({
-              length: 10
-            }).map((_, i) => {
-              return <ContactItemSkeleton key={i} />;
-            })}
-      </Space>
-      </> : <><ContactsHeaderFind setFind={setFind} /></>}
+      {!find ? (
+        <>
+          <ContactsHeader setFind={setFind} />
+          <Space
+            direction="vertical"
+            className="overflow-y-auto scrollbar gap-0"
+          >
+            {!isLoading
+              ? conversationsList
+                  .sort((a, b) => {
+                    const createdA = new Date(
+                      a.latest_message.created_at
+                    ).getTime();
+                    const createdB = new Date(
+                      b.latest_message.created_at
+                    ).getTime();
+                    return createdB - createdA;
+                  })
+                  .map((conversation) => (
+                    <ContactItem
+                      key={conversation.id}
+                      id={conversation.id}
+                      title={conversation.title}
+                      image={conversation.image}
+                      lastestMessage={conversation.latest_message}
+                      active={conversation.id == chat.currentConversation.id}
+                    />
+                  ))
+              : Array.from({
+                  length: 10
+                }).map((_, i) => {
+                  return <ContactItemSkeleton key={i} />;
+                })}
+          </Space>
+        </>
+      ) : (
+        <>
+          <ContactsHeaderFind setFind={setFind} />
+        </>
+      )}
     </Flex>
   );
 };
@@ -99,15 +108,25 @@ const ContactsHeader = ({ setFind }) => {
 const ContactsHeaderFind = ({ setFind }) => {
   return (
     <>
-      <Space className="w-[100%] p-4">
-        <Input
-          variant="filled"
-          placeholder="Search here..."
-          prefix={<SearchOutlined />}
-          autoFocus
-        />
-        <Button type="text" onClick={() => setFind(false)}>Close</Button>
-      </Space>
+      <Flex vertical className="w-[100%] p-4">
+        <Space>
+          <Input
+            variant="filled"
+            placeholder="Search here..."
+            prefix={<SearchOutlined />}
+            autoFocus
+          />
+          <Button type="text" onClick={() => setFind(false)}>
+            Close
+          </Button>
+        </Space>
+        <Space direction="vertical" className='py-4'>
+          <Typography.Text strong>Friends</Typography.Text>
+        </Space>
+        <Space direction="vertical" className='py-4'>
+          <Typography.Text strong>Groups</Typography.Text>
+        </Space>
+      </Flex>
     </>
   );
 };

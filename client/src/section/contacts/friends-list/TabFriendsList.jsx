@@ -25,7 +25,7 @@ const TabFriendsList = () => {
         className="h-[60px] p-4"
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
       >
-        <p className="font-semibold">Friends (20)</p>
+        <p className="font-semibold">Friends ({friends.length})</p>
       </Flex>
       <Space
         direction="vertical"
