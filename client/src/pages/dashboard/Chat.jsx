@@ -26,22 +26,15 @@ const Chat = () => {
   }, [dispatch, screens]);
 
   useEffect(() => {
-    if (conversations.length > 0) {
+    if (!chat.currentConversation.id && conversations.length > 0) {
       const converstationLast = conversations[0];
-      const fetch = () => {
-        dispatch(getMessagesOfConversation(converstationLast.id));
-        dispatch(
-          setCurrentConversation(
-            getInfoData({
-              fields: ['id', 'title', 'image'],
-              object: converstationLast
-            })
-          )
-        );
-      };
-      fetch();
+      dispatch(getMessagesOfConversation(converstationLast.id));
+      dispatch(setCurrentConversation(getInfoData({
+        fields: ['id', 'title', 'image'],
+        object: converstationLast
+      })));
     }
-  }, [conversations, dispatch]);
+  }, [chat.currentConversation.id, conversations, dispatch]);
 
   return (
     <Flex className="h-full">
