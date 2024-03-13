@@ -18,8 +18,6 @@ export const ChatContainer = () => {
     }
   }, [dispatch, chat.currentConversation]);
 
-  console.table(chat.messages);
-
   // effect
   useEffect(() => {
     if (scrollRef.current) {
