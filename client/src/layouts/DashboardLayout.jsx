@@ -21,6 +21,7 @@ import { logout } from '~/store/slices/authSlice';
 import { useEffect, useState } from 'react';
 import ProfileModal from '~/section/common/ProfileModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
+import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 
 const { Text } = Typography;
 
@@ -30,11 +31,13 @@ const DashboardLayout = () => {
   const { received_friend_requests } = useSelector(
     (state) => state.relationship
   );
+  const { totalUnseen } = useSelector((state) => state.notifications);
   const [openProfile, setOpenProfile] = useState(false);
 
   // effect
   useEffect(() => {
     dispatch(getNumberOfReceiveFriendRequests());
+    dispatch(getNumberOfUnseenNotifications());
   }, [dispatch]);
 
   const items = [
@@ -94,7 +97,7 @@ const DashboardLayout = () => {
                 href="/notifications"
                 tooltip="Notifications"
                 icon={<IoNotificationsOutline size={27} />}
-                badge={0}
+                badge={totalUnseen}
               />
               <NavButton
                 href="/settings"
@@ -140,7 +143,7 @@ const NavButton = ({ tooltip, href, icon, badge }) => {
           ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
         }
       >
-        <Badge count={badge} overflowCount={10} offset={[0, 5]}>
+        <Badge count={badge} overflowCount={5} offset={[0, 5]}>
           <span className="">{icon}</span>
         </Badge>
       </NavLink>

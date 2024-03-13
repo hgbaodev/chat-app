@@ -11,6 +11,9 @@ from channels.layers import get_channel_layer
 
 from .models import FriendRequest
 
+from notifications.models import Notification
+from notifications.serializers import NotificationSerializer
+
 class FriendRequestsView(GenericAPIView):
     permission_classes = [IsAuthenticated]
     
@@ -38,10 +41,22 @@ class FriendRequestsView(GenericAPIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             channel_layer = get_channel_layer()
+            # create notification
+            notification =  Notification.objects.create(
+                receiver=serializer.validated_data['receiver'],
+                message=f"{serializer.validated_data['sender'].get_full_name} sent you a friend request"
+            )
+            # socket response
             async_to_sync(channel_layer.group_send)(
                 'user_%s' % serializer.validated_data['receiver'].pk, {
                     'type': 'receive_friend_request',
                     'message': serializer.data
+                }
+            )
+            async_to_sync(channel_layer.group_send)(
+                'user_%s' % serializer.validated_data['receiver'].pk, {
+                    'type': 'receive_notification',
+                    'message': NotificationSerializer(notification).data
                 }
             )
             return Response({"msg": "Sent friend request successfully!"}, status=status.HTTP_201_CREATED)
