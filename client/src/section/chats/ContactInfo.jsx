@@ -18,8 +18,6 @@ import { showSharedMessage, toggleContactInfo } from '~/store/slices/appSlice';
 import { faker } from '@faker-js/faker';
 import { GrGroup, GrNotification, GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
-import { useState } from 'react';
-import ProfileModal from '~/section/common/ProfileModal';
 import { useSelector } from '~/store';
 const { useBreakpoint } = Grid;
 
@@ -27,7 +25,6 @@ export const ContactInfo = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
   const screens = useBreakpoint();
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // handle
   const handleClose = () => dispatch(toggleContactInfo());
@@ -59,15 +56,7 @@ export const ContactInfo = () => {
       </Flex>
       <Space className="p-4 w-full" direction="vertical">
         <Space className="w-full" direction="vertical" align="center">
-          <Avatar
-            size={64}
-            onClick={() => setIsModalOpen(true)}
-            src={chat.currentConversation.image}
-          />
-          <ProfileModal
-            isModalOpen={isModalOpen}
-            setIsModalOpen={setIsModalOpen}
-          />
+          <Avatar size={64} src={chat.currentConversation.image} />
           <Space align="center" className="mb-4">
             <Title level={5} className="!m-0">
               {chat.currentConversation.title}

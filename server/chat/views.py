@@ -119,14 +119,15 @@ class GetMessagesConversation(generics.ListAPIView):
         pk = self.kwargs.get('pk')
         participant = Participants.objects.filter(conversation_id=pk, user_id=self.request.user.id).first()
         if participant:
-            messages = Message.objects.filter(conversation=pk).order_by('created_at')
+            messages = Message.objects.filter(conversation=pk).order_by('-created_at')
             return messages
         else:
             return Message.objects.none()  # Return an empty queryset if the user doesn't have access
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        page = self.paginate_queryset(queryset)
+        page = self.paginate_queryset(queryset)[::-1]
+        print(page)
         if page is not None:
             serializer = self.get_serializer(page, many=True)
             return self.get_paginated_response(serializer.data)

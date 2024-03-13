@@ -127,7 +127,9 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </Flex>
-      <ProfileModal open={openProfile} setOpen={setOpenProfile} />
+      {openProfile && (
+        <ProfileModal open={openProfile} setOpen={setOpenProfile} />
+      )}
     </>
   );
 };
