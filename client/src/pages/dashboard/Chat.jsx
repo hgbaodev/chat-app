@@ -27,12 +27,22 @@ const Chat = () => {
 
   useEffect(() => {
     if (!chat.currentConversation.id && conversations.length > 0) {
-      const converstationLast = conversations[0];
+      const conversationsList = [...conversations];
+      conversationsList.sort((a, b) => {
+        const createdA = new Date(a.latest_message.created_at).getTime();
+        const createdB = new Date(b.latest_message.created_at).getTime();
+        return createdB - createdA;
+      });
+      const converstationLast = conversationsList[0];
       dispatch(getMessagesOfConversation(converstationLast.id));
-      dispatch(setCurrentConversation(getInfoData({
-        fields: ['id', 'title', 'image'],
-        object: converstationLast
-      })));
+      dispatch(
+        setCurrentConversation(
+          getInfoData({
+            fields: ['id', 'title', 'image'],
+            object: converstationLast
+          })
+        )
+      );
     }
   }, [chat.currentConversation.id, conversations, dispatch]);
 
