@@ -75,6 +75,9 @@ class ChatConsumer(WebsocketConsumer):
     def receive_friend_request(self, event):
         self.send(text_data=json.dumps(event))
 
+    def receive_notification(self, event):
+        self.send(text_data=json.dumps(event))
+
     def chat_message(self, event):
         self.send(text_data=json.dumps(event))
 

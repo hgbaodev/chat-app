@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'authentication',
     'relationship',
     'chat',
+    'notifications',
     'channels_auth_token_middlewares'
 ]
 
