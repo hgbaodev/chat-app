@@ -3,7 +3,8 @@ import AxiosInstance from '~/api/AxiosInstance';
 
 const initialState = {
   isLoading: false,
-  totalUnseen: 0
+  totalUnseen: 0,
+  notifications: []
 };
 
 export const getNumberOfUnseenNotifications = createAsyncThunk(
@@ -23,6 +24,7 @@ const notificationSlice = createSlice({
   initialState,
   reducers: {
     receiveNotification(state, action) {
+      state.totalUnseen += 1;
       console.log({ action });
     }
   },
