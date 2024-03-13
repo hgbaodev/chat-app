@@ -13,7 +13,7 @@ function App() {
     };
     fetchUser();
   }, [dispatch]);
-  // eslint-disable-next-line no-console
+
   console.info(
     `%c
     ░█▀▀▀░█▀▀▀░█░░█

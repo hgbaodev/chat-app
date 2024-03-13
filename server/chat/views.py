@@ -7,8 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message
 from django.http import Http404, HttpResponseForbidden
 from django.db.models import Max
-from rest_framework.pagination import PageNumberPagination
-
+from config.paginations import CustomPagination
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
@@ -112,7 +111,7 @@ class GetMemberConversation(generics.ListAPIView):
 
 class GetMessagesConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
-    pagination_class = PageNumberPagination
+    pagination_class = CustomPagination
     serializer_class = MessageSerializer
 
     def get_queryset(self):

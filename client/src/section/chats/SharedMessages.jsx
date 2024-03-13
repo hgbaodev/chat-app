@@ -31,7 +31,7 @@ export const SharedMessages = () => {
     }
   ];
   const onChange = (key) => {
-    // eslint-disable-next-line no-console
+
     console.log('key', key)
   };
 

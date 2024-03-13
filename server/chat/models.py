@@ -30,8 +30,8 @@ class Message(models.Model): # gửi, xoá
         TEXT = 1
         IMAGE = 2
         VIDEO = 3
-        VOICE = 4
-        PDF = 5
+        AUDIO = 4
+        FILE = 5
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)

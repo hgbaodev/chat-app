@@ -1,60 +1,93 @@
-import { Flex, Space } from 'antd';
+import { Flex, Space, Spin } from 'antd';
 import { ChatHeader } from './ChatHeader';
 import { ChatFooter } from './ChatFooter';
 import { TextMessage } from './MessageTypes';
 import { useDispatch, useSelector } from '~/store';
-import { useEffect, useRef } from 'react';
-import { getMessagesOfConversation } from '~/store/slices/chatSlice';
+import { useEffect } from 'react';
+import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
 import CustomLoader from '~/components/CustomLoader';
+import InfiniteScroll from 'react-infinite-scroll-component';
+
+const MessageTypes = {
+  TEXT: 1,
+  IMAGE: 2,
+  VIDEO: 3,
+  AUDIO: 4,
+  FILE: 5
+};
+
 export const ChatContainer = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
-
-  const scrollRef = useRef(null);
   // effect
   useEffect(() => {
     if (chat.currentConversation.id) {
-      dispatch(getMessagesOfConversation(chat.currentConversation.id));
+      dispatch(
+        getMessagesOfConversation({
+          conversation_id: chat.currentConversation.id,
+          page: chat.currentPage
+        })
+      );
     }
-  }, [dispatch, chat.currentConversation]);
+  }, [dispatch, chat.currentConversation, chat.currentPage]);
 
-  // effect
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTo({
-        top: scrollRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
+  const fetchMoreData = () => {
+    if (chat.currentPage < chat.lastPage) {
+      dispatch(setPage(chat.currentPage + 1));
     }
-  }, [scrollRef, chat.messages]);
-  // render
+  };
+
+  console.log('render');
+
   return (
     <Flex vertical className="h-full flex-1">
       <ChatHeader />
       <Space
-        direction="vertical"
         className="p-4 overflow-y-auto custom-scrollbar"
         style={{
           height: 'calc(100vh - 120px)',
           boxShadow:
-            '0px 2px 2px -2px rgba(0,0,0,.2), 0px -2px 2px -2px rgba(0,0,0,.2)'
+            '0px 2px 2px -2px rgba(0,0,0,.2), 0px -2px 2px -2px rgba(0,0,0,.2)',
+          display: 'flex',
+          flexDirection: 'column-reverse'
         }}
-        ref={scrollRef}
+        id="scollable"
       >
-        {chat.isLoading ? (
-          <div className="w-full h-[calc(100vh-152px)]">
-            <CustomLoader />
-          </div>
-        ) : (
-          chat.messages.map((message) => {
-            switch (message.message_type) {
-              case 1:
-                return <TextMessage key={message.id} {...message} />;
-              default:
-                return <>123</>;
-            }
-          })
-        )}
+        <InfiniteScroll
+          dataLength={chat.messages.length}
+          next={fetchMoreData}
+          style={{
+            display: 'flex',
+            flexDirection: 'column-reverse',
+            overflow: 'hidden'
+          }}
+          inverse={true}
+          hasMore={chat.currentPage < chat.lastPage}
+          loader={<Spin />}
+          endMessage={
+            <p className="text-sm font-semibold text-center text-gray-500">
+              Yay! You have seen it all
+            </p>
+          }
+          scrollableTarget="scollable"
+        >
+          <Space direction="vertical">
+            {chat.isLoading ? (
+              <div className="w-full h-[calc(100vh-60px)]">
+                <CustomLoader />
+              </div>
+            ) : (
+              chat.messages.map((message) => {
+                switch (message.message_type) {
+                  case MessageTypes.TEXT:
+                    return <TextMessage key={message.id} {...message} />;
+                  default:
+                    return null;
+                }
+              })
+            )}
+          </Space>
+        </InfiniteScroll>
       </Space>
       <ChatFooter />
     </Flex>

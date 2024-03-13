@@ -16,10 +16,10 @@ export const getConversations = createAsyncThunk(
 
 export const getMessagesOfConversation = createAsyncThunk(
   'auth/getMessagesOfConversation',
-  async (conversation_id, { rejectWithValue }) => {
+  async ({ conversation_id, page }, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.get(
-        `/chat/conversations/${conversation_id}/messages`
+        `/chat/conversations/${conversation_id}/messages/?page=${page}`
       );
       return response;
     } catch (error) {
@@ -36,6 +36,8 @@ const initialState = {
       title: null,
       image: null
     },
+    lastPage: 0,
+    currentPage: 1,
     messages: [],
     isLoading: false
   },
@@ -56,6 +58,9 @@ const chatSlice = createSlice({
           conversation.latest_message = action.payload;
         }
       });
+    },
+    setPage(state, action) {
+      state.chat.currentPage = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -74,7 +79,11 @@ const chatSlice = createSlice({
         state.chat.isLoading = true;
       })
       .addCase(getMessagesOfConversation.fulfilled, (state, action) => {
-        state.chat.messages = action.payload.data.results;
+        state.chat.messages = [
+          ...action.payload.data.results,
+          ...state.chat.messages
+        ];
+        state.chat.lastPage = action.payload.data.meta.last_page;
         state.chat.isLoading = false;
       })
       .addCase(getMessagesOfConversation.rejected, (state) => {
@@ -84,4 +93,5 @@ const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
-export const { setCurrentConversation, receiverMessage } = chatSlice.actions;
+export const { setCurrentConversation, receiverMessage, setPage } =
+  chatSlice.actions;

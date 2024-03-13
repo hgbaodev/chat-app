@@ -32,12 +32,12 @@ const Chat = () => {
             {contactInfo.open &&
               (() => {
                 switch (contactInfo.type) {
-                  case 'CONTACT':
-                    return <ContactInfo />;
-                  case 'SHARED':
-                    return <SharedMessages />;
-                  default:
-                    return <></>;
+                case 'CONTACT':
+                  return <ContactInfo />;
+                case 'SHARED':
+                  return <SharedMessages />;
+                default:
+                  return <></>;
                 }
               })()}{' '}
           </>

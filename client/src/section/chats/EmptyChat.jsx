@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unknown-property */
+
 import { Flex } from 'antd';
 import { useSelector } from '~/store';
 
