@@ -39,7 +39,9 @@ const FriendRequestItem = ({
             <Avatar size={40} src={avatar} />
             <div>
               <p className="my-1 font-semibold">{fullName}</p>
-              <p className="m-0 text-[12px]">{formatTimeAgo(time)}</p>
+              <p className="m-0 text-xs text-gray-400 ">
+                {formatTimeAgo(time)}
+              </p>
             </div>
           </Flex>
           <Button
