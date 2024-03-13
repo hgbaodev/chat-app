@@ -40,7 +40,6 @@ export const Contacts = ({ ...props }) => {
                     return createdB - createdA;
                   })
                   .map((conversation) => {
-                    console.log('id', conversation);
                     return (
                       <ContactItem
                         key={conversation.id}

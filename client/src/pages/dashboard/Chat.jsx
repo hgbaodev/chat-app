@@ -34,7 +34,7 @@ const Chat = () => {
         return createdB - createdA;
       });
       const converstationLast = conversationsList[0];
-      dispatch(getMessagesOfConversation(converstationLast.id));
+      // dispatch(getMessagesOfConversation(converstationLast.id));
       dispatch(
         setCurrentConversation(
           getInfoData({

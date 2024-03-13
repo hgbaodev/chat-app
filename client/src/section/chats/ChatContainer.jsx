@@ -37,8 +37,6 @@ export const ChatContainer = () => {
     }
   };
 
-  console.log('render');
-
   return (
     <Flex vertical className="h-full flex-1">
       <ChatHeader />
