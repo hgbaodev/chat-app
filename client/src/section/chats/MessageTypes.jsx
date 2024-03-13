@@ -4,9 +4,9 @@ import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
-import { formatDateTime } from '~/utils/formatTimeAgo';
 
 import { memo } from 'react';
+import { formatDateTime } from '~/utils/formatDayTime';
 
 const MessageWrapper = memo(({ from, created = null, children, ...props }) => {
   const { user } = useSelector((state) => state.auth);

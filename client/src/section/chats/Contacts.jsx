@@ -39,16 +39,19 @@ export const Contacts = ({ ...props }) => {
                     ).getTime();
                     return createdB - createdA;
                   })
-                  .map((conversation) => (
-                    <ContactItem
-                      key={conversation.id}
-                      id={conversation.id}
-                      title={conversation.title}
-                      image={conversation.image}
-                      lastestMessage={conversation.latest_message}
-                      active={conversation.id == chat.currentConversation.id}
-                    />
-                  ))
+                  .map((conversation) => {
+                    console.log('id', conversation);
+                    return (
+                      <ContactItem
+                        key={conversation.id}
+                        id={conversation.id}
+                        title={conversation.title}
+                        image={conversation.image}
+                        lastestMessage={conversation.latest_message}
+                        active={conversation.id == chat.currentConversation.id}
+                      />
+                    );
+                  })
               : Array.from({
                   length: 10
                 }).map((_, i) => {
@@ -124,12 +127,16 @@ const ContactsHeaderFind = ({ setFind, conversations }) => {
           </Button>
         </Space>
         <Space direction="vertical">
-          <Typography.Text strong className='p-4'>Friends</Typography.Text>
+          <Typography.Text strong className="p-4">
+            Friends
+          </Typography.Text>
         </Space>
         <Space direction="vertical">
           {conversations.length > 0 && (
             <>
-              <Typography.Text className="p-4" strong>Groups</Typography.Text>
+              <Typography.Text className="p-4" strong>
+                Groups
+              </Typography.Text>
               {conversations
                 .sort((a, b) => {
                   const createdA = new Date(

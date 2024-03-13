@@ -16,9 +16,7 @@ import { setCurrentConversation } from '~/store/slices/chatSlice';
 export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
-  const currentConversation = useSelector(
-    (state) => state.chat.currentConversation
-  );
+  const { currentConversation } = useSelector((state) => state.chat.chat);
 
   const handleDeleteConversation = (e) => {
     e.stopPropagation();
