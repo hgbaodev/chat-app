@@ -17,7 +17,7 @@ import CustomLoader from '~/components/CustomLoader';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
-  const { fullName } = useSelector((state) => state.auth);
+  const { fullName } = useSelector((state) => state.auth.user);
   const { isLoading } = useSelector((state) => state.relationship);
   const { success, error } = useCustomMessage();
   const [users, setUsers] = useState([]);
@@ -83,13 +83,13 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
       <Modal
         title={
           userSelected ? (
-            <Flex align="center">
+            <Flex align="center" gap={8}>
               <Button
                 type="text"
                 shape="circle"
-                icon={<IoChevronBack size={22} />}
+                size="small"
+                icon={<IoChevronBack size={18} />}
                 onClick={handleResetSelectedUser}
-                style={{ marginRight: 8 }}
               />
               Account Information
             </Flex>
@@ -132,7 +132,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
             </Flex>
           </Space>
         ) : (
-          <Space direction="vertical" className="w-[100%]">
+          <Space direction="vertical" className="w-[100%]" size="middle">
             <Input
               name="input-search"
               placeholder="Enter email or phone"

@@ -5,6 +5,8 @@ import { IoIosLink } from 'react-icons/io';
 import { IoHappyOutline, IoSendSharp } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
 import { useSelector } from '~/store';
+const { TextArea } = Input;
+
 export const ChatFooter = () => {
   const { chat } = useSelector((state) => state.chat);
   const { emitMessage } = useSocket();
@@ -33,7 +35,7 @@ export const ChatFooter = () => {
   // render
   return (
     <form onSubmit={(e) => handleSendMessage(e)}>
-      <Flex className="relative h-[60px] p-3" align="center" gap="small">
+      <Flex className="relative p-3" align="center" gap="small">
         <Button
           type="text"
           shape="circle"
@@ -56,14 +58,14 @@ export const ChatFooter = () => {
             <EmojiPicker onEmojiClick={handleEmojiClick} />
           </div>
         )}
-
-        <Input
+        <TextArea
           value={text}
-          onChange={(e) => {
-            setText(e.target.value);
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Aa..."
+          className="h-full rounded-full bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
+          autoSize={{
+            maxRows: 3
           }}
-          placeholder="Message..."
-          className="h-full rounded-full bg-blue-50 border-none focus:shadow-none hover:bg-blue-100 focus:bg-blue-100"
         />
         <Button
           type="text"

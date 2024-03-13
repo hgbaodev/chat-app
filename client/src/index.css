@@ -115,3 +115,7 @@ body::-webkit-scrollbar {
 .custom-scrollbar::-webkit-scrollbar-track {
   background-color: transparent;
 }
+
+.ant-modal .ant-modal-close {
+  top: 20px;
+}

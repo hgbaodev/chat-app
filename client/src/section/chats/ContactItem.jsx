@@ -18,7 +18,8 @@ export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
 
   const dispatch = useDispatch();
 
-  const handleDeleteConversation = () => {
+  const handleDeleteConversation = (e) => {
+    e.stopPropagation();
     message.success('Delete conversation successfully!');
   };
 
@@ -56,7 +57,7 @@ export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
     <Flex
       ref={hoverRef}
       className={`${
-        active ? 'bg-blue-100' : 'bg-white hover:bg-neutral-100'
+        active ? 'bg-blue-50' : 'bg-white hover:bg-neutral-100'
       } px-4 py-3 cursor-pointer`}
       align="center"
       justify="space-between"
@@ -76,6 +77,7 @@ export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
       <Dropdown
         menu={{ items }}
         placement="bottomLeft"
+        onClick={(e) => e.stopPropagation()}
         className={`${isHovering ? 'block' : '!hidden'}`}
       >
         <Button

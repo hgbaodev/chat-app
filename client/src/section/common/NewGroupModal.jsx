@@ -71,7 +71,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
           className="mt-2"
           autoComplete="nope"
         />
-        <p className="text-xs text-gray-500">Friends List</p>
+        <p className="text-xs text-gray-500 mt-2">Friends List</p>
         <div className="h-[240px] overflow-y-auto scrollbar">
           {isLoading ? (
             <Loader />

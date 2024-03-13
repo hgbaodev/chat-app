@@ -6,12 +6,9 @@ import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
 import { formatDateTime } from '~/utils/formatTimeAgo';
 
-export const MessageWrapper = ({
-  from,
-  created = null,
-  children,
-  ...props
-}) => {
+import { memo } from 'react';
+
+const MessageWrapper = memo(({ from, created = null, children, ...props }) => {
   const { user } = useSelector((state) => state.auth);
   const [hoverRef, isHovering] = useHover();
   return (
@@ -49,7 +46,9 @@ export const MessageWrapper = ({
       </Flex>
     </Flex>
   );
-};
+});
+
+export default MessageWrapper;
 
 export const TextMessage = ({ sender, message, created }) => {
   return (
