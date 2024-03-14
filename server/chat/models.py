@@ -8,10 +8,15 @@ class OnlineUser(models.Model):
     def __str__(self) -> str:
         return f"{self.user.first_name} {self.user.last_name}"
 
-class Conversation(models.Model): #tạo, xoá, update
+class Conversation(models.Model):
+    class ConversationType(IntEnum):
+        GROUP = 1
+        FRIEND = 2
+
     title = models.CharField(max_length=255)
     image = models.CharField(max_length=255, blank=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    type = models.IntegerField(choices=[(tag.value, tag.name) for tag in ConversationType], default=ConversationType.GROUP)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
