@@ -26,7 +26,8 @@ class ConversationList(APIView):
                     'id': conversation.id, 
                     'title': conversation.title, 
                     'image': conversation.image, 
-                    'latest_message': latest_message
+                    'latest_message': latest_message,
+                    'type': conversation.type,
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)

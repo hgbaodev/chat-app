@@ -11,10 +11,11 @@ class NewestMessage(serializers.ModelSerializer):
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
     latest_message = NewestMessage(read_only=True)
+    type = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'latest_message', 'participants']
+        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')
