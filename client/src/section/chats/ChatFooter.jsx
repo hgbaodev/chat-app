@@ -22,7 +22,7 @@ export const ChatFooter = () => {
   // handle send message
   const handleSendMessage = (e) => {
     e.preventDefault();
-    if (text) {
+    if (text.trim()) {
       emitMessage({
         conversation_id: chat.currentConversation.id,
         message: text,
@@ -62,7 +62,7 @@ export const ChatFooter = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Aa..."
-          className="h-full rounded-full bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
+          className="h-full rounded-3xl bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
           autoSize={{
             maxRows: 3
           }}
@@ -80,6 +80,7 @@ export const ChatFooter = () => {
           size="large"
           className="text-blue-500 hover:text-blue-500"
           onClick={(e) => handleSendMessage(e)}
+          disabled={!text.trim()}
         />
       </Flex>
     </form>
