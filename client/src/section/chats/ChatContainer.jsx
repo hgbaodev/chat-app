@@ -5,7 +5,6 @@ import { TextMessage } from './MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { useEffect } from 'react';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
-import CustomLoader from '~/components/CustomLoader';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 const MessageTypes = {
@@ -49,60 +48,47 @@ export const ChatContainer = () => {
           display: 'flex',
           flexDirection: 'column-reverse'
         }}
-        id="scollable"
+        id="scrollableDiv"
       >
         <InfiniteScroll
           dataLength={chat.messages.length}
           next={fetchMoreData}
-          className="flex flex-col-reverse overflow-y-auto"
+          className="flex flex-col-reverse"
           inverse={true}
           hasMore={chat.currentPage < chat.lastPage}
           loader={<Spin className="py-2" />}
-          endMessage={
-            <p className="text-sm font-semibold text-center text-gray-500">
-              Yay! You have seen it all
-            </p>
-          }
-          scrollableTarget="scollable"
+          scrollableTarget="scrollableDiv"
         >
           <Space direction="vertical">
-            {chat.isLoading ? (
-              <div className="w-full h-[calc(100vh-60px)]">
-                <CustomLoader />
-              </div>
-            ) : (
-              chat.messages.map((message, index) => {
-                if (
-                  index < chat.messages.length - 1 &&
-                  chat.messages.length >= 2
-                ) {
-                  const currentMessageTime = new Date(message.created_at);
-                  const nextMessageTime = new Date(
-                    chat.messages[index + 1].created_at
-                  );
-                  const timeDiff = Math.abs(
-                    nextMessageTime - currentMessageTime
-                  );
-                  const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+            {chat.messages.map((message, index) => {
+              if (
+                index < chat.messages.length - 1 &&
+                chat.messages.length >= 2
+              ) {
+                const currentMessageTime = new Date(message.created_at);
+                const nextMessageTime = new Date(
+                  chat.messages[index + 1].created_at
+                );
+                const timeDiff = Math.abs(nextMessageTime - currentMessageTime);
+                const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
 
-                  if (hoursDiff >= 1) {
-                    return (
-                      <TextMessage
-                        key={message.id}
-                        {...message}
-                        created={message.created_at}
-                      />
-                    );
-                  }
+                if (hoursDiff >= 1) {
+                  return (
+                    <TextMessage
+                      key={message.id}
+                      {...message}
+                      created={message.created_at}
+                    />
+                  );
                 }
-                switch (message.message_type) {
-                  case MessageTypes.TEXT:
-                    return <TextMessage key={message.id} {...message} />;
-                  default:
-                    return null;
-                }
-              })
-            )}
+              }
+              switch (message.message_type) {
+                case MessageTypes.TEXT:
+                  return <TextMessage key={message.id} {...message} />;
+                default:
+                  return null;
+              }
+            })}
           </Space>
         </InfiniteScroll>
       </div>
