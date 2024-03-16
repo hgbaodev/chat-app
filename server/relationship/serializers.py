@@ -3,6 +3,7 @@ from authentication.models import User
 from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
+from chat.models import Conversation, Message, Participants
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
@@ -85,17 +86,22 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     def validate_id(self, value):
         receiver = self.context['request'].user
-        
         existing_request = FriendRequest.objects.filter(id=value, receiver=receiver).first()
         
         if not existing_request:
             raise serializers.ValidationError("Cannot find this friendrequest.")
         
-        friend_relationship = FriendRelationship.objects.create(
+        FriendRelationship.objects.create(
             user_1=existing_request.sender,
             user_2=existing_request.receiver
         )
+
+        conversation = Conversation.objects.create(type=Conversation.ConversationType.FRIEND)
+        Participants.objects.create(conversation=conversation, user=existing_request.sender)
+        Participants.objects.create(conversation=conversation, user=existing_request.receiver)
+
         existing_request.delete()
+       
         return value
     
 

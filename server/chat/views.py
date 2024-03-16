@@ -8,31 +8,35 @@ from .models import Conversation, Participants, Message
 from django.http import Http404, HttpResponseForbidden
 from django.db.models import Max
 from config.paginations import CustomPagination
+from utils.cloudinary import get_image_url
+from django.db.models import Max
+
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        conversations = Conversation.objects.filter(participants__user=request.user)
-        # 
+        # Truy xuất danh sách các cuộc trò chuyện mà người dùng hiện tại tham gia
+        conversations = Conversation.objects.filter(participants__user=request.user).annotate(
+            latest_message_time=Max('message__created_at')
+        ).order_by('-latest_message_time')
+        
         conversation_data = []
         for conversation in conversations:
-            sorted_messages = Message.objects.filter(conversation=conversation.id).order_by('-created_at')
-
-            latest_message = sorted_messages.first()
-
+            latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             if latest_message is not None:
                 conversation_data.append({
                     'id': conversation.id, 
                     'title': conversation.title, 
-                    'image': conversation.image, 
+                    'image': get_image_url(conversation.image),
                     'latest_message': latest_message,
                     'type': conversation.type,
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
         return Response(serializer.data)
-    
+
+
     # Tạo cuộc hội thoại
     def post(self, request):
         serializer = self.serializer_class(data=request.data, context={'request': request})

@@ -10,6 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
 import cloudinary.api
+from utils.cloudinary import get_image_url
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -168,13 +169,7 @@ class UserSerializer(serializers.ModelSerializer):
         return obj.get_full_name
 
     def get_avatar(self, obj):
-        if obj.avatar:
-            try:
-              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-              return avatar
-            except:
-              return None
-        return None
+        return get_image_url(obj.avatar)
 
 class GetInfoUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
@@ -193,7 +188,4 @@ class GetInfoUserSerializer(serializers.ModelSerializer):
         return obj.get_full_name
 
     def get_avatar(self, obj):
-        if obj.avatar:
-            avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-            return avatar
-        return None
+        return get_image_url(obj.avatar)

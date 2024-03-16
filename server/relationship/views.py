@@ -8,9 +8,7 @@ from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerial
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-
 from .models import FriendRequest
-
 from notifications.models import Notification
 from notifications.serializers import NotificationSerializer
 
@@ -79,6 +77,7 @@ class ManageFriendRequestView(GenericAPIView):
     def get(self, request, friend_request_id):
         request.data['id'] = friend_request_id
         serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
+
         if serializer.is_valid(raise_exception=True):
             return Response({"msg": "Accepted request successfully", "id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)

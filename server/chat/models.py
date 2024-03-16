@@ -13,9 +13,9 @@ class Conversation(models.Model):
         GROUP = 1
         FRIEND = 2
 
-    title = models.CharField(max_length=255)
-    image = models.CharField(max_length=255, blank=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255, blank=True)
+    image = models.CharField(max_length=255, default="07adfb1c92adb6b369b44cf6f1734a52")
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     type = models.IntegerField(choices=[(tag.value, tag.name) for tag in ConversationType], default=ConversationType.GROUP)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

@@ -7,7 +7,7 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { NavLink, Outlet } from 'react-router-dom';
+import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
 import {
   IoChatbubbleEllipsesOutline,
@@ -133,8 +133,7 @@ const DashboardLayout = () => {
     </>
   );
 };
-/* <Tooltip placement="right" title={tooltip}>
-    </Tooltip> */
+
 const NavButton = ({ tooltip, href, icon, badge }) => {
   return (
     <Tooltip placement="rightTop" title={tooltip}>

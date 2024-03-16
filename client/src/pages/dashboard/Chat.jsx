@@ -1,6 +1,7 @@
 import { Flex, Grid } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ChatContainer } from '~/section/chats/ChatContainer';
 import { ContactInfo } from '~/section/chats/ContactInfo';
 import { Contacts } from '~/section/chats/Contacts';
@@ -8,7 +9,6 @@ import { EmptyChat } from '~/section/chats/EmptyChat';
 import { SharedMessages } from '~/section/chats/SharedMessages';
 import { setOpenContactInfo } from '~/store/slices/appSlice';
 import {
-  getMessagesOfConversation,
   setCurrentConversation
 } from '~/store/slices/chatSlice';
 import { getInfoData } from '~/utils/getInfoData';
@@ -17,6 +17,7 @@ const { useBreakpoint } = Grid;
 const Chat = () => {
   const { contactInfo } = useSelector((state) => state.app);
   const { conversations, chat } = useSelector((state) => state.chat);
+  const navigate = useNavigate()
 
   const screens = useBreakpoint();
   const dispatch = useDispatch();
@@ -27,24 +28,16 @@ const Chat = () => {
 
   useEffect(() => {
     if (!chat.currentConversation.id && conversations.length > 0) {
-      const conversationsList = [...conversations];
-      conversationsList.sort((a, b) => {
-        const createdA = new Date(a.latest_message.created_at).getTime();
-        const createdB = new Date(b.latest_message.created_at).getTime();
-        return createdB - createdA;
-      });
-      const converstationLast = conversationsList[0];
-      // dispatch(getMessagesOfConversation(converstationLast.id));
       dispatch(
         setCurrentConversation(
           getInfoData({
             fields: ['id', 'title', 'image'],
-            object: converstationLast
+            object: conversations[0]
           })
         )
-      );
+        );
     }
-  }, [chat.currentConversation.id, conversations, dispatch]);
+  }, [chat.currentConversation.id, conversations, dispatch, navigate]);
 
   return (
     <Flex className="h-full">
