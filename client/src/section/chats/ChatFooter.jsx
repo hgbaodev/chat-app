@@ -66,6 +66,12 @@ export const ChatFooter = () => {
           autoSize={{
             maxRows: 3
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSendMessage(e);
+            }
+          }}
         />
         <Button
           type="text"
