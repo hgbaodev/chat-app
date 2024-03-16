@@ -41,7 +41,7 @@ export const ChatContainer = () => {
     <Flex vertical className="h-full flex-1">
       <ChatHeader />
       <div
-        className="p-4 overflow-y-auto custom-scrollbar"
+        className="p-4 overflow-auto custom-scrollbar"
         style={{
           height: 'calc(100vh - 120px)',
           boxShadow:
@@ -54,7 +54,7 @@ export const ChatContainer = () => {
         <InfiniteScroll
           dataLength={chat.messages.length}
           next={fetchMoreData}
-          className="flex flex-col-reverse overflow-hidden"
+          className="flex flex-col-reverse overflow-y-auto"
           inverse={true}
           hasMore={chat.currentPage < chat.lastPage}
           loader={<Spin className="py-2" />}

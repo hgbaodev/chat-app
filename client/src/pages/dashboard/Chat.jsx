@@ -26,18 +26,18 @@ const Chat = () => {
     dispatch(setOpenContactInfo(screens.xl));
   }, [dispatch, screens]);
 
-  useEffect(() => {
-    if (!chat.currentConversation.id && conversations.length > 0) {
-      dispatch(
-        setCurrentConversation(
-          getInfoData({
-            fields: ['id', 'title', 'image'],
-            object: conversations[0]
-          })
-        )
-        );
-    }
-  }, [chat.currentConversation.id, conversations, dispatch, navigate]);
+  // useEffect(() => {
+  //   if (!chat.currentConversation.id && conversations.length > 0) {
+  //     dispatch(
+  //       setCurrentConversation(
+  //         getInfoData({
+  //           fields: ['id', 'title', 'image'],
+  //           object: conversations[0]
+  //         })
+  //       )
+  //       );
+  //   }
+  // }, [chat.currentConversation.id, conversations, dispatch, navigate]);
 
   return (
     <Flex className="h-full">
