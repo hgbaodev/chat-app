@@ -111,6 +111,11 @@ const ContactsHeader = ({ setFind }) => {
 };
 
 const ContactsHeaderFind = ({ setFind, conversations }) => {
+  const list = conversations.sort((a, b) => {
+    const createdA = new Date(a.latest_message.created_at).getTime();
+    const createdB = new Date(b.latest_message.created_at).getTime();
+    return createdB - createdA;
+  });
   return (
     <>
       <Flex vertical>
@@ -126,9 +131,23 @@ const ContactsHeaderFind = ({ setFind, conversations }) => {
           </Button>
         </Space>
         <Space direction="vertical">
-          <Typography.Text strong className="p-4">
-            Friends
-          </Typography.Text>
+          {conversations.length > 0 && (
+            <>
+              <Typography.Text className="p-4" strong>
+                Friend
+              </Typography.Text>
+              {list.filter((con) => con.type === 2)
+                .map((conversation) => (
+                  <ContactItem
+                    key={conversation.id}
+                    id={conversation.id}
+                    title={conversation.title}
+                    image={conversation.image}
+                    lastestMessage={conversation.latest_message}
+                  />
+                ))}
+            </>
+          )}
         </Space>
         <Space direction="vertical">
           {conversations.length > 0 && (
@@ -136,16 +155,7 @@ const ContactsHeaderFind = ({ setFind, conversations }) => {
               <Typography.Text className="p-4" strong>
                 Groups
               </Typography.Text>
-              {conversations
-                .sort((a, b) => {
-                  const createdA = new Date(
-                    a.latest_message.created_at
-                  ).getTime();
-                  const createdB = new Date(
-                    b.latest_message.created_at
-                  ).getTime();
-                  return createdB - createdA;
-                })
+              {list.filter((con) => con.type === 1)
                 .map((conversation) => (
                   <ContactItem
                     key={conversation.id}

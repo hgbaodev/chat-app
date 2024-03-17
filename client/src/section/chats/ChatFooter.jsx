@@ -54,7 +54,7 @@ export const ChatFooter = () => {
           }}
         />
         {isOpenEmojiPicker && (
-          <div className="absolute bottom-[60px] left-[60px] ">
+          <div className="absolute bottom-[60px] left-[60px]">
             <EmojiPicker onEmojiClick={handleEmojiClick} />
           </div>
         )}
