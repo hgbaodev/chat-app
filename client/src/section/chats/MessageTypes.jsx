@@ -8,51 +8,50 @@ import { useSelector } from '~/store';
 import { memo } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
 
-const MessageWrapper = memo(({ from, created = null, children, ...props }) => {
-  const { user } = useSelector((state) => state.auth);
-  const [hoverRef, isHovering] = useHover();
-  return (
-    <Flex vertical>
-      {created && (
-        <Typography.Text code className="text-center py-2">
-          {formatDateTime(created)}
-        </Typography.Text>
-      )}
-      <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
-        {from !== user.id && (
-          <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
-            B
-          </Avatar>
-        )}
-        <Flex
-          align="center"
-          gap={20}
-          className={`${from !== user.id ? 'flex-1' : ''}`}
-        >
+const MessageWrapper = memo(
+  ({ messageId, from, created = null, children, ...props }) => {
+    const { user } = useSelector((state) => state.auth);
+    const [hoverRef, isHovering] = useHover();
+    return (
+      <Flex vertical>
+        {created && <TimeLine text={formatDateTime(created)} />}
+        <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
+          {from !== user.id && (
+            <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
+              B
+            </Avatar>
+          )}
           <Flex
-            className={`${
-              from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
-            }  p-2 rounded-lg cursor-pointer`}
-            {...props}
+            align="center"
+            gap={20}
+            className={`${from !== user.id ? 'flex-1' : ''}`}
           >
-            {children}
+            <Flex
+              className={`${
+                from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
+              }  p-2 rounded-lg cursor-pointer`}
+              {...props}
+            >
+              {children}
+            </Flex>
+            <MessageAction
+              className={`${
+                from === user.id ? '-order-last flex-row-reverse' : ''
+              } ${isHovering ? 'visible' : 'invisible'}`}
+              messageId={messageId}
+            />
           </Flex>
-          <MessageAction
-            className={`${
-              from === user.id ? '-order-last flex-row-reverse' : ''
-            } ${isHovering ? 'visible' : 'invisible'}`}
-          />
         </Flex>
       </Flex>
-    </Flex>
-  );
-});
+    );
+  }
+);
 
 export default MessageWrapper;
 
-export const TextMessage = ({ sender, message, created }) => {
+export const TextMessage = ({ id, sender, message, created }) => {
   return (
-    <MessageWrapper from={sender.id} created={created}>
+    <MessageWrapper messageId={id} from={sender.id} created={created}>
       <Typography className="text-inherit">{message}</Typography>
     </MessageWrapper>
   );

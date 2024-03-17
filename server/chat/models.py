@@ -46,3 +46,8 @@ class Message(models.Model): # gửi, xoá
     
     def __str__(self) -> str:
         return f"{self.conversation_id}:{self.message_type}:{self.created_at}:{self.message}"
+    
+class DeleteMessage(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)

@@ -2,14 +2,15 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import MemberConversationSerializer, ParticipantDetailSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer
+from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Conversation, Participants, Message
-from django.http import Http404, HttpResponseForbidden
+from .models import Conversation, Participants, Message, DeleteMessage
+from django.http import Http404
 from django.db.models import Max
 from config.paginations import CustomPagination
 from utils.cloudinary import get_image_url
 from django.db.models import Max
+from utils.responses import SuccessResponse, ErrorResponse
 
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
@@ -119,17 +120,17 @@ class GetMessagesConversation(generics.ListAPIView):
     pagination_class = CustomPagination
     serializer_class = MessageSerializer
 
-    def get_queryset(self):
+    def get_queryset(self, request):
         pk = self.kwargs.get('pk')
         participant = Participants.objects.filter(conversation_id=pk, user_id=self.request.user.id).first()
         if participant:
-            messages = Message.objects.filter(conversation=pk).order_by('-created_at')
+            messages = Message.objects.filter(conversation=pk).exclude(deletemessage__user=request.user).order_by('-created_at')
             return messages
         else:
             return Message.objects.none()  # Return an empty queryset if the user doesn't have access
 
     def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
+        queryset = self.get_queryset(request)
         page = self.paginate_queryset(queryset)[::-1]
         if page is not None:
             serializer = self.get_serializer(page, many=True)
@@ -138,3 +139,15 @@ class GetMessagesConversation(generics.ListAPIView):
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
 
+class MesssageDetail(generics.DestroyAPIView):
+    def get_object(self, pk):
+        try:
+            return Message.objects.get(pk=pk)
+        except Message.DoesNotExist:
+            raise Http404 
+        
+    def delete(self, request, pk, format=None):
+        message = self.get_object(pk)
+        delete_message = DeleteMessage.objects.create(message=message,user=request.user)
+        serializer = DeleteMessageSerializer(delete_message)
+        return SuccessResponse(data=serializer.data)

@@ -1,45 +1,49 @@
 import { Button, Dropdown, Flex, Popover, Space } from 'antd';
 import { useState } from 'react';
 import { FcDislike, FcLike, FcLinux, FcRating } from 'react-icons/fc';
+import { GrPin } from 'react-icons/gr';
 import {
   IoArrowUndo,
   IoEllipsisVerticalSharp,
   IoHappyOutline
 } from 'react-icons/io5';
+import { useDispatch } from '~/store';
+import { deleteMessage } from '~/store/slices/chatSlice';
 
-const items = [
-  {
-    key: '1',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Delete
-      </a>
-    )
-  },
-  {
-    key: '2',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Forward
-      </a>
-    )
-  },
-  {
-    key: '3',
-    label: (
-      <a target="_blank" rel="noopener noreferrer" href="#">
-        Pin
-      </a>
-    )
-  }
-];
-
-const MessageAction = ({ ...props }) => {
+const MessageAction = ({ messageId, ...props }) => {
+  const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = (newOpen) => {
     setOpen(newOpen);
   };
+
+  const items = [
+    {
+      key: '1',
+      label: 'Forward',
+      icon: <IoArrowUndo />
+    },
+    {
+      key: '2',
+      label: 'Pin',
+      icon: <GrPin />
+    },
+    {
+      key: '3',
+      label: <p onClick={() => dispatch(deleteMessage(messageId))}>Recall</p>,
+      danger: true
+    },
+    {
+      key: '4',
+      label: (
+        <p onClick={() => dispatch(deleteMessage(messageId))}>
+          Delete for me only
+        </p>
+      ),
+      danger: true
+    }
+  ];
 
   return (
     <Flex gap={6} {...props}>
@@ -74,6 +78,7 @@ const MessageAction = ({ ...props }) => {
         }}
         open={open}
         onOpenChange={handleOpenChange}
+        trigger={['click']}
         className="min-w-[100px]"
       >
         <Button

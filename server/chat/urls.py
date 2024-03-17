@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, GetMemberConversation, GetMessagesConversation
+from .views import ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail,MesssageDetail, GetMemberConversation, GetMessagesConversation
 urlpatterns = [
     path('conversations/', ConversationList.as_view(), name='conversations'),
     path('conversations/<int:pk>/', ConversationDetail.as_view(), name='conversation-detail'),
@@ -7,5 +7,5 @@ urlpatterns = [
     path('conversations/<int:pk>/messages/', GetMessagesConversation.as_view(), name='get-messages'),
     path('participants/', PaticipantsList.as_view(), name='participants'),
     path('participants/<int:pk>/', ParicipantsDetail.as_view(), name='participants-detail'),
-    
+    path('messages/<int:pk>/', MesssageDetail.as_view(), name='message-detail'),
 ]

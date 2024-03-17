@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import Conversation, Message, Participants
+from .models import Conversation, Message, Participants, DeleteMessage
     
 class NewestMessage(serializers.ModelSerializer):
     class Meta: 
@@ -96,3 +96,8 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id']
+
+class DeleteMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DeleteMessage
+        fields = '__all__'

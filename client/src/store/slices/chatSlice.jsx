@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
 
 export const getConversations = createAsyncThunk(
-  'auth/getConversations',
+  'chat/getConversations',
   async () => {
     try {
       const response = await AxiosInstance.get(`/chat/conversations/`);
@@ -15,7 +15,7 @@ export const getConversations = createAsyncThunk(
 );
 
 export const getMessagesOfConversation = createAsyncThunk(
-  'auth/getMessagesOfConversation',
+  'chat/getMessagesOfConversation',
   async ({ conversation_id, page }, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.get(
@@ -24,6 +24,20 @@ export const getMessagesOfConversation = createAsyncThunk(
       return response;
     } catch (error) {
       throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const deleteMessage = createAsyncThunk(
+  'chat/deleteMessage',
+  async (messageId) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `chat/messages/${messageId}/`
+      );
+      return response;
+    } catch (error) {
+      console.log(error);
     }
   }
 );
@@ -91,6 +105,11 @@ const chatSlice = createSlice({
       })
       .addCase(getMessagesOfConversation.rejected, (state) => {
         state.chat.isLoading = false;
+      })
+      .addCase(deleteMessage.fulfilled, (state, action) => {
+        state.chat.messages = state.chat.messages.filter(
+          (message) => message.id !== action.payload.data.result.message
+        );
       });
   }
 });

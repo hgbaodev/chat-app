@@ -18,6 +18,7 @@ const MessageTypes = {
 export const ChatContainer = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
+
   // effect
   useEffect(() => {
     if (chat.currentConversation.id) {
@@ -48,16 +49,16 @@ export const ChatContainer = () => {
           display: 'flex',
           flexDirection: 'column-reverse'
         }}
-        id="scrollableDiv"
+        id="scollable"
       >
         <InfiniteScroll
           dataLength={chat.messages.length}
           next={fetchMoreData}
-          className="flex flex-col-reverse"
+          className="flex flex-col-reverse overflow-y-auto"
           inverse={true}
           hasMore={chat.currentPage < chat.lastPage}
           loader={<Spin className="py-2" />}
-          scrollableTarget="scrollableDiv"
+          scrollableTarget="scollable"
         >
           <Space direction="vertical">
             {chat.messages.map((message, index) => {

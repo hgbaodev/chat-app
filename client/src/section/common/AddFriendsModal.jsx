@@ -103,7 +103,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
         footer={null}
       >
         {userSelected ? (
-          <Space direction="vertical" className="w-[100%]" size="middle">
+          <Space direction="vertical" className="w-[100%] mt-3" size="middle">
             {isLoading && <Loader />}
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
