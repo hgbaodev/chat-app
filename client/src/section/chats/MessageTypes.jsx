@@ -9,7 +9,14 @@ import { memo } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
 
 const MessageWrapper = memo(
-  ({ messageId, from, created = null, children, ...props }) => {
+  ({
+    messageId,
+    from,
+    created = null,
+    hideAction = false,
+    children,
+    ...props
+  }) => {
     const { user } = useSelector((state) => state.auth);
     const [hoverRef, isHovering] = useHover();
     return (
@@ -28,26 +35,26 @@ const MessageWrapper = memo(
           >
             <Flex
               className={`${
-                from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100'
-              }  p-2 rounded-lg cursor-pointer`}
+                from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100 '
+              }  p-3 rounded-lg`}
               {...props}
             >
               {children}
             </Flex>
-            <MessageAction
-              className={`${
-                from === user.id ? '-order-last flex-row-reverse' : ''
-              } ${isHovering ? 'visible' : 'invisible'}`}
-              messageId={messageId}
-            />
+            {!hideAction && (
+              <MessageAction
+                className={`${
+                  from === user.id ? '-order-last flex-row-reverse' : ''
+                } ${isHovering ? 'visible' : 'invisible'}`}
+                messageId={messageId}
+              />
+            )}
           </Flex>
         </Flex>
       </Flex>
     );
   }
 );
-
-export default MessageWrapper;
 
 export const TextMessage = ({ id, sender, message, created }) => {
   return (
@@ -56,6 +63,7 @@ export const TextMessage = ({ id, sender, message, created }) => {
     </MessageWrapper>
   );
 };
+
 export const MediaMessage = ({ from, image, created }) => {
   return (
     <MessageWrapper
@@ -96,5 +104,19 @@ export const TimeLine = ({ text }) => {
         {text}
       </Flex>
     </Flex>
+  );
+};
+
+export const RecallMessage = ({ id, sender, created }) => {
+  return (
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      className="p-2 rounded-lg border border-solid border-gray-300"
+      hideAction={true}
+    >
+      <Typography className="text-gray-400 italic">Message recalled</Typography>
+    </MessageWrapper>
   );
 };

@@ -151,3 +151,8 @@ class MesssageDetail(generics.DestroyAPIView):
         delete_message = DeleteMessage.objects.create(message=message,user=request.user)
         serializer = DeleteMessageSerializer(delete_message)
         return SuccessResponse(data=serializer.data)
+    
+    def put(self, request, pk, format=None):
+        pass
+    
+    

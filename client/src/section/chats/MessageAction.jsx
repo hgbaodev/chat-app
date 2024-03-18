@@ -8,7 +8,7 @@ import {
   IoHappyOutline
 } from 'react-icons/io5';
 import { useDispatch } from '~/store';
-import { deleteMessage } from '~/store/slices/chatSlice';
+import { deleteMessage, setForwardMessage } from '~/store/slices/chatSlice';
 
 const MessageAction = ({ messageId, ...props }) => {
   const dispatch = useDispatch();
@@ -21,7 +21,9 @@ const MessageAction = ({ messageId, ...props }) => {
   const items = [
     {
       key: '1',
-      label: 'Forward',
+      label: (
+        <p onClick={() => dispatch(setForwardMessage(messageId))}>Forward</p>
+      ),
       icon: <IoArrowUndo />
     },
     {
@@ -48,7 +50,7 @@ const MessageAction = ({ messageId, ...props }) => {
   return (
     <Flex gap={6} {...props}>
       <Popover
-        content={PopoverReaction}
+      content={PopoverReaction}
         trigger="hover"
         arrow={false}
         overlayClassName="popover-reaction"
@@ -67,6 +69,7 @@ const MessageAction = ({ messageId, ...props }) => {
         shape="circle"
         icon={<IoArrowUndo size={18} />}
         className="text-gray-600"
+        onClick={() => dispatch(setForwardMessage(messageId))}
       />
       <Dropdown
         menu={{

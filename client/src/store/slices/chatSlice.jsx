@@ -50,11 +50,12 @@ const initialState = {
       title: null,
       image: null
     },
+    messages: [],
     lastPage: 0,
     currentPage: 1,
-    messages: [],
     isLoading: false
   },
+  forwardMessage: null,
   isLoading: true
 };
 
@@ -78,6 +79,11 @@ const chatSlice = createSlice({
     },
     setPage(state, action) {
       state.chat.currentPage = action.payload;
+    },
+    setForwardMessage(state, action) {
+      state.forwardMessage = state.chat.messages.find(
+        (message) => message.id === action.payload
+      );
     }
   },
   extraReducers: (builder) => {
@@ -115,5 +121,9 @@ const chatSlice = createSlice({
 });
 
 export default chatSlice.reducer;
-export const { setCurrentConversation, receiverMessage, setPage } =
-  chatSlice.actions;
+export const {
+  setCurrentConversation,
+  receiverMessage,
+  setPage,
+  setForwardMessage
+} = chatSlice.actions;
