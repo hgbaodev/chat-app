@@ -156,3 +156,24 @@ class MesssageDetail(generics.DestroyAPIView):
         pass
     
     
+
+class ConversationListFind(APIView):
+    serializer_class = ConversationSerializer
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        conversations = Conversation.objects.filter(participants__user=request.user).annotate(
+            latest_message_time=Max('message__created_at')
+        ).order_by('-latest_message_time')
+        
+        conversation_data = []
+        for conversation in conversations:
+            conversation_data.append({
+                'id': conversation.id, 
+                'title': conversation.title, 
+                'image': get_image_url(conversation.image),
+                'type': conversation.type,
+            })
+        
+        serializer = self.serializer_class(conversation_data, many=True)
+        return Response(serializer.data)
