@@ -5,6 +5,7 @@ import authReducer from './slices/authSlice';
 import relationshipReducer from './slices/relationshipSlice';
 import chatReducer from './slices/chatSlice';
 import notificationReducer from './slices/notificationSlice';
+import contactReducer from '~/store/slices/contactSlice';
 
 const rootPersistConfig = {
   key: 'root',
@@ -18,7 +19,8 @@ const rootReducer = combineReducers({
   auth: authReducer,
   relationship: relationshipReducer,
   chat: chatReducer,
-  notifications: notificationReducer
+  notifications: notificationReducer,
+  contact: contactReducer
 });
 
 export { rootPersistConfig, rootReducer };

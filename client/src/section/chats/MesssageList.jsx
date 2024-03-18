@@ -10,7 +10,6 @@ const MesssageList = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);
 
-  // effect
   useEffect(() => {
     if (chat.currentConversation.id) {
       dispatch(
@@ -50,29 +49,34 @@ const MesssageList = () => {
       >
         <Space direction="vertical">
           {chat.messages.map((message, index) => {
-            if (index < chat.messages.length - 1 && chat.messages.length >= 2) {
+            let check = false;
+            if (index > 0) {
               const currentMessageTime = new Date(message.created_at);
-              const nextMessageTime = new Date(
-                chat.messages[index + 1].created_at
+              const prevMessageTime = new Date(
+                chat.messages[index - 1].created_at
               );
-              const timeDiff = Math.abs(nextMessageTime - currentMessageTime);
+              const timeDiff = Math.abs(currentMessageTime - prevMessageTime);
               const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
+              if (hoursDiff > 1) check = true;
+            }
 
-              if (hoursDiff >= 1) {
+            switch (message.message_type) {
+              case MessageTypes.TEXT:
                 return (
                   <TextMessage
                     key={message.id}
                     {...message}
-                    created={message.created_at}
+                    created={check ? message.created_at : null}
                   />
                 );
-              }
-            }
-            switch (message.message_type) {
-              case MessageTypes.TEXT:
-                return <TextMessage key={message.id} {...message} />;
               case MessageTypes.RECALL:
-                return <RecallMessage key={message.id} {...message} />;
+                return (
+                  <RecallMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
               default:
                 return null;
             }
@@ -82,5 +86,6 @@ const MesssageList = () => {
     </div>
   );
 };
+
 
 export default MesssageList;

@@ -11,6 +11,8 @@ from config.paginations import CustomPagination
 from utils.cloudinary import get_image_url
 from django.db.models import Max
 from utils.responses import SuccessResponse, ErrorResponse
+from django.db.models import Q
+from authentication.models import User
 
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
@@ -24,6 +26,7 @@ class ConversationList(APIView):
         
         conversation_data = []
         for conversation in conversations:
+            users = User.objects.filter(participants__conversation=conversation)
             latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             if latest_message is not None:
                 conversation_data.append({
@@ -32,6 +35,7 @@ class ConversationList(APIView):
                     'image': get_image_url(conversation.image),
                     'latest_message': latest_message,
                     'type': conversation.type,
+                    'members': users
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
@@ -162,18 +166,35 @@ class ConversationListFind(APIView):
     permission_classes = [IsAuthenticated]
     
     def get(self, request):
-        conversations = Conversation.objects.filter(participants__user=request.user).annotate(
+        search_query = request.GET.get('query')
+        conversations = Conversation.objects.filter(participants__user=request.user)
+        
+        conversations = conversations.annotate(
             latest_message_time=Max('message__created_at')
         ).order_by('-latest_message_time')
-        
+
         conversation_data = []
+        
         for conversation in conversations:
-            conversation_data.append({
+            users = User.objects.filter(participants__conversation=conversation)
+            
+            conversation_info = {
                 'id': conversation.id, 
                 'title': conversation.title, 
                 'image': get_image_url(conversation.image),
                 'type': conversation.type,
-            })
+                'members': users
+            }
+
+            def check_query(x):
+                search_query_lower = search_query.lower()
+                v = filter(lambda x: search_query_lower in x, map(lambda x: f'{x.first_name} {x.last_name}'.lower(), x.get('members')))
+                return search_query_lower in x.get('title') or len(list(v)) > 0
+            
+            if not search_query or check_query(conversation_info):
+                conversation_data.append(conversation_info)
         
         serializer = self.serializer_class(conversation_data, many=True)
-        return Response(serializer.data)
+        return SuccessResponse(data=serializer.data)
+
+

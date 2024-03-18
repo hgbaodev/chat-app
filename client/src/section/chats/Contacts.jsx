@@ -1,19 +1,18 @@
 /* eslint-disable indent */
-import { Button, Flex, Input, Space, Typography } from 'antd';
+import { Flex, Space } from 'antd';
 import { ContactItem } from './ContactItem';
-import { SearchOutlined } from '@ant-design/icons';
-import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
-import { useEffect, useState } from 'react';
-import AddFriendsModal from '~/section/common/AddFriendsModal';
-import NewGroupModel from '../common/NewGroupModal';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from '~/store';
 import { getConversations } from '~/store/slices/chatSlice';
 import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
+import ContactsHeaderFind from '~/section/chats/ContactsHeaderFind';
+import ContactsHeader from '~/section/chats/ContactsHeader';
 
 export const Contacts = ({ ...props }) => {
   const dispatch = useDispatch();
-  const [find, setFind] = useState(false);
+  const { openSearch } = useSelector((state) => state.contact);
   const { conversations, isLoading, chat } = useSelector((state) => state.chat);
+  const { user } = useSelector((state) => state.auth);
   const conversationsList = [...conversations];
   useEffect(() => {
     dispatch(getConversations());
@@ -21,9 +20,9 @@ export const Contacts = ({ ...props }) => {
 
   return (
     <Flex className="h-screen" vertical {...props}>
-      {!find ? (
+      {!openSearch ? (
         <>
-          <ContactsHeader setFind={setFind} />
+          <ContactsHeader />
           <Space
             direction="vertical"
             className="overflow-y-auto scrollbar gap-0"
@@ -40,12 +39,13 @@ export const Contacts = ({ ...props }) => {
                     return createdB - createdA;
                   })
                   .map((conversation) => {
+                    const us = conversation?.members.filter((member) => member.id != user.id)[0]
                     return (
                       <ContactItem
                         key={conversation.id}
                         id={conversation.id}
-                        title={conversation.title}
-                        image={conversation.image}
+                        title={conversation.type == 1 ? conversation.title : `${us.first_name} ${us.last_name}`}
+                        image={conversation.type == 1 ? conversation.image : us.avatar}
                         lastestMessage={conversation.latest_message}
                         active={conversation.id == chat.currentConversation.id}
                       />
@@ -60,115 +60,9 @@ export const Contacts = ({ ...props }) => {
         </>
       ) : (
         <>
-          <ContactsHeaderFind
-            setFind={setFind}
-            conversations={conversationsList}
-          />
+          <ContactsHeaderFind />
         </>
       )}
     </Flex>
-  );
-};
-
-const ContactsHeader = ({ setFind }) => {
-  const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
-  const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
-
-  return (
-    <>
-      <Space className="w-[100%] p-4">
-        <Input
-          variant="filled"
-          placeholder="Search here..."
-          prefix={<SearchOutlined />}
-          onClick={() => setFind(true)}
-        />
-        <Button
-          type="text"
-          icon={<MdOutlinePersonAddAlt size={20} />}
-          onClick={() => setIsAddFriendModalOpen(true)}
-        />
-        <Button
-          type="text"
-          icon={<MdOutlineGroupAdd size={20} />}
-          onClick={() => setIsNewGroupModalOpen(true)}
-        />
-      </Space>
-      {isAddFriendModalOpen && (
-        <AddFriendsModal
-          isModalOpen={isAddFriendModalOpen}
-          setIsModalOpen={setIsAddFriendModalOpen}
-        />
-      )}
-      {isNewGroupModalOpen && (
-        <NewGroupModel
-          isModalOpen={isNewGroupModalOpen}
-          setIsModalOpen={setIsNewGroupModalOpen}
-        />
-      )}
-    </>
-  );
-};
-
-const ContactsHeaderFind = ({ setFind, conversations }) => {
-  const list = conversations.sort((a, b) => {
-    const createdA = new Date(a.latest_message.created_at).getTime();
-    const createdB = new Date(b.latest_message.created_at).getTime();
-    return createdB - createdA;
-  });
-  return (
-    <>
-      <Flex vertical>
-        <Space className="w-[100%] p-4">
-          <Input
-            variant="filled"
-            placeholder="Search here..."
-            prefix={<SearchOutlined />}
-            autoFocus
-          />
-          <Button type="text" onClick={() => setFind(false)}>
-            Close
-          </Button>
-        </Space>
-        <Space direction="vertical">
-          {conversations.length > 0 && (
-            <>
-              <Typography.Text className="p-4" strong>
-                Friend
-              </Typography.Text>
-              {list.filter((con) => con.type === 2)
-                .map((conversation) => (
-                  <ContactItem
-                    key={conversation.id}
-                    id={conversation.id}
-                    title={conversation.title}
-                    image={conversation.image}
-                    lastestMessage={conversation.latest_message}
-                  />
-                ))}
-            </>
-          )}
-        </Space>
-        <Space direction="vertical">
-          {conversations.length > 0 && (
-            <>
-              <Typography.Text className="p-4" strong>
-                Groups
-              </Typography.Text>
-              {list.filter((con) => con.type === 1)
-                .map((conversation) => (
-                  <ContactItem
-                    key={conversation.id}
-                    id={conversation.id}
-                    title={conversation.title}
-                    image={conversation.image}
-                    lastestMessage={conversation.latest_message}
-                  />
-                ))}
-            </>
-          )}
-        </Space>
-      </Flex>
-    </>
   );
 };

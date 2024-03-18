@@ -2,20 +2,31 @@ from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
 from .models import Conversation, Message, Participants, DeleteMessage
-    
+from utils.cloudinary import get_image_url
+
+class MemberConversationSerializer(serializers.ModelSerializer):
+    avatar = serializers.SerializerMethodField()
+    class Meta:
+        model = User
+        fields = ['id','first_name', 'last_name', 'avatar'] 
+
+    def get_avatar(self, obj):
+        return get_image_url(obj.avatar)
+
 class NewestMessage(serializers.ModelSerializer):
     class Meta: 
         model = Message
         fields = ['id','message','sender','message_type','created_at']
-    
+
 class ConversationSerializer(serializers.ModelSerializer):
     participants = serializers.ListField(child=serializers.PrimaryKeyRelatedField(queryset=User.objects.all()), allow_null=False, write_only=True)
     latest_message = NewestMessage(read_only=True)
     type = serializers.IntegerField(read_only=True)
+    members = MemberConversationSerializer(many=True, read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants']
+        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants', 'members']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')
@@ -33,11 +44,8 @@ class ConversationSerializer(serializers.ModelSerializer):
         Participants.objects.bulk_create(participants_to_create)
 
         return conversation
+    
 
-class MemberConversationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id','first_name', 'last_name', 'avatar'] 
     
 class CreateParticipantsSerializer(serializers.ModelSerializer):
     conversation = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all())
