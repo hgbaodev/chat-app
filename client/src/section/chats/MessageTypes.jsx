@@ -47,6 +47,7 @@ const MessageWrapper = memo(
                   from === user.id ? '-order-last flex-row-reverse' : ''
                 } ${isHovering ? 'visible' : 'invisible'}`}
                 messageId={messageId}
+                from={from}
               />
             )}
           </Flex>

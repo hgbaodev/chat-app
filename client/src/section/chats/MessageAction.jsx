@@ -1,17 +1,17 @@
 import { Button, Dropdown, Flex, Popover, Space } from 'antd';
 import { useState } from 'react';
 import { FcDislike, FcLike, FcLinux, FcRating } from 'react-icons/fc';
-import { GrPin } from 'react-icons/gr';
 import {
   IoArrowUndo,
   IoEllipsisVerticalSharp,
   IoHappyOutline
 } from 'react-icons/io5';
-import { useDispatch } from '~/store';
+import { useDispatch, useSelector } from '~/store';
 import { deleteMessage, setForwardMessage } from '~/store/slices/chatSlice';
 
-const MessageAction = ({ messageId, ...props }) => {
+const MessageAction = ({ messageId, from, ...props }) => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
   const [open, setOpen] = useState(false);
 
   const handleOpenChange = (newOpen) => {
@@ -23,13 +23,11 @@ const MessageAction = ({ messageId, ...props }) => {
       key: '1',
       label: (
         <p onClick={() => dispatch(setForwardMessage(messageId))}>Forward</p>
-      ),
-      icon: <IoArrowUndo />
+      )
     },
     {
       key: '2',
-      label: 'Pin',
-      icon: <GrPin />
+      label: 'Pin'
     },
     {
       key: '3',
@@ -47,10 +45,13 @@ const MessageAction = ({ messageId, ...props }) => {
     }
   ];
 
+  const filteredItems =
+    from !== user.id ? items.filter((item) => item.key != 3) : items;
+
   return (
     <Flex gap={6} {...props}>
       <Popover
-      content={PopoverReaction}
+        content={PopoverReaction}
         trigger="hover"
         arrow={false}
         overlayClassName="popover-reaction"
@@ -73,7 +74,7 @@ const MessageAction = ({ messageId, ...props }) => {
       />
       <Dropdown
         menu={{
-          items
+          items: filteredItems
         }}
         placement="topLeft"
         arrow={{
