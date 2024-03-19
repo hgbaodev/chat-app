@@ -11,7 +11,7 @@ import { useDispatch } from 'react-redux';
 import { setForwardMessage } from '~/store/slices/chatSlice';
 
 export const ChatFooter = () => {
-  const { chat, forwardMessage } = useSelector((state) => state.chat);
+  const { chat, conversations, forwardMessage } = useSelector((state) => state.chat);
   const { emitMessage } = useSocket();
 
   const [text, setText] = useState('');
@@ -28,8 +28,9 @@ export const ChatFooter = () => {
     if (text.trim()) {
       emitMessage({
         conversation_id: chat.currentConversation.id,
+        conversation: conversations.find((con) => con.id==chat.currentConversation.id) == null ? chat.currentConversation : null,
         message: text,
-        message_type: 1 // default
+        message_type: 1,
       });
       // reset text
       setText('');

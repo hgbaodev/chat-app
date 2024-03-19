@@ -68,9 +68,14 @@ class ChatConsumer(WebsocketConsumer):
        
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
-            async_to_sync(self.channel_layer.group_send)(
-               room_group_name, {"type": "chat_message", "message": message_serializer.data}
-            )
+            if(data.get("conversation")):
+                async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "chat_message", "message": message_serializer.data, "conversation": data.get("conversation")}
+                )
+            else:
+                async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "chat_message", "message": message_serializer.data}
+                )
 
     def receive_friend_request(self, event):
         self.send(text_data=json.dumps(event))

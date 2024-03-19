@@ -1,4 +1,4 @@
-import { Button, Flex, Input, Space, Typography } from 'antd';
+import { Button, Flex, Input, Space } from 'antd';
 import { CiSearch } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
 import { findConversations, setOpenSearch } from '~/store/slices/contactSlice';
@@ -57,6 +57,7 @@ const ContactsHeaderFind = () => {
                         id={conversation.id}
                         title={conversation.type == 1 ? conversation.title : `${us.first_name} ${us.last_name}`}
                         image={conversation.type == 1 ? conversation.image : us.avatar}
+                        members={conversation.members}
                         active={conversation.id == chat.currentConversation.id}
                       />
                     );

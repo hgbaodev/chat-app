@@ -23,14 +23,14 @@ export const SocketProvider = ({ children }) => {
       var socket = new ReconnectingWebSocket(endpoint);
 
       socket.onopen = function (e) {
-        console.log('socket connected');
+        console.log(`socket connected ${e}`);
       };
 
       socket.onmessage = function (event) {
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
-            dispatch(receiverMessage(data.message));
+            dispatch(receiverMessage(data));
           } else if (data.type === 'receive_friend_request') {
             dispatch(receiveFriendRequest(data.message));
           } else if (data.type === 'receive_notification') {
@@ -42,7 +42,7 @@ export const SocketProvider = ({ children }) => {
       };
 
       socket.onclose = function (e) {
-        console.log('socket disconnected');
+        console.log(`socket disconnected ${e}`);
       };
 
       setSocketInstance(socket);

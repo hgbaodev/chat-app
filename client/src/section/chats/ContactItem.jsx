@@ -13,7 +13,7 @@ import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
 
-export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
+export const ContactItem = ({ id, title, image, lastestMessage, members, active }) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
@@ -52,7 +52,7 @@ export const ContactItem = ({ id, title, image, lastestMessage, active }) => {
   // handle get all messages
   const getAllMessages = () => {
     if (currentConversation.id != id) {
-      dispatch(setCurrentConversation({ id, title, image }));
+      dispatch(setCurrentConversation({ id, title, image, members }));
     }
   };
   return (

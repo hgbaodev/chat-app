@@ -48,7 +48,9 @@ const initialState = {
     currentConversation: {
       id: null,
       title: null,
-      image: null
+      image: null,
+      latest_message: null,
+      members: [],
     },
     messages: [],
     lastPage: 0,
@@ -70,12 +72,17 @@ const chatSlice = createSlice({
       state.chat.messages = [];
     },
     receiverMessage(state, action) {
-      state.chat.messages.push(action.payload);
+      const result = action.payload
+      console.log('result', result)
+      if (result.conversation!=null) {
+        state.conversations = [result.conversation, ...state.conversations];
+      }
       state.conversations.map((conversation) => {
-        if (conversation.id === action.payload.conversation_id) {
-          conversation.latest_message = action.payload;
+        if (conversation.id === result.message.conversation_id) {
+          conversation.latest_message = result.message;
         }
       });
+      state.chat.messages.push(result.message);
     },
     setPage(state, action) {
       state.chat.currentPage = action.payload;
