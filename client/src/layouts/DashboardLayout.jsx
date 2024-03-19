@@ -22,6 +22,7 @@ import { useEffect, useState } from 'react';
 import ProfileModal from '~/section/common/ProfileModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
+import Notification from '~/pages/dashboard/Notification';
 
 const { Text } = Typography;
 
@@ -33,6 +34,7 @@ const DashboardLayout = () => {
   );
   const { totalUnseen } = useSelector((state) => state.notifications);
   const [openProfile, setOpenProfile] = useState(false);
+  const [openNotification, setOpenNotification] = useState(false);
 
   // effect
   useEffect(() => {
@@ -94,10 +96,11 @@ const DashboardLayout = () => {
                 badge={received_friend_requests.length}
               />
               <NavButton
-                href="/notifications"
+                href="#"
                 tooltip="Notifications"
                 icon={<IoNotificationsOutline size={27} />}
                 badge={totalUnseen}
+                onClick={() => setOpenNotification(true)}
               />
               <NavButton
                 href="/settings"
@@ -130,17 +133,25 @@ const DashboardLayout = () => {
       {openProfile && (
         <ProfileModal open={openProfile} setOpen={setOpenProfile} />
       )}
+      <Notification
+        open={openNotification}
+        handleClose={() => {
+          setOpenNotification(false);
+        }}
+      />
     </>
   );
 };
 
-const NavButton = ({ tooltip, href, icon, badge }) => {
+const NavButton = ({ tooltip, href, icon, badge, ...other }) => {
   return (
-    <Tooltip placement="rightTop" title={tooltip}>
+    <Tooltip placement="rightTop" title={tooltip} {...other}>
       <NavLink
         to={href}
         className={({ isActive }) =>
-          (isActive ? 'bg-neutral-300' : 'hover:bg-neutral-200') +
+          (isActive && href !== '#'
+            ? 'bg-neutral-300'
+            : 'hover:bg-neutral-200') +
           ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
         }
       >
