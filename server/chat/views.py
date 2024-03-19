@@ -157,7 +157,14 @@ class MesssageDetail(generics.DestroyAPIView):
         return SuccessResponse(data=serializer.data)
     
     def put(self, request, pk, format=None):
-        pass
+        message_obj = self.get_object(pk)
+        if request.user != message_obj.sender:
+            return ErrorResponse(error_message="You are not the sender of this message")
+        message_obj.message_type = Message.MessageType.RECALL
+        message_obj.message = ""
+        message_obj.save()
+        serializer = MessageSerializer(message_obj)
+        return SuccessResponse(data=serializer.data)
     
     
 
