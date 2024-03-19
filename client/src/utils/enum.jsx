@@ -6,3 +6,8 @@ export const MessageTypes = {
   FILE: 5,
   RECALL: 6
 };
+
+export const GroupTypes = {
+  GROUP: 1,
+  FRIEND: 2
+}

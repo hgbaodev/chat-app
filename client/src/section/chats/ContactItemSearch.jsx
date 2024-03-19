@@ -11,7 +11,7 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
 
-export const ContactItemSearch = ({ id, title, image, members, active }) => {
+export const ContactItemSearch = ({ id, title, image, members, type, active }) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
@@ -31,7 +31,7 @@ export const ContactItemSearch = ({ id, title, image, members, active }) => {
   // handle get all messages
   const getAllMessages = () => {
     if (currentConversation.id != id) {
-      dispatch(setCurrentConversation({ id, title, image, members }));
+      dispatch(setCurrentConversation({ id, title, image, members, type }));
     }
   };
   return (

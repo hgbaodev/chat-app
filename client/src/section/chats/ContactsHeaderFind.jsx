@@ -58,6 +58,7 @@ const ContactsHeaderFind = () => {
                         title={conversation.type == 1 ? conversation.title : `${us.first_name} ${us.last_name}`}
                         image={conversation.type == 1 ? conversation.image : us.avatar}
                         members={conversation.members}
+                        type={conversation.type}
                         active={conversation.id == chat.currentConversation.id}
                       />
                     );

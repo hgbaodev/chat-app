@@ -49,6 +49,7 @@ const initialState = {
       id: null,
       title: null,
       image: null,
+      type: null,
       latest_message: null,
       members: [],
     },
