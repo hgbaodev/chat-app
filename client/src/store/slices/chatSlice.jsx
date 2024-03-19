@@ -73,7 +73,6 @@ const chatSlice = createSlice({
     },
     receiverMessage(state, action) {
       const result = action.payload
-      console.log('result', result)
       if (result.conversation!=null) {
         state.conversations = [result.conversation, ...state.conversations];
       }
