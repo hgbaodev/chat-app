@@ -1,5 +1,4 @@
 import { Button, Dropdown, Flex, Popover, Space } from 'antd';
-import { useState } from 'react';
 import { FcDislike, FcLike, FcLinux, FcRating } from 'react-icons/fc';
 import {
   IoArrowUndo,
@@ -7,31 +6,41 @@ import {
   IoHappyOutline
 } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
-import { deleteMessage, recallMessageRequest, setForwardMessage } from '~/store/slices/chatSlice';
+import {
+  deleteMessage,
+  recallMessageRequest,
+  setForwardMessage
+} from '~/store/slices/chatSlice';
+import {
+  BsArrow90DegLeft,
+  BsArrowClockwise,
+  BsPin,
+  BsTrash3
+} from 'react-icons/bs';
 
-const MessageAction = ({ messageId, from, ...props }) => {
+const MessageAction = ({ messageId, from, open, setOpen, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const [open, setOpen] = useState(false);
-
-  const handleOpenChange = (newOpen) => {
-    setOpen(newOpen);
-  };
 
   const items = [
     {
       key: '1',
       label: (
         <p onClick={() => dispatch(setForwardMessage(messageId))}>Forward</p>
-      )
+      ),
+      icon: <BsArrow90DegLeft size={16} />
     },
     {
       key: '2',
-      label: 'Pin'
+      label: 'Pin',
+      icon: <BsPin size={16} />
     },
     {
       key: '3',
-      label: <p onClick={() => dispatch(recallMessageRequest(messageId))}>Recall</p>,
+      label: (
+        <p onClick={() => dispatch(recallMessageRequest(messageId))}>Recall</p>
+      ),
+      icon: <BsArrowClockwise size={18} />,
       danger: true
     },
     {
@@ -41,6 +50,7 @@ const MessageAction = ({ messageId, from, ...props }) => {
           Delete for me only
         </p>
       ),
+      icon: <BsTrash3 size={16} />,
       danger: true
     }
   ];
@@ -52,9 +62,10 @@ const MessageAction = ({ messageId, from, ...props }) => {
     <Flex gap={6} {...props}>
       <Popover
         content={PopoverReaction}
-        trigger="hover"
+        trigger="click"
         arrow={false}
         overlayClassName="popover-reaction"
+        onOpenChange={(e) => setOpen(e)}
       >
         <Button
           type="text"
@@ -80,8 +91,7 @@ const MessageAction = ({ messageId, from, ...props }) => {
         arrow={{
           pointAtCenter: true
         }}
-        open={open}
-        onOpenChange={handleOpenChange}
+        onOpenChange={(e) => setOpen(e)}
         trigger={['click']}
         className="min-w-[100px]"
       >

@@ -43,6 +43,7 @@ class Message(models.Model): # gửi, xoá
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
     message = models.TextField()
     message_type = models.IntegerField(choices=[(tag.value, tag.name) for tag in MessageType], default=MessageType.TEXT)
+    forward = models.ForeignKey('self', on_delete=models.CASCADE,related_name='forward_messages', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self) -> str:

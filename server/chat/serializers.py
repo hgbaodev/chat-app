@@ -93,6 +93,7 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
         fields = ['id','title']
 
 
+
 class SenderSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -100,10 +101,17 @@ class SenderSerializer(serializers.ModelSerializer):
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
+    forward = serializers.SerializerMethodField()
+    
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward']
 
+    def get_forward(self, obj):
+        if obj.forward:
+            return MessageSerializer(obj.forward, context=self.context).data
+        return None
+    
 class DeleteMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeleteMessage

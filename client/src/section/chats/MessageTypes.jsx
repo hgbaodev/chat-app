@@ -1,17 +1,18 @@
-import { Avatar, Button, Flex, Image, Typography } from 'antd';
+import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
 import pdf from '~/assets/pdf.png';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
 
 const MessageWrapper = memo(
   ({
     messageId,
     from,
+    forward,
     created = null,
     hideAction = false,
     children,
@@ -19,6 +20,8 @@ const MessageWrapper = memo(
   }) => {
     const { user } = useSelector((state) => state.auth);
     const [hoverRef, isHovering] = useHover();
+    const [open, setOpen] = useState(false);
+
     return (
       <Flex vertical>
         {created && <TimeLine text={formatDateTime(created)} />}
@@ -33,21 +36,25 @@ const MessageWrapper = memo(
             gap={20}
             className={`${from !== user.id ? 'flex-1' : ''}`}
           >
-            <Flex
+            <Space
               className={`${
                 from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100 '
-              }  p-3 rounded-lg`}
+              }  p-3 rounded-2xl`}
               {...props}
+              direction="vertical"
             >
+              {forward && <ForwardMessage />}
               {children}
-            </Flex>
+            </Space>
             {!hideAction && (
               <MessageAction
                 className={`${
                   from === user.id ? '-order-last flex-row-reverse' : ''
-                } ${isHovering ? 'visible' : 'invisible'}`}
+                } ${isHovering || open ? 'visible' : 'invisible'}`}
                 messageId={messageId}
                 from={from}
+                open={open}
+                setOpen={setOpen}
               />
             )}
           </Flex>
@@ -57,9 +64,14 @@ const MessageWrapper = memo(
   }
 );
 
-export const TextMessage = ({ id, sender, message, created }) => {
+export const TextMessage = ({ id, sender, message, forward, created }) => {
   return (
-    <MessageWrapper messageId={id} from={sender.id} created={created}>
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      forward={forward}
+    >
       <Typography className="text-inherit">{message}</Typography>
     </MessageWrapper>
   );
@@ -100,7 +112,7 @@ export const DocMessage = ({ from, text, created }) => {
 
 export const TimeLine = ({ text }) => {
   return (
-    <Flex justify="center">
+    <Flex justify="center" className="mb-3">
       <Flex className=" bg-gray-100 px-4 py-1 rounded-[999px] text-[12px]">
         {text}
       </Flex>
@@ -119,5 +131,17 @@ export const RecallMessage = ({ id, sender, created }) => {
     >
       <Typography className="text-gray-400 italic">Message recalled</Typography>
     </MessageWrapper>
+  );
+};
+
+const ForwardMessage = ({ id, sender, message }) => {
+  return (
+    <div className="border-l-4 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2">
+      <p className="text-xs font-semibold text-blue">Tran Nhat Sinh</p>
+      <p className="text-xs ">
+        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis,
+        corporis!
+      </p>
+    </div>
   );
 };
