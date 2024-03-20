@@ -1,17 +1,26 @@
-import { Button, Flex, Input } from 'antd';
-import EmojiPicker from 'emoji-picker-react';
+import { Button, Dropdown, Flex, Input } from 'antd';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
-import { IoHappyOutline, IoSendSharp } from 'react-icons/io5';
+import {
+  IoDocumentAttachOutline,
+  IoHappyOutline,
+  IoImageOutline,
+  IoMic,
+  IoSendSharp
+} from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
 import { useSelector } from '~/store';
 const { TextArea } = Input;
 import { CloseOutlined } from '@ant-design/icons';
 import { useDispatch } from 'react-redux';
 import { setForwardMessage } from '~/store/slices/chatSlice';
+import data from '@emoji-mart/data';
+import Picker from '@emoji-mart/react';
 
 export const ChatFooter = () => {
-  const { chat, conversations, forwardMessage } = useSelector((state) => state.chat);
+  const { chat, conversations, forwardMessage } = useSelector(
+    (state) => state.chat
+  );
   const { emitMessage } = useSocket();
 
   const [text, setText] = useState('');
@@ -19,7 +28,7 @@ export const ChatFooter = () => {
 
   // handle
   const handleEmojiClick = (emoji) => {
-    setText((pre) => pre + emoji.emoji);
+    setText((pre) => pre + emoji.native);
   };
 
   // handle send message
@@ -28,27 +37,52 @@ export const ChatFooter = () => {
     if (text.trim()) {
       emitMessage({
         conversation_id: chat.currentConversation.id,
-        conversation: conversations.find((con) => con.id==chat.currentConversation.id) == null ? chat.currentConversation : null,
+        conversation:
+          conversations.find((con) => con.id == chat.currentConversation.id) ==
+          null
+            ? chat.currentConversation
+            : null,
         message: text,
-        message_type: 1,
+        message_type: 1
       });
       // reset text
       setText('');
     }
   };
 
+  const items = [
+    {
+      key: '1',
+      label: <p>Photo or Video</p>,
+      icon: <IoImageOutline size={17} />
+    },
+    {
+      key: '2',
+      label: <p>Document</p>,
+      icon: <IoDocumentAttachOutline size={16} />
+    }
+  ];
+
   return (
     <>
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
       <form onSubmit={(e) => handleSendMessage(e)}>
         <Flex className="relative p-3" align="center" gap="small">
-          <Button
-            type="text"
-            shape="circle"
-            icon={<IoIosLink size={24} />}
-            size="large"
-            className="text-blue-500 hover:bg-blue-700"
-          />
+          <Dropdown
+            menu={{
+              items
+            }}
+            trigger={['click']}
+          >
+            <Button
+              type="text"
+              shape="circle"
+              icon={<IoIosLink size={24} />}
+              size="large"
+              className="text-blue-500 hover:bg-blue-700"
+            />
+          </Dropdown>
+
           <Button
             type="text"
             shape="circle"
@@ -61,7 +95,7 @@ export const ChatFooter = () => {
           />
           {isOpenEmojiPicker && (
             <div className="absolute bottom-[60px] left-[60px]">
-              <EmojiPicker onEmojiClick={handleEmojiClick} />
+              <Picker data={data} onEmojiSelect={handleEmojiClick} />
             </div>
           )}
           <TextArea
@@ -79,15 +113,25 @@ export const ChatFooter = () => {
               }
             }}
           />
-          <Button
-            type="text"
-            shape="circle"
-            icon={<IoSendSharp size={20} />}
-            size="large"
-            className="text-blue-500 hover:text-blue-500"
-            onClick={(e) => handleSendMessage(e)}
-            disabled={!text.trim()}
-          />
+          {text.trim() ? (
+            <Button
+              type="text"
+              shape="circle"
+              icon={<IoSendSharp size={20} />}
+              size="large"
+              className="text-blue-500 hover:text-blue-500"
+              onClick={(e) => handleSendMessage(e)}
+            />
+          ) : (
+            <Button
+              type="text"
+              shape="circle"
+              icon={<IoMic size={20} />}
+              size="large"
+              className="text-blue-500 hover:text-blue-500"
+              onClick={(e) => handleSendMessage(e)}
+            />
+          )}
         </Flex>
       </form>
     </>
