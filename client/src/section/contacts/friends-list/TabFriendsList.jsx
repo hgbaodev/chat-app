@@ -1,21 +1,28 @@
 import { Empty, Flex, Input, Select, Space, Spin } from 'antd';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { IoSearchOutline } from 'react-icons/io5';
 import { LoadingOutlined } from '@ant-design/icons';
 import { FriendItem } from '~/section/contacts/friends-list/FriendItem';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
+import useDebounce from '~/hooks/useDebounce';
 
 const TabFriendsList = () => {
   const dispatch = useDispatch();
+  const [search, setSearch] = useState('');
+  const [sort, setSort] = useState('asc');
+  const handleSortChange = selectedOption => {
+    setSort(selectedOption);
+  };
+  const searchDebauce = useDebounce(search, 500);
   const { friends, isLoadingGetAll } = useSelector(
     (state) => state.relationship
   );
 
   // effect
   useEffect(() => {
-    dispatch(getAllFriends());
-  }, [dispatch]);
+    dispatch(getAllFriends({ query: searchDebauce, sort: sort }));
+  }, [dispatch, searchDebauce, sort]);
 
   // render
   return (
@@ -37,21 +44,21 @@ const TabFriendsList = () => {
             variant="filled"
             prefix={<IoSearchOutline />}
             className="w-[350px]"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
           />
           <Select
             className="w-[250px]"
-            defaultValue="asc"
+            defaultValue={sort}
             options={[
               { value: 'asc', label: 'Name (A-Z)' },
               { value: 'desc', label: 'Name (Z-A)' }
             ]}
+            onChange={handleSortChange}
           />
         </Flex>
         {isLoadingGetAll ? (
-          <Flex
-            align="center"
-            justify="center"
-          >
+          <Flex align="center" justify="center">
             <Spin
               indicator={<LoadingOutlined style={{ fontSize: 36 }} spin />}
             />

@@ -8,7 +8,7 @@ urlpatterns = [
     path('friend-requests/receive-friend-requests/count', GetNumberOfReceiveFriendRequestsView.as_view(), name='count-receive-friend-requests'),
     path('friend-requests/<int:friend_request_id>', ManageFriendRequestView.as_view(), name='manage-friend-request'),
 
-    path('friends', GetAllFriendsView.as_view(), name='get-all-friends'),
+    path('friends/', GetAllFriendsView.as_view(), name='get-all-friends'),
     path('friends/<int:friend_id>', DeleteFriendView.as_view(), name='delete-friend'),
     path('friends/block/<int:friend_id>', BlockUnblockFriendView.as_view(), name='block-friend'),
 

@@ -4,6 +4,7 @@ from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
 from chat.models import Conversation, Message, Participants
+from utils.cloudinary import get_image_url
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
@@ -171,7 +172,7 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
         fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about']
 
     @staticmethod
-    def get_all_friends(user_id):
+    def get_all_friends(user_id, query_string=None, sort='asc'):
 
         friend_relationships = FriendRelationship.objects.filter(
             Q(user_1=user_id) | Q(user_2=user_id)
@@ -184,18 +185,25 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
             if relationship.user_2.id != user_id:
                 friends.append(relationship.user_2)
 
-        unique_friends = list(set(friends))
+        if query_string:
+            friends = User.objects.filter(
+                Q(first_name__icontains=query_string) |
+                Q(last_name__icontains=query_string),
+                id__in=[friend.id for friend in friends]
+            )
+        else:
+            friends = User.objects.filter(id__in=[friend.id for friend in friends])
+            
+        if sort == 'asc':
+            friends = friends.order_by('last_name')
+        elif sort == 'desc':
+            friends = friends.order_by('-last_name')
 
-        return unique_friends  
+        unique_friends = list(friends.distinct())
+
+        return unique_friends 
     def get_avatar(self, obj):
-        if obj.avatar:
-            try:
-              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-              return avatar
-            except:
-              return None
-        return None
-
+        return get_image_url(obj.avatar)
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
