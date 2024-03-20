@@ -11,7 +11,7 @@ const TabFriendsList = () => {
   const dispatch = useDispatch();
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('asc');
-  const handleSortChange = selectedOption => {
+  const handleSortChange = (selectedOption) => {
     setSort(selectedOption);
   };
   const searchDebauce = useDebounce(search, 500);
@@ -30,7 +30,7 @@ const TabFriendsList = () => {
       <Flex
         align="center"
         className="h-[60px] p-4"
-        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
       >
         <p className="font-semibold">Friends ({friends.length})</p>
       </Flex>

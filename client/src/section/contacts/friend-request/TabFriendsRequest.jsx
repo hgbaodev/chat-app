@@ -24,7 +24,7 @@ const TabFriendsRequest = () => {
         align="center"
         gap={10}
         className="h-[60px] p-4 bg-white mb-4"
-        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
       >
         <IoPersonAddOutline size={22} />
         <p className="font-semibold">Friend Requests</p>

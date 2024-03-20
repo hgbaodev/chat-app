@@ -28,7 +28,7 @@ const MesssageList = () => {
   };
   return (
     <div
-      className="p-4 overflow-auto custom-scrollbar"
+      className="p-4 overflow-auto custom-scrollbar bg-gradient-to-b from-neutral-200 to-neutral-400"
       style={{
         height: 'calc(100vh - 120px)',
         boxShadow:
@@ -86,6 +86,5 @@ const MesssageList = () => {
     </div>
   );
 };
-
 
 export default MesssageList;

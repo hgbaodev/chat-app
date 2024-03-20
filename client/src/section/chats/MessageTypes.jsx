@@ -38,8 +38,8 @@ const MessageWrapper = memo(
           >
             <Space
               className={`${
-                from === user.id ? 'bg-blue-500 text-white' : 'bg-gray-100 '
-              }  p-3 rounded-2xl`}
+                from === user.id ? 'bg-[#c7e0ff] text-neutral-900' : 'bg-white'
+              }  p-3 rounded-xl shadow-sm`}
               {...props}
               direction="vertical"
             >
@@ -113,7 +113,7 @@ export const DocMessage = ({ from, text, created }) => {
 export const TimeLine = ({ text }) => {
   return (
     <Flex justify="center" className="mb-3">
-      <Flex className=" bg-gray-100 px-4 py-1 rounded-[999px] text-[12px]">
+      <Flex className=" bg-black opacity-30 text-white px-4 py-1 rounded-[999px] text-[12px]">
         {text}
       </Flex>
     </Flex>
@@ -126,10 +126,10 @@ export const RecallMessage = ({ id, sender, created }) => {
       messageId={id}
       from={sender.id}
       created={created}
-      className="p-2 rounded-lg border border-solid border-gray-300"
+      className="p-2 rounded-xl border border-solid border-gray-400"
       hideAction={true}
     >
-      <Typography className="text-gray-400 italic">Message recalled</Typography>
+      <Typography className="text-gray-500 italic">Message recalled</Typography>
     </MessageWrapper>
   );
 };
@@ -138,7 +138,7 @@ const ForwardMessage = ({ id, sender, message }) => {
   return (
     <div className="border-l-4 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2">
       <p className="text-xs font-semibold text-blue">Tran Nhat Sinh</p>
-      <p className="text-xs ">
+      <p className="text-xs text-gray-600">
         Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis,
         corporis!
       </p>

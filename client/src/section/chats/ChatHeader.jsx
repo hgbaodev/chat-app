@@ -17,9 +17,9 @@ export const ChatHeader = () => {
   };
   return (
     <Flex className="h-[60px] px-4" justify="space-between">
-      <Space size={18}>
+      <Space size="middle">
         <Badge size="default" dot={true} color="green" offset={[0, 28]}>
-          <Avatar src={chat.currentConversation.image} />
+          <Avatar src={chat.currentConversation.image} size="large" />
         </Badge>
         <Flex vertical justify="center">
           <Typography className="font-bold">

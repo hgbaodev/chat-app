@@ -37,13 +37,13 @@ export const ContactInfo = () => {
       className={`w-[350px] ${
         !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
       }`}
-      style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+      style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
     >
       <Flex
         justify="space-between"
         align="center"
         className="w-full h-[60px] px-4"
-        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
       >
         <p className="m-0 font-semibold">Contact Information</p>
         <Button
@@ -113,7 +113,7 @@ export const ContactInfo = () => {
         </Flex>
         <Divider className="my-3" />
         <Typography className="font-bold m-0">Privacy settings</Typography>
-        <Typography>{faker.lorem.sentence()}</Typography>
+        <Typography>Delete chat history</Typography>
       </Space>
     </Flex>
   );

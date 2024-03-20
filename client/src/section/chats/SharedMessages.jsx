@@ -31,8 +31,7 @@ export const SharedMessages = () => {
     }
   ];
   const onChange = (key) => {
-
-    console.log('key', key)
+    console.log('key', key);
   };
 
   // render
@@ -40,13 +39,13 @@ export const SharedMessages = () => {
     <Flex
       vertical
       className="w-[350px]"
-      style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+      style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
     >
       <Flex
         gap={10}
         align="center"
         className="w-full h-[60px] px-4"
-        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
       >
         <Button
           type="text"

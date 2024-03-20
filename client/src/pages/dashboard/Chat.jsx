@@ -23,7 +23,7 @@ const Chat = () => {
   return (
     <Flex className="h-full">
       <Contacts
-        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.2)' }}
+        style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
         className="w-[350px]"
       />
       <Flex className="w-full h-full flex-1 relative">
@@ -33,12 +33,12 @@ const Chat = () => {
             {contactInfo.open &&
               (() => {
                 switch (contactInfo.type) {
-                case 'CONTACT':
-                  return <ContactInfo />;
-                case 'SHARED':
-                  return <SharedMessages />;
-                default:
-                  return <></>;
+                  case 'CONTACT':
+                    return <ContactInfo />;
+                  case 'SHARED':
+                    return <SharedMessages />;
+                  default:
+                    return <></>;
                 }
               })()}{' '}
           </>

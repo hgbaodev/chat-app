@@ -79,7 +79,7 @@ export const ContactItem = ({
       <Space className="flex-1">
         <Avatar size={42} src={image} />
         <Flex vertical justify="center">
-          <Typography className="text-gray-700 font-semibold overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
+          <Typography className="text-slate-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
