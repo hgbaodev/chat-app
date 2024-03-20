@@ -1,6 +1,0 @@
-
-server/run.bat
-server/test.rest
-server/config/.env
-.vscode
-.idea
