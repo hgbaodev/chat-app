@@ -85,5 +85,8 @@ class ChatConsumer(WebsocketConsumer):
 
     def chat_message(self, event):
         self.send(text_data=json.dumps(event))
+    
+    def add_group(self, event):
+        self.send(text_data=json.dumps(event))
 
     

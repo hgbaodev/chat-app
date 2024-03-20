@@ -13,6 +13,9 @@ from django.db.models import Max
 from utils.responses import SuccessResponse, ErrorResponse
 from django.db.models import Q
 from authentication.models import User
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from django.utils import timezone
 
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
@@ -47,8 +50,52 @@ class ConversationList(APIView):
         serializer = self.serializer_class(data=request.data, context={'request': request})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+            conversation = Conversation.objects.get(id=serializer.data['id'])
+            sender = self.request.user
+            users = User.objects.filter(participants__conversation=conversation)
+            message = Message.objects.create(
+                conversation=conversation,
+                sender=sender,
+                message="Tôi đã tạo ra group này!",
+                message_type=Message.MessageType.TEXT
+            )
+            latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
+            members_info = [
+                {
+                    'id': member['id'],
+                    'first_name': member['first_name'],
+                    'last_name': member['last_name'],
+                    'avatar': get_image_url(member['avatar'])
+                }
+                for member in users.values('id', 'first_name', 'last_name', 'avatar')
+            ]
+            current_time = timezone.now()
+            data = {
+                'id': conversation.id, 
+                'title': conversation.title, 
+                'image': get_image_url(conversation.image),
+                'latest_message': {
+                    'id': message.id,
+                    'message': message.message,
+                    'sender': sender.id,
+                    'created_at': current_time.isoformat()
+                },
+                'type': conversation.type,
+                'members': members_info
+            }
+            channel_layer = get_channel_layer()
+            for user in users:
+                room_group_name = f"user_{user.id}"
+                async_to_sync(channel_layer.group_send)(
+                    room_group_name,
+                    {
+                        'type': 'add_group',
+                        'message': data
+                    }
+                )
+            return SuccessResponse(data=data, status=status.HTTP_201_CREATED)  
+        return ErrorResponse(error_message=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
     
 class ConversationDetail(APIView):
     def get_object(self, pk):
