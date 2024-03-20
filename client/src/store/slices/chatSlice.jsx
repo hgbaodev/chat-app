@@ -42,6 +42,7 @@ export const deleteMessage = createAsyncThunk(
   }
 );
 
+
 const initialState = {
   conversations: [],
   chat: {
@@ -83,6 +84,9 @@ const chatSlice = createSlice({
         }
       });
       state.chat.messages.push(result.message);
+    },
+    createGroup(state, action) {
+      state.conversations.push(action.payload)
     },
     setPage(state, action) {
       state.chat.currentPage = action.payload;
@@ -132,5 +136,6 @@ export const {
   setCurrentConversation,
   receiverMessage,
   setPage,
-  setForwardMessage
+  setForwardMessage,
+  createGroup
 } = chatSlice.actions;

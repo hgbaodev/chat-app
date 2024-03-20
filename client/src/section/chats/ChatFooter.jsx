@@ -12,6 +12,7 @@ import { setForwardMessage } from '~/store/slices/chatSlice';
 
 export const ChatFooter = () => {
   const { chat, conversations, forwardMessage } = useSelector((state) => state.chat);
+  console.log('conversations', conversations)
   const { emitMessage } = useSocket();
 
   const [text, setText] = useState('');

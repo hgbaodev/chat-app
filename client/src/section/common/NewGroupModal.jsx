@@ -1,4 +1,14 @@
-import { Avatar, Button, Empty, Flex, Input, Modal, Space, Upload } from 'antd';
+import {
+  Avatar,
+  Button,
+  Empty,
+  Flex,
+  Input,
+  Modal,
+  Space,
+  Upload,
+  message
+} from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { IoAdd, IoCloseOutline } from 'react-icons/io5';
@@ -7,13 +17,16 @@ import { getAllFriends } from '~/store/slices/relationshipSlice';
 import Loader from '~/components/Loader';
 import { FaCamera } from 'react-icons/fa';
 import useDebounce from '~/hooks/useDebounce';
+import { createConversation } from '~/store/slices/contactSlice';
 
 const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const { friends, isLoading } = useSelector((state) => state.relationship);
+  const { isLoadingCreateConversation } = useSelector((state) => state.contact)
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [search, setSearch] = useState('');
   const searchDebauce = useDebounce(search, 500);
+  const [title, setTitle] = useState('');
 
   // effect
   useEffect(() => {
@@ -25,15 +38,27 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
     setIsModalOpen(false);
   };
 
+  const handleSubmit = async () => {
+    if (title.trim().length == 0) message.error('Please enter a title');
+    else if (selectedFriends.length == 0) message.error('Please selected friend add group!')
+    else {
+      await dispatch(
+         createConversation({ title: title, participants: selectedFriends })
+      );
+      setIsModalOpen(false);
+    }
+  };
+
   return (
     <Modal
       title="Create group"
       open={isModalOpen}
-      onOk={handleClose}
+      onOk={handleSubmit}
       onCancel={handleClose}
       width={500}
+      confirmLoading={isLoadingCreateConversation}
     >
-      <Flex horizontal align="center" gap={10} className="py-2 w-full">
+      <Flex horizontal={true} align="center" gap={10} className="py-2 w-full">
         <div>
           <Upload
             action=""
@@ -52,9 +77,11 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
           variant="filled"
           autoComplete="nope"
           className="h-[40px]"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
       </Flex>
-      <Space direction="horizontal">
+      <Flex>
         <Avatar.Group
           maxCount={2}
           maxStyle={{ color: '#f56a00', backgroundColor: '#fde3cf' }}
@@ -65,7 +92,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
               <Avatar key={friend.id} src={friend.avatar} />
             ))}
         </Avatar.Group>
-      </Space>
+      </Flex>
       <Space direction="vertical" className="w-[100%]">
         <Input
           name="input-search"

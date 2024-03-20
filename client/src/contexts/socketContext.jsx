@@ -2,7 +2,7 @@ import Cookies from 'js-cookie';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
-import { receiverMessage } from '~/store/slices/chatSlice';
+import { createGroup, receiverMessage } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
 export const SocketContext = createContext({
@@ -35,6 +35,8 @@ export const SocketProvider = ({ children }) => {
             dispatch(receiveFriendRequest(data.message));
           } else if (data.type === 'receive_notification') {
             dispatch(receiveNotification(data.message));
+          } else if (data.type === 'add_group') {
+            dispatch(createGroup(data.message));
           }
         } catch (error) {
           console.error('Error parsing message:', error);

@@ -32,7 +32,6 @@ class ConversationSerializer(serializers.ModelSerializer):
         participants_data = validated_data.pop('participants')
         conversation = Conversation.objects.create(
             title=validated_data.get('title', ''),
-            image=validated_data.get('image', ''),
             creator=self.context['request'].user
         )
 
