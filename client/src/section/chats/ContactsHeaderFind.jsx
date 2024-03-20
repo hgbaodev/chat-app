@@ -57,7 +57,7 @@ const ContactsHeaderFind = () => {
   };
   return (
     <>
-      <Flex vertical>
+      <Flex vertical className='overflow-y-auto'>
         <Space className="w-[100%] p-4">
           <Input
             value={query}

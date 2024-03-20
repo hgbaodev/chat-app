@@ -13,6 +13,7 @@ import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
+import { useState } from 'react';
 
 export const ContactItem = ({
   id,
@@ -24,6 +25,7 @@ export const ContactItem = ({
   active
 }) => {
   const [hoverRef, isHovering] = useHover();
+  const [openOptions, setOpenOptions] = useState(false);
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
 
@@ -91,17 +93,21 @@ export const ContactItem = ({
         menu={{ items }}
         placement="bottomLeft"
         onClick={(e) => e.stopPropagation()}
-        className={`${isHovering ? 'block' : '!hidden'}`}
+        className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
+        onOpenChange={(o) => setOpenOptions(o)}
+        trigger={['click']}
+        arrow={true}
       >
         <Button
           type="text"
           size="small"
+          className={openOptions && 'bg-slate-200'}
           icon={<AiOutlineEllipsis size={20} />}
         />
       </Dropdown>
       <Typography
         className={`${
-          isHovering ? 'hidden' : 'block'
+          isHovering || openOptions ? 'hidden' : 'block'
         } text-[10px] text-neutral-500`}
       >
         {formatTimeAgo(lastestMessage?.created_at)}

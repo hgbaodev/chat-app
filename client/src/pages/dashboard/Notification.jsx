@@ -19,7 +19,7 @@ const Notification = ({ open, handleClose }) => {
   return (
     <Drawer
       title="Notifications"
-      placement={'left'}
+      placement={'right'}
       closable={false}
       onClose={handleClose}
       open={open}
