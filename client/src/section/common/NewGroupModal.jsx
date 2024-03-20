@@ -6,21 +6,25 @@ import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 import Loader from '~/components/Loader';
 import { FaCamera } from 'react-icons/fa';
+import useDebounce from '~/hooks/useDebounce';
 
 const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
   const { friends, isLoading } = useSelector((state) => state.relationship);
   const [selectedFriends, setSelectedFriends] = useState([]);
+  const [search, setSearch] = useState('');
+  const searchDebauce = useDebounce(search, 500);
 
   // effect
   useEffect(() => {
-    dispatch(getAllFriends());
-  }, [dispatch]);
+    dispatch(getAllFriends({ query: searchDebauce, sort: 'asc' }));
+  }, [dispatch, searchDebauce]);
 
   // handle
   const handleClose = () => {
     setIsModalOpen(false);
   };
+
   return (
     <Modal
       title="Create group"
@@ -70,9 +74,11 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
           prefix={<SearchOutlined />}
           className="mt-2"
           autoComplete="nope"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
         />
         <p className="text-xs text-gray-500 mt-2">Friends List</p>
-        <div className="h-[240px] overflow-y-auto scrollbar">
+        <div className="h-[240px] overflow-y-auto scrollbar relative">
           {isLoading ? (
             <Loader />
           ) : friends.length ? (

@@ -6,7 +6,7 @@ const initialState = {
   friends: [],
   sent_friend_requests: [],
   received_friend_requests: [],
-  isLoadingGetAll: false,
+  isLoadingGetAll: false
 };
 
 export const getRecommendedUsers = createAsyncThunk(
@@ -109,9 +109,11 @@ export const acceptFriendRequest = createAsyncThunk(
 
 export const getAllFriends = createAsyncThunk(
   'relationship/getAllFriends',
-  async (_, { rejectWithValue }) => {
+  async ({ query, sort = null }, { rejectWithValue }) => {
     try {
-      const response = await AxiosInstance.get(`relationship/friends`);
+      const response = await AxiosInstance.get(
+        `relationship/friends/?query=${query}&sort=${sort}`
+      );
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);
