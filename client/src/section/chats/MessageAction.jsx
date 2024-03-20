@@ -7,7 +7,7 @@ import {
   IoHappyOutline
 } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
-import { deleteMessage, setForwardMessage } from '~/store/slices/chatSlice';
+import { deleteMessage, recallMessageRequest, setForwardMessage } from '~/store/slices/chatSlice';
 
 const MessageAction = ({ messageId, from, ...props }) => {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const MessageAction = ({ messageId, from, ...props }) => {
     },
     {
       key: '3',
-      label: <p onClick={() => dispatch(deleteMessage(messageId))}>Recall</p>,
+      label: <p onClick={() => dispatch(recallMessageRequest(messageId))}>Recall</p>,
       danger: true
     },
     {

@@ -12,8 +12,17 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
+import { MessageTypes } from '~/utils/enum';
 
-export const ContactItem = ({ id, title, image, lastestMessage, type, members, active }) => {
+export const ContactItem = ({
+  id,
+  title,
+  image,
+  lastestMessage,
+  type,
+  members,
+  active
+}) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
@@ -72,7 +81,9 @@ export const ContactItem = ({ id, title, image, lastestMessage, type, members, a
             {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {lastestMessage?.message}
+            {lastestMessage?.message_type == MessageTypes.RECALL
+              ? 'You unsent a message'
+              : lastestMessage.message}
           </Typography>
         </Flex>
       </Space>

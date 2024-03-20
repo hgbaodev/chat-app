@@ -197,12 +197,14 @@ class MesssageDetail(generics.DestroyAPIView):
         except Message.DoesNotExist:
             raise Http404 
         
+    # Delete message
     def delete(self, request, pk, format=None):
         message = self.get_object(pk)
         delete_message = DeleteMessage.objects.create(message=message,user=request.user)
         serializer = DeleteMessageSerializer(delete_message)
         return SuccessResponse(data=serializer.data)
     
+    # Recall message
     def put(self, request, pk, format=None):
         message_obj = self.get_object(pk)
         if request.user != message_obj.sender:
@@ -211,6 +213,19 @@ class MesssageDetail(generics.DestroyAPIView):
         message_obj.message = ""
         message_obj.save()
         serializer = MessageSerializer(message_obj)
+        
+        channel_layer = get_channel_layer()
+        users = User.objects.filter(participants__conversation=message_obj.conversation)
+        for user in users:
+                room_group_name = f"user_{user.id}"
+                async_to_sync(channel_layer.group_send)(
+                    room_group_name,
+                    {
+                        'type': 'recall_message',
+                        'message': serializer.data
+                    }
+                )
+        print(users)
         return SuccessResponse(data=serializer.data)
     
     

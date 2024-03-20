@@ -165,7 +165,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
                   />
                 ))
               ) : (
-                <Empty description="Result List is empty" className="py-4" />
+                <Empty description="Friends is empty" className="py-4" />
               )}
             </div>
           </Space>

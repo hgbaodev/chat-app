@@ -76,11 +76,19 @@ const ContactsHeaderFind = () => {
             <Flex vertical>
               {searchConversation.some(
                 (conversation) => conversation.type === GroupTypes.FRIEND
-              ) && <Typography.Text strong className="px-4">Friends</Typography.Text>}
+              ) && (
+                <Typography.Text strong className="px-4 mb-2">
+                  Friends
+                </Typography.Text>
+              )}
               {renderConversationsByType(GroupTypes.FRIEND)}
               {searchConversation.some(
                 (conversation) => conversation.type === GroupTypes.GROUP
-              ) && <Typography.Text strong className="px-4">Groups</Typography.Text>}
+              ) && (
+                <Typography.Text strong className="px-4 mb-2">
+                  Groups
+                </Typography.Text>
+              )}
               {renderConversationsByType(GroupTypes.GROUP)}
             </Flex>
           </>

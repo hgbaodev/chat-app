@@ -1,20 +1,20 @@
-import { Button, Input, Space } from "antd";
-import { useState } from "react";
-import { CiSearch } from "react-icons/ci";
-import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from "react-icons/md";
-import { useDispatch } from "react-redux";
-import AddFriendsModal from "~/section/common/AddFriendsModal";
-import NewGroupModel from "~/section/common/NewGroupModal";
-import { setOpenSearch } from "~/store/slices/contactSlice";
+import { Button, Input, Space } from 'antd';
+import { useState } from 'react';
+import { CiSearch } from 'react-icons/ci';
+import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
+import { useDispatch } from 'react-redux';
+import AddFriendsModal from '~/section/common/AddFriendsModal';
+import NewGroupModel from '~/section/common/NewGroupModal';
+import { setOpenSearch } from '~/store/slices/contactSlice';
 
 const ContactsHeader = () => {
   const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
   const handleSearch = () => {
-    dispatch(setOpenSearch((true)))
-  }
+    dispatch(setOpenSearch(true));
+  };
 
   return (
     <>

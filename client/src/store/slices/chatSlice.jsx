@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
+import { MessageTypes } from '~/utils/enum';
 
 export const getConversations = createAsyncThunk(
   'chat/getConversations',
@@ -42,6 +43,17 @@ export const deleteMessage = createAsyncThunk(
   }
 );
 
+export const recallMessageRequest = createAsyncThunk(
+  'chat/recallMessage',
+  async (messageId) => {
+    try {
+      const response = await AxiosInstance.put(`chat/messages/${messageId}/`);
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+);
 
 const initialState = {
   conversations: [],
@@ -52,7 +64,7 @@ const initialState = {
       image: null,
       type: null,
       latest_message: null,
-      members: [],
+      members: []
     },
     messages: [],
     lastPage: 0,
@@ -74,8 +86,8 @@ const chatSlice = createSlice({
       state.chat.messages = [];
     },
     receiverMessage(state, action) {
-      const result = action.payload
-      if (result.conversation!=null) {
+      const result = action.payload;
+      if (result.conversation != null) {
         state.conversations = [result.conversation, ...state.conversations];
       }
       state.conversations.map((conversation) => {
@@ -86,7 +98,7 @@ const chatSlice = createSlice({
       state.chat.messages.push(result.message);
     },
     createGroup(state, action) {
-      state.conversations.push(action.payload)
+      state.conversations.push(action.payload);
     },
     setPage(state, action) {
       state.chat.currentPage = action.payload;
@@ -95,6 +107,16 @@ const chatSlice = createSlice({
       state.forwardMessage = state.chat.messages.find(
         (message) => message.id === action.payload
       );
+    },
+    recallMessage(state, action) {
+      const { currentConversation, messages } = state.chat;
+      const { conversation_id, id } = action.payload;
+      if (currentConversation.id === conversation_id) {
+        let message = messages.find((message) => message.id === id);
+        if (message) {
+          message.message_type = MessageTypes.RECALL;
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -137,5 +159,6 @@ export const {
   receiverMessage,
   setPage,
   setForwardMessage,
-  createGroup
+  createGroup,
+  recallMessage
 } = chatSlice.actions;
