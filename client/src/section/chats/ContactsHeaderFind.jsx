@@ -7,7 +7,7 @@ import { useEffect, useState } from 'react';
 import useDebounce from '~/hooks/useDebounce';
 import { useSelector } from '~/store';
 import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
-import { GroupTypes } from '~/utils/enum';
+import { ConversationTypes } from '~/utils/enum';
 
 const ContactsHeaderFind = () => {
   const { searchConversation, isLoading } = useSelector(
@@ -57,7 +57,7 @@ const ContactsHeaderFind = () => {
   };
   return (
     <>
-      <Flex vertical className='overflow-y-auto'>
+      <Flex vertical className="overflow-y-auto">
         <Space className="w-[100%] p-4">
           <Input
             value={query}
@@ -75,21 +75,21 @@ const ContactsHeaderFind = () => {
           <>
             <Flex vertical>
               {searchConversation.some(
-                (conversation) => conversation.type === GroupTypes.FRIEND
+                (conversation) => conversation.type === ConversationTypes.FRIEND
               ) && (
                 <Typography.Text strong className="px-4 mb-2">
                   Friends
                 </Typography.Text>
               )}
-              {renderConversationsByType(GroupTypes.FRIEND)}
+              {renderConversationsByType(ConversationTypes.FRIEND)}
               {searchConversation.some(
-                (conversation) => conversation.type === GroupTypes.GROUP
+                (conversation) => conversation.type === ConversationTypes.GROUP
               ) && (
                 <Typography.Text strong className="px-4 my-2">
                   Groups
                 </Typography.Text>
               )}
-              {renderConversationsByType(GroupTypes.GROUP)}
+              {renderConversationsByType(ConversationTypes.GROUP)}
             </Flex>
           </>
         ) : (

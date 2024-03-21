@@ -7,7 +7,7 @@ export const MessageTypes = {
   RECALL: 6
 };
 
-export const GroupTypes = {
+export const ConversationTypes = {
   GROUP: 1,
   FRIEND: 2
 }
