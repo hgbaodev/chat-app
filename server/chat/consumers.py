@@ -47,13 +47,24 @@ class ChatConsumer(WebsocketConsumer):
         message_type = data.get("message_type", Message.MessageType.TEXT)
         conversation_id = data["conversation_id"]
         sender = self.scope["user"]
+        
+        if "forward" in data:
+            forward_message_id = data["forward"]
+            try:
+                forward = Message.objects.get(id=forward_message_id)
+            except Message.DoesNotExist:
+                forward = None
+        else:
+            forward = None
+            
         conversation = Conversation.objects.get(id=conversation_id)
         # Create message
         message = Message.objects.create(
             conversation=conversation,
             sender=sender,
             message=message,
-            message_type=message_type
+            message_type=message_type,
+            forward=forward
         )
         
         # Get member of conversation

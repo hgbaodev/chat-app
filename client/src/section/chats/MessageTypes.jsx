@@ -43,7 +43,7 @@ const MessageWrapper = memo(
               {...props}
               direction="vertical"
             >
-              {forward && <ForwardMessage />}
+              {forward && <ForwardMessage replyFrom={forward} />}
               {children}
             </Space>
             {!hideAction && (
@@ -113,7 +113,7 @@ export const DocMessage = ({ from, text, created }) => {
 export const TimeLine = ({ text }) => {
   return (
     <Flex justify="center" className="mb-3">
-      <Flex className=" bg-black opacity-30 text-white px-4 py-1 rounded-[999px] text-[12px]">
+      <Flex className=" bg-black bg-opacity-30 text-white px-4 py-1 rounded-[999px] text-[12px]">
         {text}
       </Flex>
     </Flex>
@@ -126,7 +126,6 @@ export const RecallMessage = ({ id, sender, created }) => {
       messageId={id}
       from={sender.id}
       created={created}
-      className="p-2 rounded-xl border border-solid border-gray-400"
       hideAction={true}
     >
       <Typography className="text-gray-500 italic">Message recalled</Typography>
@@ -134,14 +133,14 @@ export const RecallMessage = ({ id, sender, created }) => {
   );
 };
 
-const ForwardMessage = ({ id, sender, message }) => {
+const ForwardMessage = ({ replyFrom }) => {
+  const { message, sender } = replyFrom;
   return (
-    <div className="border-l-4 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2">
-      <p className="text-xs font-semibold text-blue">Tran Nhat Sinh</p>
-      <p className="text-xs text-gray-600">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Omnis,
-        corporis!
+    <div className="border-l-4 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2 cursor-pointer">
+      <p className="text-xs font-semibold text-blue mb-1">
+        {sender.first_name + ' ' + sender.last_name}
       </p>
+      <p className="text-xs text-gray-600">{message}</p>
     </div>
   );
 };

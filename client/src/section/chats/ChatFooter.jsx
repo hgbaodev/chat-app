@@ -2,6 +2,7 @@ import { Button, Dropdown, Flex, Input } from 'antd';
 import { useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import {
+  IoArrowUndoOutline,
   IoDocumentAttachOutline,
   IoHappyOutline,
   IoImageOutline,
@@ -21,6 +22,7 @@ export const ChatFooter = () => {
   const { chat, conversations, forwardMessage } = useSelector(
     (state) => state.chat
   );
+  const dispatch = useDispatch();
   const { emitMessage } = useSocket();
 
   const [text, setText] = useState('');
@@ -43,10 +45,12 @@ export const ChatFooter = () => {
             ? chat.currentConversation
             : null,
         message: text,
-        message_type: 1
+        message_type: 1,
+        forward: forwardMessage?.id
       });
       // reset text
       setText('');
+      dispatch(setForwardMessage(null));
     }
   };
 
@@ -64,7 +68,7 @@ export const ChatFooter = () => {
   ];
 
   return (
-    <>
+    <div className="transition-all ease-in-out delay-150">
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
       <form onSubmit={(e) => handleSendMessage(e)}>
         <Flex className="relative p-3" align="center" gap="small">
@@ -134,7 +138,7 @@ export const ChatFooter = () => {
           )}
         </Flex>
       </form>
-    </>
+    </div>
   );
 };
 
@@ -142,18 +146,25 @@ const ForwardMessage = ({ message, sender }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
   return (
-    <Flex className="w-full px-4 pt-2" justify="space-between">
-      <div>
-        <p className="text-sm mb-[2px]">
-          Replying to{' '}
-          {`${sender.id === user.id ? 'yourself' : sender.last_name}`}
-        </p>
-        <p className="text-xs text-gray-500">{message}</p>
-      </div>
+    <Flex
+      className="w-full px-4 pt-2"
+      justify="space-between"
+      gap={20}
+      align="center"
+    >
+      <Flex className="flex-1" gap={10} align="center">
+        <IoArrowUndoOutline size={30} className="text-blue-500" />
+        <div className="rounded-md py-2 border-l-4 border-t-0 border-r-0 border-b-0 border-solid border-blue-500 ps-2 bg-blue-100 flex-1">
+          <p className="text-sm mb-[2px]">
+            Replying to{' '}
+            {`${sender.id === user.id ? 'yourself' : sender.last_name}`}
+          </p>
+          <p className="text-xs text-gray-500">{message}</p>
+        </div>
+      </Flex>
       <Button
         type="text"
         shape="circle"
-        size="small"
         icon={<CloseOutlined className="text-gray-500" />}
         onClick={() => dispatch(setForwardMessage(null))}
       />

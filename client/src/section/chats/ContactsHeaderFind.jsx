@@ -85,7 +85,7 @@ const ContactsHeaderFind = () => {
               {searchConversation.some(
                 (conversation) => conversation.type === GroupTypes.GROUP
               ) && (
-                <Typography.Text strong className="px-4 mb-2">
+                <Typography.Text strong className="px-4 my-2">
                   Groups
                 </Typography.Text>
               )}

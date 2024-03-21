@@ -4,7 +4,13 @@ import { SocketContext } from '../contexts/socketContext';
 export const useSocket = () => {
   const { socketInstance } = useContext(SocketContext);
 
-  const emitMessage = ({ conversation_id, conversation, message, message_type }) => {
+  const emitMessage = ({
+    conversation_id,
+    conversation,
+    message,
+    message_type,
+    forward
+  }) => {
     console.log({ conversation_id, conversation, message, message_type });
     socketInstance.send(
       JSON.stringify({
@@ -12,6 +18,7 @@ export const useSocket = () => {
         conversation_id,
         conversation,
         message,
+        forward,
         message_type
       })
     );
