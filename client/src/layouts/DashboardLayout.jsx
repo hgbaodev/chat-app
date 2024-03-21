@@ -23,6 +23,7 @@ import ProfileModal from '~/section/common/ProfileModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
+import AvatarGroup from '~/components/AvatarGroup';
 
 const { Text } = Typography;
 
@@ -74,6 +75,7 @@ const DashboardLayout = () => {
   return (
     <>
       <Flex className="h-[100vh]">
+        
         <Flex
           vertical
           justify="space-between"
@@ -82,6 +84,36 @@ const DashboardLayout = () => {
         >
           <Flex vertical align="center">
             <img src={logo_dark} alt="logo" className="cursor-pointer" />
+           <Flex className='justify-center'>
+           <AvatarGroup users={
+          [
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+            {
+              name: 'John',
+              avatar: 'https://avatars.githubusercontent.com/u/120194990?v=4'
+            },
+          ]
+        }></AvatarGroup>
+           </Flex>
             <Flex vertical className="mt-5 w-[100%]">
               <NavButton
                 href="/"
