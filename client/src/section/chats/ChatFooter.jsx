@@ -46,7 +46,7 @@ export const ChatFooter = () => {
             : null,
         message: text,
         message_type: 1,
-        forward: forwardMessage.id
+        forward: forwardMessage?.id
       });
       // reset text
       setText('');

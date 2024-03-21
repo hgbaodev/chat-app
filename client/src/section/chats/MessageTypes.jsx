@@ -126,7 +126,6 @@ export const RecallMessage = ({ id, sender, created }) => {
       messageId={id}
       from={sender.id}
       created={created}
-      className="p-2 rounded-xl border border-solid border-gray-400"
       hideAction={true}
     >
       <Typography className="text-gray-500 italic">Message recalled</Typography>
