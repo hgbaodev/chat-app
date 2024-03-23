@@ -4,9 +4,11 @@ import { MessageTypes } from '~/utils/enum';
 
 export const getConversations = createAsyncThunk(
   'chat/getConversations',
-  async () => {
+  async ({ page }) => {
     try {
-      const response = await AxiosInstance.get(`/chat/conversations/`);
+      const response = await AxiosInstance.get(
+        `/chat/conversations/?page=${page}`
+      );
       return response;
     } catch (error) {
       console.log(error);
@@ -57,6 +59,8 @@ export const recallMessageRequest = createAsyncThunk(
 
 const initialState = {
   conversations: [],
+  currentPage: 1,
+  lastPage: 0,
   chat: {
     currentConversation: {
       id: null,
@@ -72,7 +76,8 @@ const initialState = {
     isLoading: false
   },
   forwardMessage: null,
-  isLoading: true
+  isLoading: false,
+  isLoadingSecond: false,
 };
 
 const chatSlice = createSlice({
@@ -85,11 +90,17 @@ const chatSlice = createSlice({
       state.chat.currentPage = 1;
       state.chat.messages = [];
     },
+    setCurrentPage(state, action) {
+      state.currentPage = action.payload;
+    },
     receiverMessage(state, action) {
       const result = action.payload;
-      if (result.conversation != null) {
-        state.conversations = [result.conversation, ...state.conversations];
-      }
+      if (result.conversation != null)
+        if (state.conversations.find((c) => c.id === c.id) == null) {
+          if (result.conversation != null) {
+            state.conversations = [result.conversation, ...state.conversations];
+          }
+        }
       state.conversations.map((conversation) => {
         if (conversation.id === result.message.conversation_id) {
           conversation.latest_message = result.message;
@@ -122,10 +133,16 @@ const chatSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state) => {
+        if (state.conversations.length == 0)
         state.isLoading = true;
       })
       .addCase(getConversations.fulfilled, (state, action) => {
-        state.conversations = action.payload.data;
+        state.conversations = [
+          ...state.conversations,
+          ...action.payload.data.results
+        ];
+        state.currentPage = action.payload.data.meta.current_page;
+        state.lastPage = action.payload.data.meta.last_page;
         state.isLoading = false;
       })
       .addCase(getConversations.rejected, (state) => {
@@ -160,5 +177,6 @@ export const {
   setPage,
   setForwardMessage,
   createGroup,
-  recallMessage
+  recallMessage,
+  setCurrentPage
 } = chatSlice.actions;
