@@ -18,7 +18,6 @@ const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { conversation_id } = useParams();
-  const { user } = useSelector((state) => state.auth);
   const { call } = useSelector((state) => state.chat);
   const { emitVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
@@ -30,60 +29,64 @@ const VideoCall = () => {
   const [remoteStream, setRemoteStream] = useState(null);
 
   useEffect(() => {
-    const callTranfer = JSON.parse(localStorage.getItem('call'));
-    dispatch(setCall(callTranfer));
-    const peer = new Peer(`${conversation_id}-${callTranfer.owner ? 1 : 2}`);
-    console.log('====================================');
-    console.log('peer id', `${conversation_id}-${callTranfer.owner ? 1 : 2}`);
-    console.log('====================================');
-    setPeer(peer);
-    navigator.mediaDevices
-      .getUserMedia({ video: true, audio: true })
-      .then((localStream) => {
-        setStream(localStream);
-        // on call
-        peer.on('call', (call) => {
-          console.log('on-call', call);
-          call.answer(localStream);
-          // on stream
-          call.on('stream', (remoteStream) => {
-            setRemoteStream(remoteStream);
+    if (socketInstance) {
+      const callTranfer = JSON.parse(localStorage.getItem('call'));
+      dispatch(setCall(callTranfer));
+      if (peer) peer.destroy();
+      const peerInstance = new Peer(
+        `${conversation_id}-${callTranfer.owner ? 1 : 2}`
+      );
+      setPeer(peerInstance);
+      navigator.mediaDevices
+        .getUserMedia({ video: true, audio: true })
+        .then((localStream) => {
+          setStream(localStream);
+          // on call
+          peerInstance.on('call', (call) => {
+            console.log({ call });
+            call.answer(localStream);
+            // on stream
+            call.on('stream', (remoteStream) => {
+              setRemoteStream(remoteStream);
+            });
           });
+        })
+        .catch((err) => {
+          console.error('Failed to get local stream', err);
         });
-      })
-      .catch((err) => {
-        console.error('Failed to get local stream', err);
-      });
-    if (callTranfer.owner) {
-      emitVideoCall({ conversation_id });
+      if (callTranfer.owner) {
+        emitVideoCall({ conversation_id });
+      }
     }
-  }, [dispatch, socketInstance]);
+  }, [socketInstance]);
 
   useEffect(() => {
-    if (peer && call.calling && stream) {
-      const myCall = peer.call(
-        `${conversation_id}-${call.owner ? 2 : 1}`,
-        stream
-      );
+    if (peer && call.calling && stream && !call.owner) {
+      const contact_id = `${conversation_id}-1`;
+      const myCall = peer.call(contact_id, stream);
       if (myCall) {
         myCall.on('stream', (remoteStream) => {
           setRemoteStream(remoteStream);
         });
+        myCall.on('error', function (err) {
+          console.log('Error occurred:', err);
+        });
       }
+      console.log({ myCall });
     }
-  }, [peer, stream, call]);
+  }, [peer, stream, call.calling]);
   // set stream to video
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream, videoRef]);
+  }, [stream, videoRef, call.calling]);
   // set remote video stream
   useEffect(() => {
     if (remoteVideoRef.current) {
       remoteVideoRef.current.srcObject = remoteStream;
     }
-  }, [remoteStream, remoteVideoRef]);
+  }, [remoteStream, remoteVideoRef, call.calling]);
   // handle toggle microphone
   const toggleMicrophone = () => {
     if (stream) {
@@ -104,17 +107,26 @@ const VideoCall = () => {
       setIsCameraOn(!isCameraOn);
     }
   };
-
+  // handle close call
+  const handleCloseCall = () => {
+    if (stream) {
+      stream.getTracks().forEach((track) => {
+        track.stop();
+      });
+    }
+    setStream(null);
+    peer.destroy();
+  };
   return (
-    <div className="w-[100vw] h-[100vh] relative bg-black flex items-center justify-center text-white">
+    <div className="w-[100vw] h-[100vh] relative bg-[#efecec] flex items-center justify-center text-white">
       {call.calling ? (
         <>
           <div className="absolute top-0 right-0 w-full h-full">
             <video
               ref={remoteVideoRef}
-              className="w-full h-full"
               autoPlay
               playsInline
+              className="w-full h-full"
             />
           </div>
         </>
@@ -126,11 +138,11 @@ const VideoCall = () => {
               'https://res.cloudinary.com/dw3oj3iju/image/upload/v1709628794/chat_app/b6pswhnwsreustbzr8d0.jpg'
             }
           />
-          <h2 className="my-3 text-[20px] font-semibold">Hoàng Công Khanh</h2>
+          <h2 className="my-3 text-[20px] font-semibold">Tên Thạm Thời</h2>
           <p className="text-[#777]">Đang gọi...</p>
         </div>
       )}
-      <div className="absolute top-0 right-0 w-[280px] h-[200px] m-4 rounded-lg overflow-hidden">
+      <div className="absolute top-0 right-0 w-[320px] h-auto m-4 rounded-lg overflow-hidden">
         <video ref={videoRef} className="w-full h-full" autoPlay playsInline />
       </div>
 
@@ -167,6 +179,7 @@ const VideoCall = () => {
           icon={<FaPhoneAlt size={18} />}
           size={'large'}
           className="bg-red-500 text-white border-none "
+          onClick={handleCloseCall}
         />
       </Space>
     </div>

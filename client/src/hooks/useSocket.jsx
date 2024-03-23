@@ -32,13 +32,23 @@ export const useSocket = () => {
           conversation_id
         })
       );
-      console.log('send video call', { conversation_id });
+    }
+  };
+  const emitAcceptVideoCall = ({ user_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'accept_video_call',
+          user_id
+        })
+      );
     }
   };
 
   // return
   return {
     emitMessage,
-    emitVideoCall
+    emitVideoCall,
+    emitAcceptVideoCall
   };
 };
