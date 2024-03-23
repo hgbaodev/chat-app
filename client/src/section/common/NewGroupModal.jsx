@@ -40,7 +40,7 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
 
   const handleSubmit = async () => {
     if (title.trim().length == 0) message.error('Please enter a title');
-    else if (selectedFriends.length == 0) message.error('Please selected friend add group!')
+    else if (selectedFriends.length < 2) message.error('Please selected friend add group!')
     else {
       await dispatch(
          createConversation({ title: title, participants: selectedFriends })
@@ -58,10 +58,9 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
       width={500}
       confirmLoading={isLoadingCreateConversation}
     >
-      <Flex horizontal={true} align="center" gap={10} className="py-2 w-full">
+      <Flex horizontal align="center" gap={10} className="py-2 w-full">
         <div>
           <Upload
-            action=""
             listType="picture-circle"
             fileList={[]}
             onPreview={null}

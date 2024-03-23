@@ -19,22 +19,25 @@ from django.utils import timezone
 
 class ConversationList(APIView):
     serializer_class = ConversationSerializer
+    pagination_class = CustomPagination
     permission_classes = [IsAuthenticated]
-    
+
     def get(self, request):
-        # Truy xuất danh sách các cuộc trò chuyện mà người dùng hiện tại tham gia
         conversations = Conversation.objects.filter(participants__user=request.user).annotate(
             latest_message_time=Max('message__created_at')
         ).order_by('-latest_message_time')
+
+        paginator = self.pagination_class()
+        result_page = paginator.paginate_queryset(conversations, request)
         
         conversation_data = []
-        for conversation in conversations:
+        for conversation in result_page:
             users = User.objects.filter(participants__conversation=conversation)
             latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             if latest_message is not None:
                 conversation_data.append({
-                    'id': conversation.id, 
-                    'title': conversation.title, 
+                    'id': conversation.id,
+                    'title': conversation.title,
                     'image': get_image_url(conversation.image),
                     'latest_message': latest_message,
                     'type': conversation.type,
@@ -42,8 +45,7 @@ class ConversationList(APIView):
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
-        return Response(serializer.data)
-
+        return paginator.get_paginated_response(serializer.data)
 
     # Tạo cuộc hội thoại
     def post(self, request):
@@ -59,7 +61,6 @@ class ConversationList(APIView):
                 message="Tôi đã tạo ra group này!",
                 message_type=Message.MessageType.TEXT
             )
-            latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             members_info = [
                 {
                     'id': member['id'],

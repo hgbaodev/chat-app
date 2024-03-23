@@ -12,8 +12,9 @@ import { AiOutlineEllipsis } from 'react-icons/ai';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
-import { MessageTypes } from '~/utils/enum';
+import { ConversationTypes, MessageTypes } from '~/utils/enum';
 import { useState } from 'react';
+import AvatarGroup from '~/components/AvatarGroup';
 
 export const ContactItem = ({
   id,
@@ -77,7 +78,7 @@ export const ContactItem = ({
       onClick={getAllMessages}
     >
       <Space className="flex-1">
-        <Avatar size={42} src={image} />
+        {image==null && type === ConversationTypes.GROUP ? <AvatarGroup users={members}/> : <Avatar size={50} src={image} />}
         <Flex vertical justify="center">
           <Typography className="text-slate-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {title}
