@@ -24,8 +24,21 @@ export const useSocket = () => {
     );
   };
 
+  const emitVideoCall = ({ conversation_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'video_call',
+          conversation_id
+        })
+      );
+      console.log('send video call', { conversation_id });
+    }
+  };
+
   // return
   return {
-    emitMessage
+    emitMessage,
+    emitVideoCall
   };
 };

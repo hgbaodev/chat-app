@@ -7,6 +7,7 @@ import {
   IoHappyOutline,
   IoImageOutline,
   IoMic,
+  IoPauseCircle,
   IoSendSharp
 } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
@@ -17,6 +18,8 @@ import { useDispatch } from 'react-redux';
 import { setForwardMessage } from '~/store/slices/chatSlice';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import { formatTimeRecord } from '~/utils/formatDayTime';
 
 export const ChatFooter = () => {
   const { chat, conversations, forwardMessage } = useSelector(
@@ -27,6 +30,9 @@ export const ChatFooter = () => {
 
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [isRecording, setRecording] = useState(false);
+  const [recorder, setRecorder] = useState(null);
+  const [recordedTime, setRecordedTime] = useState(0);
 
   // handle
   const handleEmojiClick = (emoji) => {
@@ -48,24 +54,40 @@ export const ChatFooter = () => {
         message_type: 1,
         forward: forwardMessage?.id
       });
-      // reset text
       setText('');
       dispatch(setForwardMessage(null));
     }
   };
 
-  const items = [
-    {
-      key: '1',
-      label: <p>Photo or Video</p>,
-      icon: <IoImageOutline size={17} />
-    },
-    {
-      key: '2',
-      label: <p>Document</p>,
-      icon: <IoDocumentAttachOutline size={16} />
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: true
+      });
+      const newRecorder = RecordRTC(stream, { type: 'audio' });
+      newRecorder.startRecording();
+      setRecorder(newRecorder);
+      setRecording(true);
+      newRecorder.interval = setInterval(() => {
+        setRecordedTime((prevTime) => prevTime + 0.1);
+      }, 100);
+    } catch (error) {
+      console.error('Error accessing media devices:', error);
     }
-  ];
+  };
+
+  const stopRecording = () => {
+    if (recorder) {
+      recorder.stopRecording(() => {
+        const blob = recorder.getBlob();
+        recorder.destroy();
+        setRecording(false);
+        clearInterval(recorder.interval);
+        setRecordedTime(0);
+        invokeSaveAsDialog(blob);
+      });
+    }
+  };
 
   return (
     <div className="transition-all ease-in-out delay-150">
@@ -74,15 +96,26 @@ export const ChatFooter = () => {
         <Flex className="relative p-3" align="center" gap="small">
           <Dropdown
             menu={{
-              items
+              items: [
+                {
+                  key: '1',
+                  label: <p>Photo or Video</p>,
+                  icon: <IoImageOutline size={17} />
+                },
+                {
+                  key: '2',
+                  label: <p>Document</p>,
+                  icon: <IoDocumentAttachOutline size={16} />
+                }
+              ]
             }}
             trigger={['click']}
           >
             <Button
               type="text"
               shape="circle"
-              icon={<IoIosLink size={24} />}
-              size="large"
+              icon={<IoIosLink size={20} />}
+              size="middle"
               className="text-blue-500 hover:bg-blue-700"
             />
           </Dropdown>
@@ -90,8 +123,8 @@ export const ChatFooter = () => {
           <Button
             type="text"
             shape="circle"
-            icon={<IoHappyOutline size={24} />}
-            size="large"
+            icon={<IoHappyOutline size={20} />}
+            size="middle"
             className=" text-blue-500 hover:bg-blue-700"
             onClick={() => {
               setOpenEmojiPicker(!isOpenEmojiPicker);
@@ -119,22 +152,34 @@ export const ChatFooter = () => {
           />
           {text.trim() ? (
             <Button
-              type="text"
+              type="primary"
               shape="circle"
-              icon={<IoSendSharp size={20} />}
-              size="large"
-              className="text-blue-500 hover:text-blue-500"
+              icon={<IoSendSharp />}
+              size="middle"
+              className="text-white"
               onClick={(e) => handleSendMessage(e)}
+            />
+          ) : !isRecording ? (
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoMic size={20} />}
+              size="middle"
+              className="text-white"
+              onClick={startRecording}
             />
           ) : (
             <Button
-              type="text"
-              shape="circle"
-              icon={<IoMic size={20} />}
-              size="large"
-              className="text-blue-500 hover:text-blue-500"
-              onClick={(e) => handleSendMessage(e)}
-            />
+              type="primary"
+              shape="round"
+              icon={<IoPauseCircle size={20} />}
+              size="middle"
+              className="text-white"
+              onClick={stopRecording}
+              danger
+            >
+              {formatTimeRecord(recordedTime)}
+            </Button>
           )}
         </Flex>
       </form>

@@ -7,6 +7,7 @@ import Contacts from '~/pages/dashboard/Contacts';
 
 // dynamic import
 const Settings = Loadable(lazy(() => import('~/pages/dashboard/Settings')));
+const VideoCall = Loadable(lazy(() => import('~/section/call/VideoCall')));
 
 const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
@@ -31,6 +32,10 @@ const UserRoutes = {
           element: <Settings />
         }
       ]
+    },
+    {
+      path: '/video-call/:conversation_id',
+      element: <VideoCall />
     }
   ]
 };

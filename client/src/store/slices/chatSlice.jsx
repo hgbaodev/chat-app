@@ -75,9 +75,15 @@ const initialState = {
     currentPage: 1,
     isLoading: false
   },
+  call: {
+    open: false,
+    calling: false,
+    owner: false,
+    user: null
+  },
   forwardMessage: null,
   isLoading: false,
-  isLoadingSecond: false,
+  isLoadingSecond: false
 };
 
 const chatSlice = createSlice({
@@ -128,13 +134,22 @@ const chatSlice = createSlice({
           message.message_type = MessageTypes.RECALL;
         }
       }
+    },
+    openCall(state) {
+      state.call.calling = false;
+      state.call.owner = true;
+    },
+    setCall(state, action) {
+      state.call.calling = action.payload.calling || false;
+      state.call.owner = action.payload.owner || false;
+      state.call.open = action.payload.open || false;
+      state.call.user = action.payload.user || null;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(getConversations.pending, (state) => {
-        if (state.conversations.length == 0)
-        state.isLoading = true;
+        if (state.conversations.length == 0) state.isLoading = true;
       })
       .addCase(getConversations.fulfilled, (state, action) => {
         state.conversations = [
@@ -178,5 +193,7 @@ export const {
   setForwardMessage,
   createGroup,
   recallMessage,
-  setCurrentPage
+  setCurrentPage,
+  openCall,
+  setCall
 } = chatSlice.actions;

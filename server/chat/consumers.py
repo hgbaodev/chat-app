@@ -16,7 +16,6 @@ class ChatConsumer(WebsocketConsumer):
         user = User.objects.get(id=user_id)
 
         self.scope["user"] = user
-        print(self.scope["user"])
         if user.is_authenticated:
             self.room_name = user.id
             self.room_group_name = f"user_{self.room_name}"
@@ -41,6 +40,8 @@ class ChatConsumer(WebsocketConsumer):
         
         if data_source == "message_send":
             self.receive_message_send(data)
+        elif data_source == "video_call":
+            self.receive_video_call(data)
         
     def receive_message_send(self, data):
         message = data["message"]
@@ -88,6 +89,22 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "chat_message", "message": message_serializer.data}
                 )
 
+    def receive_video_call(self, data):
+        conversation_id = data["conversation_id"]
+        print('conversation_id', conversation_id)
+        user_dict = {
+            'id': self.scope["user"].id,
+            'email': self.scope["user"].email,
+            'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
+        }
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "video_call", "message": json.dumps(user_dict)}
+                )
+       
+
     def receive_friend_request(self, event):
         self.send(text_data=json.dumps(event))
 
@@ -102,4 +119,6 @@ class ChatConsumer(WebsocketConsumer):
         
     def recall_message(self, event):
         self.send(text_data=json.dumps(event))
-    
+        
+    def video_call(self, event):
+        self.send(text_data=json.dumps(event))

@@ -5,6 +5,7 @@ import { ChatContainer } from '~/section/chats/ChatContainer';
 import { ContactInfo } from '~/section/chats/ContactInfo';
 import { Contacts } from '~/section/chats/Contacts';
 import { EmptyChat } from '~/section/chats/EmptyChat';
+import ListMemberOfGroup from '~/section/chats/ListMemberOfGroup';
 import { SharedMessages } from '~/section/chats/SharedMessages';
 import { setOpenContactInfo } from '~/store/slices/appSlice';
 const { useBreakpoint } = Grid;
@@ -37,6 +38,8 @@ const Chat = () => {
                     return <ContactInfo />;
                   case 'SHARED':
                     return <SharedMessages />;
+                  case 'MEMBERS':
+                    return <ListMemberOfGroup />;
                   default:
                     return <></>;
                 }
