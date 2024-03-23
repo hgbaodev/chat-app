@@ -13,3 +13,16 @@ export function formatDateTime(isoDateTime) {
 
   return new Intl.DateTimeFormat('en-US', options).format(date);
 }
+
+export const formatTimeRecord = (seconds) => {
+  const mm = Math.floor(seconds / 60)
+    .toString()
+    .padStart(2, '0');
+  const ss = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, '0');
+  const s = Math.floor((seconds - Math.floor(seconds)) * 10)
+    .toString()
+    .padStart(2, '0');
+  return `${mm}:${ss}:${s}`;
+};
