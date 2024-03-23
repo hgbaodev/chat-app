@@ -7,6 +7,7 @@ import {
 import { IoVideocamOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { toggleContactInfo } from '~/store/slices/appSlice';
+import { openCall } from '~/store/slices/chatSlice';
 export const ChatHeader = () => {
   const dispatch = useDispatch();
   const { contactInfo } = useSelector((state) => state.app);
@@ -14,6 +15,16 @@ export const ChatHeader = () => {
   // handle
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
+  };
+
+  // handle video call
+  const handleVideoCall = () => {
+    dispatch(openCall());
+    localStorage.setItem(
+      'call',
+      JSON.stringify({ calling: false, owner: true })
+    );
+    window.open(`/video-call/${chat.currentConversation.id}`, '_blank');
   };
   return (
     <Flex className="h-[60px] px-4" justify="space-between">
@@ -33,6 +44,7 @@ export const ChatHeader = () => {
           type="text"
           shape="circle"
           icon={<IoVideocamOutline size={20} />}
+          onClick={handleVideoCall}
         />
         <Button type="text" shape="circle" icon={<PhoneOutlined />} />
         <Button type="text" shape="circle" icon={<SearchOutlined />} />

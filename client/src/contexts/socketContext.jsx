@@ -5,7 +5,8 @@ import { useDispatch, useSelector } from '~/store';
 import {
   createGroup,
   recallMessage,
-  receiverMessage
+  receiverMessage,
+  setCall
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
@@ -43,6 +44,18 @@ export const SocketProvider = ({ children }) => {
             dispatch(createGroup(data.message));
           } else if (data.type === 'recall_message') {
             dispatch(recallMessage(data.message));
+          } else if (data.type === 'video_call') {
+            dispatch(
+              setCall({
+                open: true,
+                calling: false,
+                owner: false,
+                user: JSON.parse(data.message)
+              })
+            );
+            console.log('====================================');
+            console.log(data.message);
+            console.log('====================================');
           }
         } catch (error) {
           console.error('Error parsing message:', error);

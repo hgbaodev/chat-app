@@ -1,4 +1,4 @@
-import { Drawer, Space } from 'antd';
+import { Drawer, Empty, Space } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomLoader from '~/components/CustomLoader';
@@ -28,7 +28,7 @@ const Notification = ({ open, handleClose }) => {
       <Space direction="vertical" className="w-full">
         {isLoading ? (
           <CustomLoader />
-        ) : (
+        ) : notifications.length > 0 ? (
           notifications.map((notification) => (
             <NotificationItem
               key={notification.id}
@@ -38,6 +38,8 @@ const Notification = ({ open, handleClose }) => {
               seen={notification.seen}
             />
           ))
+        ) : (
+          <Empty description="No notifications" />
         )}
       </Space>
     </Drawer>
