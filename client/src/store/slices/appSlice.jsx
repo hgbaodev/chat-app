@@ -22,6 +22,9 @@ const slice = createSlice({
     },
     showContactInfo(state) {
       state.contactInfo.type = 'CONTACT';
+    },
+    showMembersGroup(state) {
+      state.contactInfo.type = 'MEMBERS';
     }
   }
 });
@@ -31,5 +34,6 @@ export const {
   toggleContactInfo,
   setOpenContactInfo,
   showSharedMessage,
-  showContactInfo
+  showContactInfo,
+  showMembersGroup
 } = slice.actions;

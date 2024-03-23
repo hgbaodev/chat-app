@@ -38,6 +38,7 @@
     "react-redux": "^9.1.0",
     "react-router-dom": "^6.21.3",
     "reconnecting-websocket": "^4.4.0",
+    "recordrtc": "^5.6.2",
     "redux-persist": "^6.0.0",
     "socket.io-client": "^4.7.4",
     "vite-plugin-svgr": "^4.2.0",

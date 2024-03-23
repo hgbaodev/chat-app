@@ -7,6 +7,7 @@ import {
   IoHappyOutline,
   IoImageOutline,
   IoMic,
+  IoPauseOutline,
   IoSendSharp
 } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
@@ -17,6 +18,7 @@ import { useDispatch } from 'react-redux';
 import { setForwardMessage } from '~/store/slices/chatSlice';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
+import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 
 export const ChatFooter = () => {
   const { chat, conversations, forwardMessage } = useSelector(
@@ -27,6 +29,7 @@ export const ChatFooter = () => {
 
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [isRecording, setRecording] = useState(false);
 
   // handle
   const handleEmojiClick = (emoji) => {
@@ -67,6 +70,10 @@ export const ChatFooter = () => {
     }
   ];
 
+  const handleRecordAudio = () => {
+    setRecording(true);
+  };
+
   return (
     <div className="transition-all ease-in-out delay-150">
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
@@ -81,8 +88,8 @@ export const ChatFooter = () => {
             <Button
               type="text"
               shape="circle"
-              icon={<IoIosLink size={24} />}
-              size="large"
+              icon={<IoIosLink size={20} />}
+              size="middle"
               className="text-blue-500 hover:bg-blue-700"
             />
           </Dropdown>
@@ -90,8 +97,8 @@ export const ChatFooter = () => {
           <Button
             type="text"
             shape="circle"
-            icon={<IoHappyOutline size={24} />}
-            size="large"
+            icon={<IoHappyOutline size={20} />}
+            size="middle"
             className=" text-blue-500 hover:bg-blue-700"
             onClick={() => {
               setOpenEmojiPicker(!isOpenEmojiPicker);
@@ -119,21 +126,30 @@ export const ChatFooter = () => {
           />
           {text.trim() ? (
             <Button
-              type="text"
+              type="primary"
               shape="circle"
-              icon={<IoSendSharp size={20} />}
-              size="large"
-              className="text-blue-500 hover:text-blue-500"
+              icon={<IoSendSharp />}
+              size="middle"
+              className="text-white"
               onClick={(e) => handleSendMessage(e)}
+            />
+          ) : !isRecording ? (
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoMic size={20} />}
+              size="middle"
+              className="text-white"
+              onClick={handleRecordAudio}
             />
           ) : (
             <Button
-              type="text"
+              type="primary"
               shape="circle"
-              icon={<IoMic size={20} />}
-              size="large"
-              className="text-blue-500 hover:text-blue-500"
-              onClick={(e) => handleSendMessage(e)}
+              icon={<IoPauseOutline size={20} />}
+              size="middle"
+              className="text-white"
+              onClick={() => setRecording(false)}
             />
           )}
         </Flex>

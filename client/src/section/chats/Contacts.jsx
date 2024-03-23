@@ -50,7 +50,7 @@ export const Contacts = ({ ...props }) => {
               loader={<ContactItemSkeleton />}
               scrollableTarget="scollable"
             >
-              <Space direction="vertical">
+              <Space direction="vertical" size={0}>
                 {!isLoading
                   ? conversationsList
                       .sort((a, b) => {
