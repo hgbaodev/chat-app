@@ -1,5 +1,4 @@
-/* eslint-disable indent */
-import { Flex, Space, Spin } from 'antd';
+import { Flex, Space } from 'antd';
 import { ContactItem } from './ContactItem';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from '~/store';
@@ -15,7 +14,6 @@ export const Contacts = ({ ...props }) => {
   const { conversations, currentPage, lastPage, isLoading, chat } = useSelector(
     (state) => state.chat
   );
-  console.log('currentPage', currentPage);
   const { user } = useSelector((state) => state.auth);
   const conversationsList = [...conversations];
   useEffect(() => {
@@ -49,7 +47,7 @@ export const Contacts = ({ ...props }) => {
               next={fetchMoreData}
               className="flex flex-col overflow-y-auto"
               hasMore={currentPage < lastPage}
-              loader={<Spin className="py-2" />}
+              loader={<ContactItemSkeleton />}
               scrollableTarget="scollable"
             >
               <Space direction="vertical">

@@ -135,7 +135,6 @@ const chatSlice = createSlice({
       .addCase(getConversations.pending, (state) => {
         if (state.conversations.length == 0)
         state.isLoading = true;
-        
       })
       .addCase(getConversations.fulfilled, (state, action) => {
         state.conversations = [
