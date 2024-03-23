@@ -57,3 +57,4 @@ class DeleteMessage(models.Model):
 class PinConversation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
