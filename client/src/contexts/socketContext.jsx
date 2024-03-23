@@ -53,9 +53,17 @@ export const SocketProvider = ({ children }) => {
                 user: JSON.parse(data.message)
               })
             );
-            console.log('====================================');
-            console.log(data.message);
-            console.log('====================================');
+          } else if (data.type === 'accept_video_call') {
+            dispatch(
+              setCall({
+                calling: true,
+                owner: true
+              })
+            );
+            localStorage.setItem(
+              'call',
+              JSON.stringify({ open: false, calling: true, owner: true })
+            );
           }
         } catch (error) {
           console.error('Error parsing message:', error);

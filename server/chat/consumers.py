@@ -42,6 +42,8 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_message_send(data)
         elif data_source == "video_call":
             self.receive_video_call(data)
+        elif data_source == "accept_video_call":
+            self.receive_accept_video_call(data)
         
     def receive_message_send(self, data):
         message = data["message"]
@@ -91,11 +93,11 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive_video_call(self, data):
         conversation_id = data["conversation_id"]
-        print('conversation_id', conversation_id)
         user_dict = {
             'id': self.scope["user"].id,
             'email': self.scope["user"].email,
             'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
+            'conversation_id': conversation_id
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
@@ -103,6 +105,19 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "video_call", "message": json.dumps(user_dict)}
                 )
+            
+    def receive_accept_video_call(self, data):
+        user_id = data["user_id"]
+        user_dict = {
+            'id': self.scope["user"].id,
+            'email': self.scope["user"].email,
+            'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
+        }
+        room_group_name = f"user_{user_id}"
+        async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "accept_video_call", "message": json.dumps(user_dict)}
+                )
+            
        
 
     def receive_friend_request(self, event):
@@ -121,4 +136,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
         
     def video_call(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def accept_video_call(self, event):
         self.send(text_data=json.dumps(event))
