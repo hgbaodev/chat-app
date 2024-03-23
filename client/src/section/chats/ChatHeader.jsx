@@ -6,6 +6,7 @@ import {
 } from '@ant-design/icons';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
+import { openCall } from '~/store/slices/chatSlice';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
 import { ConversationTypes } from '~/utils/enum';
 
@@ -20,6 +21,15 @@ export const ChatHeader = () => {
     dispatch(toggleContactInfo());
   };
 
+  // handle video call
+  const handleVideoCall = () => {
+    dispatch(openCall());
+    localStorage.setItem(
+      'call',
+      JSON.stringify({ calling: false, owner: true })
+    );
+    window.open(`/video-call/${currentConversation.id}`, '_blank');
+  };
   const handleOpenSharedMessages = () => dispatch(showMembersGroup());
 
   const getConversationInfo = () => {
@@ -50,6 +60,7 @@ export const ChatHeader = () => {
           type="text"
           shape="circle"
           icon={<IoVideocamOutline size={20} />}
+          onClick={handleVideoCall}
         />
         <Button type="text" shape="circle" icon={<PhoneOutlined />} />
         <Button type="text" shape="circle" icon={<SearchOutlined />} />

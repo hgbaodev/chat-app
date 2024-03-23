@@ -23,6 +23,7 @@ import ProfileModal from '~/section/common/ProfileModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
+import VideoCallModal from '~/section/call/VideoCallModal';
 
 const { Text } = Typography;
 
@@ -139,6 +140,7 @@ const DashboardLayout = () => {
           setOpenNotification(false);
         }}
       />
+      <VideoCallModal />
     </>
   );
 };
