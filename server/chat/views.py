@@ -8,7 +8,6 @@ from .models import Conversation, Participants, Message, DeleteMessage
 from django.http import Http404
 from django.db.models import Max
 from config.paginations import CustomPagination
-from utils.cloudinary import get_image_url
 from django.db.models import Max
 from utils.responses import SuccessResponse, ErrorResponse
 from django.db.models import Q
@@ -38,7 +37,7 @@ class ConversationList(APIView):
                 conversation_data.append({
                     'id': conversation.id,
                     'title': conversation.title,
-                    'image': get_image_url(conversation.image),
+                    'image': conversation.image,
                     'latest_message': latest_message,
                     'type': conversation.type,
                     'members': users
@@ -66,7 +65,7 @@ class ConversationList(APIView):
                     'id': member['id'],
                     'first_name': member['first_name'],
                     'last_name': member['last_name'],
-                    'avatar': get_image_url(member['avatar'])
+                    'avatar': member['avatar']
                 }
                 for member in users.values('id', 'first_name', 'last_name', 'avatar')
             ]
@@ -74,7 +73,7 @@ class ConversationList(APIView):
             data = {
                 'id': conversation.id, 
                 'title': conversation.title, 
-                'image': get_image_url(conversation.image),
+                'image': conversation.image,
                 'latest_message': {
                     'id': message.id,
                     'message': message.message,
@@ -251,7 +250,7 @@ class ConversationListFind(APIView):
             conversation_info = {
                 'id': conversation.id, 
                 'title': conversation.title, 
-                'image': get_image_url(conversation.image),
+                'image': conversation.image,
                 'type': conversation.type,
                 'members': users
             }

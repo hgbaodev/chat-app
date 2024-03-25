@@ -53,22 +53,22 @@ const AvatarGroup = ({ users }) => {
           <Avatar
             size={size}
             src={users[0].avatar}
-            className="border-2 border-white z-5"
+            className="border-1 border-white z-5"
           />
           <Avatar
             size={size}
             src={users[1].avatar}
-            className="absolute top-5 left-0 border-2 border-white z-7"
+            className="absolute top-5 left-0 border-1 border-white z-7"
           />
           <Avatar
             size={size}
             src={users[2].avatar}
-            className="absolute top-5 right-0 border-2 border-white z-10"
+            className="absolute top-5 right-0 border-1 border-white z-10"
           />
           <Avatar
             size={size}
             src={users[3].avatar}
-            className="absolute top-0 right-0 border-2 border-white"
+            className="absolute top-0 right-0 border-1 border-white"
           />
         </div>
       </div>
@@ -81,21 +81,21 @@ const AvatarGroup = ({ users }) => {
         <Avatar
           size={28}
           src={users[0].avatar}
-          className="border-2 border-white z-5"
+          className="border-1 border-white z-5"
         />
         <Avatar
           size={28}
           src={users[1].avatar}
-          className="absolute top-5 left-0 border-2 border-white z-7"
+          className="absolute top-5 left-0 border-1 border-white z-7"
         />
         <Avatar
           size={28}
           src={users[2].avatar}
-          className="absolute top-0 right-0 border-2 border-white"
+          className="absolute top-0 right-0 border-1 border-white"
         />
         <Avatar
           size={28}
-          className="absolute top-5 right-0 border-2 border-white z-10 "
+          className="absolute top-5 right-0 border-1 border-white z-10 "
         >
           +{users.length - 3}
         </Avatar>

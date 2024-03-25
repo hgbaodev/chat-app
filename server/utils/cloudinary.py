@@ -1,7 +1,7 @@
 import cloudinary
 
 def get_image_url(image):
-    # return "https://avatars.githubusercontent.com/u/120194990?v=4"
+    # return  None
     if image is None: return None
     try: 
         return cloudinary.api.resource_by_asset_id(image).get('secure_url')
