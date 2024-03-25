@@ -10,9 +10,13 @@ import {
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import logo_dark from '~/assets/icon_app.svg';
 import {
+  IoChatbubbleEllipses,
   IoChatbubbleEllipsesOutline,
+  IoNotifications,
   IoNotificationsOutline,
   IoPeopleOutline,
+  IoPeopleSharp,
+  IoSettings,
   IoSettingsOutline
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
@@ -82,49 +86,48 @@ const DashboardLayout = () => {
           className="bg-white dark:bg-gray-900 py-2 h-[100%] w-[64px]"
         >
           <Flex vertical align="center">
-            <img src={logo_dark} alt="logo" className="cursor-pointer" />
-            <Flex vertical className="mt-5 w-[100%]">
+            <Flex vertical className="w-[100%]" gap="middle">
+              <Dropdown
+                menu={{
+                  items,
+                  onClick
+                }}
+                placement="topRight"
+                trigger={['click']}
+                arrow="true"
+              >
+                <Avatar size={40} src={avatar} />
+              </Dropdown>
               <NavButton
                 href="/"
                 tooltip="Messages"
-                icon={<IoChatbubbleEllipsesOutline size={27} />}
+                icon={
+                  <IoChatbubbleEllipses size={27} className="text-gray-500" />
+                }
                 badge={0}
               />
               <NavButton
                 href="/contacts"
                 tooltip="Contacts"
-                icon={<IoPeopleOutline size={27} />}
+                icon={<IoPeopleSharp size={27} className="text-gray-500" />}
                 badge={received_friend_requests.length}
               />
               <NavButton
                 href="#"
                 tooltip="Notifications"
-                icon={<IoNotificationsOutline size={27} />}
+                icon={<IoNotifications size={27} className="text-gray-500" />}
                 badge={totalUnseen}
                 onClick={() => setOpenNotification(true)}
-              />
-              <NavButton
-                href="/settings"
-                tooltip="Settings"
-                icon={<IoSettingsOutline size={27} />}
-                badge={0}
               />
             </Flex>
           </Flex>
           <Space direction="vertical" size={18} align="center" className="mb-4">
-            <Dropdown
-              menu={{
-                items,
-                onClick
-              }}
-              placement="topRight"
-              trigger={['click']}
-              arrow="true"
-            >
-              <a onClick={(e) => e.preventDefault()}>
-                <Avatar size={40} src={avatar} />
-              </a>
-            </Dropdown>
+            <NavButton
+              href="/settings"
+              tooltip="Settings"
+              icon={<IoSettings size={27} className="text-gray-500" />}
+              badge={0}
+            />
           </Space>
         </Flex>
         <div className="h-screen flex-1">
@@ -151,10 +154,8 @@ const NavButton = ({ tooltip, href, icon, badge, ...other }) => {
       <NavLink
         to={href}
         className={({ isActive }) =>
-          (isActive && href !== '#'
-            ? 'bg-neutral-300'
-            : 'hover:bg-neutral-200') +
-          ' text-black flex items-center justify-center h-[64px] w-[64px] hover:text-black'
+          (isActive && href !== '#' ? 'bg-gray-200' : 'hover:bg-gray-100') +
+          ' text-black flex items-center justify-center h-[45px] w-[45px] hover:text-black rounded-md'
         }
       >
         <Badge count={badge} overflowCount={5} offset={[0, 5]}>
