@@ -1,7 +1,7 @@
 import { Button, Input, Space } from 'antd';
 import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
-import { MdOutlineGroupAdd, MdOutlinePersonAddAlt } from 'react-icons/md';
+import { LuUserPlus, LuUsers } from 'react-icons/lu';
 import { useDispatch } from 'react-redux';
 import AddFriendsModal from '~/section/common/AddFriendsModal';
 import NewGroupModel from '~/section/common/NewGroupModal';
@@ -27,12 +27,12 @@ const ContactsHeader = () => {
         />
         <Button
           type="text"
-          icon={<MdOutlinePersonAddAlt size={20} />}
+          icon={<LuUserPlus size={20} />}
           onClick={() => setIsAddFriendModalOpen(true)}
         />
         <Button
           type="text"
-          icon={<MdOutlineGroupAdd size={20} />}
+          icon={<LuUsers size={20} />}
           onClick={() => setIsNewGroupModalOpen(true)}
         />
       </Space>

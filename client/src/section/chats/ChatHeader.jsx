@@ -15,8 +15,6 @@ export const ChatHeader = () => {
   const { contactInfo } = useSelector((state) => state.app);
   const { currentConversation } = useSelector((state) => state.chat.chat);
 
-  console.log(currentConversation);
-
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
   };

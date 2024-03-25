@@ -167,12 +167,18 @@ const chatSlice = createSlice({
         state.chat.isLoading = true;
       })
       .addCase(getMessagesOfConversation.fulfilled, (state, action) => {
-        state.chat.messages = [
-          ...action.payload.data.results,
-          ...state.chat.messages
-        ];
-        state.chat.lastPage = action.payload.data.meta.last_page;
-        state.chat.isLoading = false;
+        if (
+          !state.chat.messages.find(
+            (message) => message.id === action.payload.data.results[0].id
+          )
+        ) {
+          state.chat.messages = [
+            ...action.payload.data.results,
+            ...state.chat.messages
+          ];
+          state.chat.lastPage = action.payload.data.meta.last_page;
+          state.chat.isLoading = false;
+        }
       })
       .addCase(getMessagesOfConversation.rejected, (state) => {
         state.chat.isLoading = false;
