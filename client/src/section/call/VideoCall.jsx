@@ -1,4 +1,5 @@
 import { Avatar, Button, Space } from 'antd';
+import { now } from 'lodash';
 import Peer from 'peerjs';
 import { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
@@ -17,7 +18,7 @@ import { setCall } from '~/store/slices/chatSlice';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
-  const { conversation_id } = useParams();
+  const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
   const { emitVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
@@ -33,9 +34,9 @@ const VideoCall = () => {
       const callTranfer = JSON.parse(localStorage.getItem('call'));
       dispatch(setCall(callTranfer));
       if (peer) peer.destroy();
-      const peerInstance = new Peer(
-        `${conversation_id}-${callTranfer.owner ? 1 : 2}`
-      );
+      const peerInstance = new Peer(peer_id);
+      console.log('peerInstance', peerInstance, now());
+
       setPeer(peerInstance);
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -50,20 +51,26 @@ const VideoCall = () => {
               setRemoteStream(remoteStream);
             });
           });
+          peerInstance.on('error', function (err) {
+            console.log('PeerJS error:', err);
+          });
         })
         .catch((err) => {
           console.error('Failed to get local stream', err);
         });
       if (callTranfer.owner) {
-        emitVideoCall({ conversation_id });
+        emitVideoCall({
+          conversation_id: callTranfer.conversation_id,
+          peer_id
+        });
       }
     }
   }, [socketInstance]);
 
   useEffect(() => {
     if (peer && call.calling && stream && !call.owner) {
-      const contact_id = `${conversation_id}-1`;
-      const myCall = peer.call(contact_id, stream);
+      const myCall = peer.call(call.user.peer_id, stream);
+      console.log('myCall', myCall, now());
       if (myCall) {
         myCall.on('stream', (remoteStream) => {
           setRemoteStream(remoteStream);
@@ -72,9 +79,8 @@ const VideoCall = () => {
           console.log('Error occurred:', err);
         });
       }
-      console.log({ myCall });
     }
-  }, [peer, stream, call.calling]);
+  }, [peer, stream, call]);
   // set stream to video
   useEffect(() => {
     if (videoRef.current) {

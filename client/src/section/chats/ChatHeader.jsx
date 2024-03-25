@@ -10,6 +10,7 @@ import { openCall } from '~/store/slices/chatSlice';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
 import { ConversationTypes } from '~/utils/enum';
 import AvatarGroup from '~/components/AvatarGroup';
+import { v4 as uuidv4 } from 'uuid';
 
 export const ChatHeader = () => {
   const dispatch = useDispatch();
@@ -26,9 +27,22 @@ export const ChatHeader = () => {
     dispatch(openCall());
     localStorage.setItem(
       'call',
-      JSON.stringify({ calling: false, owner: true })
+      JSON.stringify({
+        calling: false,
+        owner: true,
+        conversation_id: currentConversation.id
+      })
     );
-    window.open(`/video-call/${currentConversation.id}`, '_blank');
+    const peer_id = uuidv4();
+    const width = 800;
+    const height = 600;
+    window.open(
+      `/video-call/${peer_id}`,
+      '_blank',
+      `width=${width}, height=${600}, left=${
+        (window.innerWidth - width) / 2
+      }, top=${(window.innerHeight - height) / 2}`
+    );
   };
   const handleOpenSharedMessages = () => dispatch(showMembersGroup());
 
