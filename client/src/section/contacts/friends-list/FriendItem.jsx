@@ -1,5 +1,7 @@
 import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
+import { useState } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
+import useHover from '~/hooks/useHover';
 const ACTIONS = {
   CHAT: 'Chat now',
   VIEW_DETAILS: 'View details',
@@ -16,6 +18,8 @@ const FriendDropdownItem = ({ action, onClick }) => (
 );
 
 export const FriendItem = ({ id, avatar, fullName, email }) => {
+  const [hoverRef, isHovering] = useHover();
+  const [openOptions, setOpenOptions] = useState(false);
   // handle
   const handleDeleteFriend = () => {
     // logic here
@@ -64,6 +68,7 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
       align="center"
       justify="space-between"
       className="w-full py-3 px-4 hover:bg-blue-50 cursor-pointer rounded"
+      ref={hoverRef}
     >
       <Space align="center">
         <Avatar size={40} src={avatar} />
@@ -72,12 +77,19 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
           <p className="m-0 text-[13px] opacity-70">{email}</p>
         </div>
       </Space>
-      <Dropdown menu={{ items: dropdownItems }} placement="bottomLeft">
+      <Dropdown
+        menu={{ items: dropdownItems }}
+        placement="bottomLeft"
+        className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
+        onOpenChange={(o) => setOpenOptions(o)}
+        trigger={['click']}
+        arrow={true}
+      >
         <Button
           type="text"
           icon={<IoEllipsisHorizontal />}
           size="middle"
-          className="text-gray-500"
+          className={openOptions && 'bg-slate-200'}
         />
       </Dropdown>
     </Flex>

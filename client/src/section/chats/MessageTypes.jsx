@@ -19,6 +19,8 @@ const MessageWrapper = memo(
     ...props
   }) => {
     const { user } = useSelector((state) => state.auth);
+    const { chat } = useSelector((state) => state.chat);
+
     const [hoverRef, isHovering] = useHover();
     const [open, setOpen] = useState(false);
 
@@ -27,9 +29,14 @@ const MessageWrapper = memo(
         {created && <TimeLine text={formatDateTime(created)} />}
         <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
           {from !== user.id && (
-            <Avatar className="bg-[#fde3cf] text-[#f56a00] mr-2 cursor-pointer">
-              B
-            </Avatar>
+            <Avatar
+              className="mr-2 cursor-pointer"
+              src={
+                chat.currentConversation.members.find((mem) => mem.id == from)[
+                  'avatar'
+                ]
+              }
+            />
           )}
           <Flex
             align="center"
