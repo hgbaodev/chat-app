@@ -29,10 +29,6 @@ export const ChatFooter = () => {
   const { emitMessage } = useSocket();
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
-  const [isRecording, setRecording] = useState(false);
-  const [recorder, setRecorder] = useState(null);
-  const [recordedTime, setRecordedTime] = useState(0);
-  const [stream, setStream] = useState(null);
 
   // handle
   const handleEmojiClick = (emoji) => {
@@ -58,6 +54,96 @@ export const ChatFooter = () => {
       dispatch(setForwardMessage(null));
     }
   };
+
+  return (
+    <div className="transition-all ease-in-out delay-150">
+      {forwardMessage && <ForwardMessage {...forwardMessage} />}
+      <form onSubmit={(e) => handleSendMessage(e)}>
+        <Flex className="relative p-3" align="center" gap="small">
+          <Dropdown
+            menu={{
+              items: [
+                {
+                  key: '1',
+                  label: <p>Photo or Video</p>,
+                  icon: <IoImageOutline size={17} />
+                },
+                {
+                  key: '2',
+                  label: <p>Document</p>,
+                  icon: <IoDocumentAttachOutline size={16} />
+                }
+              ]
+            }}
+            trigger={['click']}
+          >
+            <Button
+              type="text"
+              shape="circle"
+              icon={<IoIosLink size={20} />}
+              size="middle"
+              className="text-blue-500 hover:bg-blue-700"
+            />
+          </Dropdown>
+
+          <Button
+            type="text"
+            shape="circle"
+            icon={<IoHappyOutline size={20} />}
+            size="middle"
+            className=" text-blue-500 hover:bg-blue-700"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpenEmojiPicker(!isOpenEmojiPicker);
+            }}
+          />
+          {isOpenEmojiPicker && (
+            <div className="absolute bottom-[60px] left-[60px]">
+              <Picker
+                data={data}
+                onEmojiSelect={handleEmojiClick}
+                onClickOutside={() => setOpenEmojiPicker(false)}
+              />
+            </div>
+          )}
+          <TextArea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Aa..."
+            className="h-full rounded-3xl bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
+            autoSize={{
+              maxRows: 3
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage(e);
+              }
+            }}
+          />
+          {text.trim() ? (
+            <Button
+              type="primary"
+              shape="circle"
+              icon={<IoSendSharp />}
+              size="middle"
+              className="text-white"
+              onClick={(e) => handleSendMessage(e)}
+            />
+          ) : (
+            <RecordButton />
+          )}
+        </Flex>
+      </form>
+    </div>
+  );
+};
+
+const RecordButton = () => {
+  const [isRecording, setRecording] = useState(false);
+  const [recorder, setRecorder] = useState(null);
+  const [recordedTime, setRecordedTime] = useState(0);
+  const [stream, setStream] = useState(null);
 
   const startRecording = async () => {
     try {
@@ -99,7 +185,6 @@ export const ChatFooter = () => {
     setRecording(false);
     clearInterval(recorder.interval);
     setRecordedTime(0);
-    console.log('cancel clicked');
     if (stream) {
       stream.getTracks().forEach((track) => track.stop());
     }
@@ -107,113 +192,37 @@ export const ChatFooter = () => {
     setStream(null);
   };
 
-  return (
-    <div className="transition-all ease-in-out delay-150">
-      {forwardMessage && <ForwardMessage {...forwardMessage} />}
-      <form onSubmit={(e) => handleSendMessage(e)}>
-        <Flex className="relative p-3" align="center" gap="small">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: '1',
-                  label: <p>Photo or Video</p>,
-                  icon: <IoImageOutline size={17} />
-                },
-                {
-                  key: '2',
-                  label: <p>Document</p>,
-                  icon: <IoDocumentAttachOutline size={16} />
-                }
-              ]
-            }}
-            trigger={['click']}
-          >
-            <Button
-              type="text"
-              shape="circle"
-              icon={<IoIosLink size={20} />}
-              size="middle"
-              className="text-blue-500 hover:bg-blue-700"
-            />
-          </Dropdown>
-
-          <Button
-            type="text"
-            shape="circle"
-            icon={<IoHappyOutline size={20} />}
-            size="middle"
-            className=" text-blue-500 hover:bg-blue-700"
-            onClick={() => {
-              setOpenEmojiPicker(!isOpenEmojiPicker);
-            }}
-          />
-          {isOpenEmojiPicker && (
-            <div className="absolute bottom-[60px] left-[60px]">
-              <Picker data={data} onEmojiSelect={handleEmojiClick} />
-            </div>
-          )}
-          <TextArea
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Aa..."
-            className="h-full rounded-3xl bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
-            autoSize={{
-              maxRows: 3
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
-                e.preventDefault();
-                handleSendMessage(e);
-              }
-            }}
-          />
-          {text.trim() ? (
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<IoSendSharp />}
-              size="middle"
-              className="text-white"
-              onClick={(e) => handleSendMessage(e)}
-            />
-          ) : !isRecording ? (
-            <Button
-              type="primary"
-              shape="circle"
-              icon={<IoMic size={20} />}
-              size="middle"
-              className="text-white"
-              onClick={startRecording}
-            />
-          ) : (
-            <>
-              <Button
-                type="primary"
-                shape="circle"
-                icon={<FaTrash />}
-                size="middle"
-                className="text-white"
-                onClick={cancleRecord}
-                danger
-              />
-              <Button
-                type="primary"
-                shape="round"
-                icon={<IoSendSharp />}
-                size="middle"
-                className="text-white min-w-[122px]"
-                onClick={stopRecording}
-              >
-                <span className="min-w-[60px]">
-                  {formatTimeRecord(recordedTime)}
-                </span>
-              </Button>
-            </>
-          )}
-        </Flex>
-      </form>
-    </div>
+  return !isRecording ? (
+    <Button
+      type="primary"
+      shape="circle"
+      icon={<IoMic size={20} />}
+      size="middle"
+      className="text-white"
+      onClick={startRecording}
+    />
+  ) : (
+    <>
+      <Button
+        type="primary"
+        shape="circle"
+        icon={<FaTrash />}
+        size="middle"
+        className="text-white"
+        onClick={cancleRecord}
+        danger
+      />
+      <Button
+        type="primary"
+        shape="round"
+        icon={<IoSendSharp />}
+        size="middle"
+        className="text-white min-w-[122px]"
+        onClick={stopRecording}
+      >
+        <span className="min-w-[60px]">{formatTimeRecord(recordedTime)}</span>
+      </Button>
+    </>
   );
 };
 

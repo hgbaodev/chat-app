@@ -83,7 +83,7 @@ export const ContactInfo = () => {
           <MembersSection />
         )}
 
-        <Divider className="my-2" />
+        <Divider className="mb-2 mt-0" />
         <Flex justify="space-between" align="center">
           <Typography className="font-bold m-0">
             Media, Links and Docs
@@ -171,7 +171,7 @@ const HeaderInfoTool = () => {
 const PrivacySection = () => {
   return (
     <>
-      <Typography className="font-bold m-0">Privacy settings</Typography>
+      <Typography className="font-bold mb-2">Privacy settings</Typography>
       <Flex vertical>
         <ContactInfoItem
           icon={<LuTrash2 size={20} />}
