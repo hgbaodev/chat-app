@@ -46,11 +46,33 @@ export const useSocket = () => {
       );
     }
   };
+  const emitInterruptVideoCall = ({ conversation_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'interrupt_video_call',
+          conversation_id
+        })
+      );
+    }
+  };
+  const emitRefuseVideoCall = ({ user_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'refuse_video_call',
+          user_id
+        })
+      );
+    }
+  };
 
   // return
   return {
     emitMessage,
     emitVideoCall,
-    emitAcceptVideoCall
+    emitAcceptVideoCall,
+    emitInterruptVideoCall,
+    emitRefuseVideoCall
   };
 };

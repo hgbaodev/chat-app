@@ -70,6 +70,46 @@ export const SocketProvider = ({ children }) => {
                 user: JSON.parse(data.message)
               })
             );
+          } else if (data.type === 'refuse_video_call') {
+            dispatch(
+              setCall({
+                calling: false,
+                ended: false,
+                refused: true,
+                owner: true,
+                user: null
+              })
+            );
+            localStorage.setItem(
+              'call',
+              JSON.stringify({
+                calling: false,
+                ended: false,
+                refused: true,
+                owner: true,
+                user: JSON.parse(data.message)
+              })
+            );
+          } else if (data.type === 'interrupt_video_call') {
+            console.log({ msg: data.message });
+            dispatch(
+              setCall({
+                open: false,
+                calling: false,
+                ended: true,
+                user: null
+              })
+            );
+            localStorage.setItem(
+              'call',
+              JSON.stringify({
+                calling: false,
+                ended: true,
+                refused: false,
+                owner: true,
+                user: JSON.parse(data.message)
+              })
+            );
           }
         } catch (error) {
           console.error('Error parsing message:', error);

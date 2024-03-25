@@ -7,20 +7,22 @@ import { v4 as uuidv4 } from 'uuid';
 
 const VideoCallModal = () => {
   const dispatch = useDispatch();
-  const { emitAcceptVideoCall } = useSocket();
+  const { emitAcceptVideoCall, emitRefuseVideoCall } = useSocket();
   const { call } = useSelector((state) => state.chat);
   // handle
-  const handleClose = () => {
-    dispatch(setCall({ open: false }));
-  };
+
   const handleAccept = () => {
+    dispatch(setCall({ open: false }));
     localStorage.setItem(
       'call',
       JSON.stringify({
         open: false,
         calling: true,
+        refused: false,
+        ended: false,
         owner: false,
-        user: call.user
+        user: call.user,
+        conversation_id: call.user.conversation_id
       })
     );
     const peer_id = uuidv4();
@@ -35,13 +37,19 @@ const VideoCallModal = () => {
     );
     emitAcceptVideoCall({ user_id: call.user.id, peer_id });
   };
+
+  // handle refuse
+  const handleRefuse = () => {
+    emitRefuseVideoCall({ user_id: call.user.id });
+    dispatch(setCall({ open: false }));
+  };
   // render
   return (
     <>
       <Modal
         title={'Video call'}
         open={call.open}
-        onCancel={handleClose}
+        onCancel={handleRefuse}
         width={400}
         footer={null}
       >
@@ -67,7 +75,7 @@ const VideoCallModal = () => {
               icon={<IoClose size={22} />}
               size={'large'}
               className="bg-red-500 text-white border-none "
-              onClick={handleClose}
+              onClick={handleRefuse}
             />
             <Button
               type="default"

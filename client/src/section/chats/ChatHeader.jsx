@@ -17,6 +17,7 @@ export const ChatHeader = () => {
   const { contactInfo } = useSelector((state) => state.app);
   const { user } = useSelector((state) => state.auth);
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { call } = useSelector((state) => state.chat);
 
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
@@ -29,6 +30,8 @@ export const ChatHeader = () => {
       'call',
       JSON.stringify({
         calling: false,
+        refused: false,
+        ended: false,
         owner: true,
         conversation_id: currentConversation.id
       })
