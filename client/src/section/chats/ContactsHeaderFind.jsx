@@ -1,4 +1,4 @@
-import { Button, Flex, Input, Space, Typography } from 'antd';
+import { Button, Flex, Input, Typography } from 'antd';
 import { CiSearch } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
 import { findConversations, setOpenSearch } from '~/store/slices/contactSlice';
@@ -58,19 +58,20 @@ const ContactsHeaderFind = () => {
   return (
     <>
       <Flex vertical className="overflow-y-auto">
-        <Space className="w-[100%] p-4">
+        <Flex className="w-[100%] p-4" justify="space-between" gap="small">
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             variant="filled"
             placeholder="Search here..."
             prefix={<CiSearch />}
+            className="w-auto flex-1"
             autoFocus
           />
           <Button type="text" onClick={handleExitSearch}>
             Close
           </Button>
-        </Space>
+        </Flex>
         {!isLoading ? (
           <>
             <Flex vertical>

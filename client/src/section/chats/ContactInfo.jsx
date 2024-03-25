@@ -124,12 +124,13 @@ const AboutSection = () => {
 
 const MembersSection = () => {
   const dispatch = useDispatch();
+  const { currentConversation } = useSelector((state) => state.chat.chat);
   return (
     <>
       <Typography className="font-bold m-0">Members</Typography>
       <ContactInfoItem
         icon={<LuUsers size={20} />}
-        title="99 members"
+        title={`${currentConversation.members.length} members`}
         onClick={() => dispatch(showMembersGroup())}
       />
     </>

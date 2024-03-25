@@ -1,4 +1,4 @@
-import { Button, Input, Space } from 'antd';
+import { Button, Flex, Input } from 'antd';
 import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { LuUserPlus, LuUsers } from 'react-icons/lu';
@@ -18,12 +18,13 @@ const ContactsHeader = () => {
 
   return (
     <>
-      <Space className="w-[100%] p-4">
+      <Flex className="w-[100%] p-4" justify="space-between" gap="small">
         <Input
           variant="filled"
           placeholder="Search here..."
           prefix={<CiSearch />}
           onFocus={handleSearch}
+          className="w-auto flex-1"
         />
         <Button
           type="text"
@@ -35,7 +36,7 @@ const ContactsHeader = () => {
           icon={<LuUsers size={20} />}
           onClick={() => setIsNewGroupModalOpen(true)}
         />
-      </Space>
+      </Flex>
       {isAddFriendModalOpen && (
         <AddFriendsModal
           isModalOpen={isAddFriendModalOpen}
