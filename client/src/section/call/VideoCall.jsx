@@ -8,19 +8,20 @@ import {
   IoMicOffOutline,
   IoMicOutline,
   IoVideocamOffOutline,
-  IoVideocamOutline
+  IoVideocamOutline,
+  IoClose
 } from 'react-icons/io5';
 import { useParams } from 'react-router-dom';
 import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
-import { setCall } from '~/store/slices/chatSlice';
+import { setCall, setConversationCall } from '~/store/slices/chatSlice';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitVideoCall } = useSocket();
+  const { emitVideoCall, emitInterruptVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -33,6 +34,9 @@ const VideoCall = () => {
     if (socketInstance) {
       const callTranfer = JSON.parse(localStorage.getItem('call'));
       dispatch(setCall(callTranfer));
+      dispatch(
+        setConversationCall({ conversation_id: callTranfer.conversation_id })
+      );
       if (peer) peer.destroy();
       const peerInstance = new Peer(peer_id);
       console.log('peerInstance', peerInstance, now());
@@ -113,8 +117,8 @@ const VideoCall = () => {
       setIsCameraOn(!isCameraOn);
     }
   };
-  // handle close call
-  const handleCloseCall = () => {
+
+  const stopStreamAndDestroyPeer = () => {
     if (stream) {
       stream.getTracks().forEach((track) => {
         track.stop();
@@ -123,6 +127,43 @@ const VideoCall = () => {
     setStream(null);
     peer.destroy();
   };
+  // handle interrupt call
+  const handleInteruptCall = () => {
+    emitInterruptVideoCall({ conversation_id: call.conversation_id });
+    dispatch(
+      setCall({
+        calling: false,
+        refused: false,
+        ended: true,
+        owner: call.owner
+      })
+    );
+
+    // destrop peer
+    stopStreamAndDestroyPeer();
+  };
+  // handle close call
+  const handleCloseCall = () => {
+    window.close();
+    // destrop peer
+    stopStreamAndDestroyPeer();
+  };
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      if (call.calling) {
+        handleInteruptCall();
+      } else {
+        handleCloseCall();
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    // Clean up
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [call]);
+
   return (
     <div className="w-[100vw] h-[100vh] relative bg-[#efecec] flex items-center justify-center text-white">
       {call.calling ? (
@@ -145,49 +186,84 @@ const VideoCall = () => {
             }
           />
           <h2 className="my-3 text-[20px] font-semibold">Tên Thạm Thời</h2>
-          <p className="text-[#777]">Đang gọi...</p>
+          {call.refused ? (
+            <p className="text-[#777]">Đã từ chối cuộc gọi</p>
+          ) : call.ended ? (
+            <p className="text-[#777]">Cuộc gọi đã kết thúc</p>
+          ) : (
+            <p className="text-[#777]">Đang gọi...</p>
+          )}
         </div>
       )}
-      <div className="absolute top-0 right-0 w-[320px] h-auto m-4 rounded-lg overflow-hidden">
-        <video ref={videoRef} className="w-full h-full" autoPlay playsInline />
-      </div>
 
-      <Space size={23} className="absolute bottom-0 my-5">
-        <Button
-          type="default"
-          shape="circle"
-          icon={
-            isCameraOn ? (
-              <IoVideocamOutline size={24} />
-            ) : (
-              <IoVideocamOffOutline size={24} />
-            )
-          }
-          size={'large'}
-          onClick={toggleCamera}
-        />
-        <Button
-          type="default"
-          shape="circle"
-          icon={
-            isMicrophoneOn ? (
-              <IoMicOutline size={24} />
-            ) : (
-              <IoMicOffOutline size={24} />
-            )
-          }
-          size={'large'}
-          onClick={toggleMicrophone}
-        />
-        <Button
-          type="default"
-          shape="circle"
-          icon={<FaPhoneAlt size={18} />}
-          size={'large'}
-          className="bg-red-500 text-white border-none "
-          onClick={handleCloseCall}
-        />
-      </Space>
+      {!call.refused && !call.ended && (
+        <div className="absolute top-0 right-0 w-[320px] h-auto m-4 rounded-lg overflow-hidden">
+          <video
+            ref={videoRef}
+            className="w-full h-full"
+            autoPlay
+            playsInline
+          />
+        </div>
+      )}
+
+      {call.refused || call.ended ? (
+        <Space size={50} className="absolute bottom-[22%] my-5">
+          <Button
+            type="default"
+            shape="circle"
+            icon={<IoClose size={22} />}
+            size={'large'}
+            className="bg-red-500 text-white border-none "
+            onClick={handleCloseCall}
+          />
+          <Button
+            type="default"
+            shape="circle"
+            icon={<FaPhoneAlt size={18} />}
+            size={'large'}
+            className="bg-green-500 text-white border-none "
+            onClick={null}
+          />
+        </Space>
+      ) : (
+        <Space size={23} className="absolute bottom-0 my-5">
+          <Button
+            type="default"
+            shape="circle"
+            icon={
+              isCameraOn ? (
+                <IoVideocamOutline size={24} />
+              ) : (
+                <IoVideocamOffOutline size={24} />
+              )
+            }
+            size={'large'}
+            onClick={toggleCamera}
+          />
+          <Button
+            type="default"
+            shape="circle"
+            icon={
+              isMicrophoneOn ? (
+                <IoMicOutline size={24} />
+              ) : (
+                <IoMicOffOutline size={24} />
+              )
+            }
+            size={'large'}
+            onClick={toggleMicrophone}
+          />
+          <Button
+            type="default"
+            shape="circle"
+            icon={<FaPhoneAlt size={18} />}
+            size={'large'}
+            className="bg-red-500 text-white border-none "
+            onClick={handleInteruptCall}
+          />
+        </Space>
+      )}
     </div>
   );
 };
