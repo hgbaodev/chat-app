@@ -7,7 +7,6 @@ import {
   IoHappyOutline,
   IoImageOutline,
   IoMic,
-  IoPauseCircle,
   IoSendSharp
 } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
@@ -20,6 +19,7 @@ import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
 import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
 import { formatTimeRecord } from '~/utils/formatDayTime';
+import { FaTrash } from 'react-icons/fa';
 
 export const ChatFooter = () => {
   const { chat, conversations, forwardMessage } = useSelector(
@@ -27,12 +27,12 @@ export const ChatFooter = () => {
   );
   const dispatch = useDispatch();
   const { emitMessage } = useSocket();
-
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
   const [isRecording, setRecording] = useState(false);
   const [recorder, setRecorder] = useState(null);
   const [recordedTime, setRecordedTime] = useState(0);
+  const [stream, setStream] = useState(null);
 
   // handle
   const handleEmojiClick = (emoji) => {
@@ -61,10 +61,14 @@ export const ChatFooter = () => {
 
   const startRecording = async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
+      const audioStream = await navigator.mediaDevices.getUserMedia({
         audio: true
       });
-      const newRecorder = RecordRTC(stream, { type: 'audio' });
+      setStream(audioStream);
+      const newRecorder = RecordRTC(audioStream, {
+        type: 'audio',
+        disableLogs: true
+      });
       newRecorder.startRecording();
       setRecorder(newRecorder);
       setRecording(true);
@@ -77,16 +81,30 @@ export const ChatFooter = () => {
   };
 
   const stopRecording = () => {
-    if (recorder) {
-      recorder.stopRecording(() => {
-        const blob = recorder.getBlob();
-        recorder.destroy();
-        setRecording(false);
-        clearInterval(recorder.interval);
-        setRecordedTime(0);
-        invokeSaveAsDialog(blob);
-      });
+    recorder.stopRecording(() => {
+      const blob = recorder.getBlob();
+      setRecording(false);
+      clearInterval(recorder.interval);
+      setRecordedTime(0);
+      invokeSaveAsDialog(blob);
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+      recorder.destroy();
+      setStream(null);
+    });
+  };
+
+  const cancleRecord = () => {
+    setRecording(false);
+    clearInterval(recorder.interval);
+    setRecordedTime(0);
+    console.log('cancel clicked');
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
     }
+    recorder.destroy();
+    setStream(null);
   };
 
   return (
@@ -169,17 +187,29 @@ export const ChatFooter = () => {
               onClick={startRecording}
             />
           ) : (
-            <Button
-              type="primary"
-              shape="round"
-              icon={<IoPauseCircle size={20} />}
-              size="middle"
-              className="text-white"
-              onClick={stopRecording}
-              danger
-            >
-              {formatTimeRecord(recordedTime)}
-            </Button>
+            <>
+              <Button
+                type="primary"
+                shape="circle"
+                icon={<FaTrash />}
+                size="middle"
+                className="text-white"
+                onClick={cancleRecord}
+                danger
+              />
+              <Button
+                type="primary"
+                shape="round"
+                icon={<IoSendSharp />}
+                size="middle"
+                className="text-white min-w-[122px]"
+                onClick={stopRecording}
+              >
+                <span className="min-w-[60px]">
+                  {formatTimeRecord(recordedTime)}
+                </span>
+              </Button>
+            </>
           )}
         </Flex>
       </form>
