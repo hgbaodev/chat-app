@@ -78,8 +78,11 @@ const initialState = {
   call: {
     open: false,
     calling: false,
+    refused: false,
+    ended: false,
     owner: false,
-    user: null
+    user: null,
+    conversation_id: null
   },
   forwardMessage: null,
   isLoading: false,
@@ -138,12 +141,18 @@ const chatSlice = createSlice({
     openCall(state) {
       state.call.calling = false;
       state.call.owner = true;
+      state.call.user = {};
     },
     setCall(state, action) {
       state.call.calling = action.payload.calling || false;
+      state.call.refused = action.payload.refused || false;
+      state.call.ended = action.payload.ended || false;
       state.call.owner = action.payload.owner || false;
       state.call.open = action.payload.open || false;
       state.call.user = action.payload.user || null;
+    },
+    setConversationCall(state, action) {
+      state.call.conversation_id = action.payload.conversation_id;
     }
   },
   extraReducers: (builder) => {
@@ -201,5 +210,6 @@ export const {
   recallMessage,
   setCurrentPage,
   openCall,
-  setCall
+  setCall,
+  setConversationCall
 } = chatSlice.actions;

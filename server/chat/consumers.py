@@ -44,6 +44,10 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_video_call(data)
         elif data_source == "accept_video_call":
             self.receive_accept_video_call(data)
+        elif data_source == "refuse_video_call":
+            self.receive_refuse_video_call(data)
+        elif data_source == "interrupt_video_call":
+            self.receive_interrupt_video_call(data)
         
     def receive_message_send(self, data):
         message = data["message"]
@@ -121,7 +125,29 @@ class ChatConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "accept_video_call", "message": json.dumps(user_dict)}
                 )
+    
+    def receive_refuse_video_call(self, data):
+        user_id = data["user_id"]
+        user_dict = {
+            'id': self.scope["user"].id,
+        }
+        room_group_name = f"user_{user_id}"
+        async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "refuse_video_call", "message": json.dumps(user_dict)}
+                )
             
+    def receive_interrupt_video_call(self, data):
+        conversation_id = data["conversation_id"]
+        user_dict = {
+            'id': self.scope["user"].id,
+        }
+
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "interrupt_video_call", "message": json.dumps(user_dict)}
+                )
        
 
     def receive_friend_request(self, event):
@@ -143,4 +169,10 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
 
     def accept_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def refuse_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+    
+    def interrupt_video_call(self, event):
         self.send(text_data=json.dumps(event))
