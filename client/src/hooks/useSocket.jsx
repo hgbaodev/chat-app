@@ -1,23 +1,27 @@
 import { useContext } from 'react';
 import { SocketContext } from '../contexts/socketContext';
+import { fileToBase64 } from '~/utils/convertToBase64';
 
 export const useSocket = () => {
   const { socketInstance } = useContext(SocketContext);
 
-  const emitMessage = ({
+  const emitMessage = async ({
     conversation_id,
-    conversation,
-    message,
+    message = '',
+    attachment = null,
     message_type,
     forward
   }) => {
-    console.log({ conversation_id, conversation, message, message_type });
+    console.log({ conversation_id, message, attachment, message_type });
+    if (attachment != null) {
+      attachment = await fileToBase64(attachment);
+    }
     socketInstance.send(
       JSON.stringify({
         source: 'message_send',
         conversation_id,
-        conversation,
         message,
+        attachment: attachment,
         forward,
         message_type
       })
@@ -35,6 +39,7 @@ export const useSocket = () => {
       );
     }
   };
+
   const emitAcceptVideoCall = ({ user_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(

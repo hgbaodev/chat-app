@@ -18,16 +18,15 @@ import {
   BsTrash3
 } from 'react-icons/bs';
 
-const MessageAction = ({ messageId, from, open, setOpen, ...props }) => {
+const MessageAction = ({ messageId, from, setOpen, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
 
   const items = [
     {
       key: '1',
-      label: (
-        <p onClick={() => dispatch(setForwardMessage(messageId))}>Forward</p>
-      ),
+      label: 'Forward',
+      onClick: () => dispatch(setForwardMessage(messageId)),
       icon: <BsArrow90DegLeft size={16} />
     },
     {
@@ -37,19 +36,15 @@ const MessageAction = ({ messageId, from, open, setOpen, ...props }) => {
     },
     {
       key: '3',
-      label: (
-        <p onClick={() => dispatch(recallMessageRequest(messageId))}>Recall</p>
-      ),
+      label: 'Recall',
+      onClick: () => dispatch(recallMessageRequest(messageId)),
       icon: <BsArrowClockwise size={18} />,
       danger: true
     },
     {
       key: '4',
-      label: (
-        <p onClick={() => dispatch(deleteMessage(messageId))}>
-          Delete for me only
-        </p>
-      ),
+      label: 'Delete for me only',
+      onClick: () => dispatch(deleteMessage(messageId)),
       icon: <BsTrash3 size={16} />,
       danger: true
     }

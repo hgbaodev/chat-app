@@ -36,7 +36,7 @@ class Message(models.Model): # gửi, xoá
         IMAGE = 2
         VIDEO = 3
         AUDIO = 4
-        FILE = 5
+        DOCUMENT = 5
         RECALL = 6
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
@@ -48,6 +48,14 @@ class Message(models.Model): # gửi, xoá
     
     def __str__(self) -> str:
         return f"{self.conversation_id}:{self.message_type}:{self.created_at}:{self.message}"
+    
+class Attachments(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    file_name = models.CharField(max_length=255, blank=True)
+    file_type = models.CharField(max_length=10, blank=True)
+    file_url = models.CharField(max_length=255)
+    file_size = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
     
 class DeleteMessage(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)

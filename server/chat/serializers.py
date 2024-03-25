@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import Conversation, Message, Participants, DeleteMessage
+from .models import Conversation, Message, Participants, DeleteMessage, Attachments
 
 class MemberConversationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -95,18 +95,28 @@ class SenderSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'first_name', 'last_name', 'avatar']
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attachments
+        fields = ['file_name', 'file_type', 'file_url', 'file_size']
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
     forward = serializers.SerializerMethodField()
+    attachments = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments']
 
     def get_forward(self, obj):
         if obj.forward:
             return MessageSerializer(obj.forward, context=self.context).data
         return None
+    
+    def get_attachments(self, obj):
+        attachments = Attachments.objects.filter(message=obj)
+        return AttachmentSerializer(attachments, many=True).data
     
 class DeleteMessageSerializer(serializers.ModelSerializer):
     class Meta:

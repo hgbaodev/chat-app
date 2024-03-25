@@ -1,7 +1,13 @@
 import { Space, Spin } from 'antd';
 import { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { RecallMessage, TextMessage } from '~/section/chats/MessageTypes';
+import {
+  AudioMessage,
+  DocMessage,
+  MediaMessage,
+  RecallMessage,
+  TextMessage
+} from '~/section/chats/MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
@@ -70,9 +76,33 @@ const MesssageList = () => {
                     created={check ? message.created_at : null}
                   />
                 );
+              case MessageTypes.AUDIO:
+                return (
+                  <AudioMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
               case MessageTypes.RECALL:
                 return (
                   <RecallMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
+              case MessageTypes.DOCUMENT:
+                return (
+                  <DocMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
+              case MessageTypes.IMAGE:
+                return (
+                  <MediaMessage
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}

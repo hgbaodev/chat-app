@@ -3,11 +3,11 @@ export const MessageTypes = {
   IMAGE: 2,
   VIDEO: 3,
   AUDIO: 4,
-  FILE: 5,
+  DOCUMENT: 5,
   RECALL: 6
 };
 
 export const ConversationTypes = {
   GROUP: 1,
   FRIEND: 2
-}
+};

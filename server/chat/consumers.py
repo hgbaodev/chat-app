@@ -1,10 +1,14 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from .serializers import MessageSerializer
-from .models import Message, Conversation, Participants, OnlineUser
+from .serializers import MessageSerializer, AttachmentSerializer
+from .models import Message, Conversation, Participants, OnlineUser, Attachments
 from authentication.models import User
 from rest_framework_simplejwt.tokens import AccessToken
+import base64
+import json
+import secrets
+import cloudinary.uploader
 
 class ChatConsumer(WebsocketConsumer):
     
@@ -47,6 +51,7 @@ class ChatConsumer(WebsocketConsumer):
         
     def receive_message_send(self, data):
         message = data["message"]
+        attachment = data["attachment"]
         message_type = data.get("message_type", Message.MessageType.TEXT)
         conversation_id = data["conversation_id"]
         sender = self.scope["user"]
@@ -61,6 +66,7 @@ class ChatConsumer(WebsocketConsumer):
             forward = None
             
         conversation = Conversation.objects.get(id=conversation_id)
+            
         # Create message
         message = Message.objects.create(
             conversation=conversation,
@@ -70,13 +76,20 @@ class ChatConsumer(WebsocketConsumer):
             forward=forward
         )
         
-        # Get member of conversation
-        # online_users = OnlineUser.objects.all()
-
-        # participants_online = Participants.objects.filter(
-        #     conversation=conversation
-        # ).select_related('user').filter(user__in=online_users.values_list('user', flat=True))
-        
+        #Upload file
+        if attachment:
+            decoded_file = base64.b64decode(attachment.get("base64").split(",")[1])
+            file_name = f"{secrets.token_hex(8)}"
+            upload_result = cloudinary.uploader.upload(decoded_file, public_id=file_name,resource_type = "auto")
+            attachment_instance = Attachments.objects.create(
+                message=message,
+                file_name=attachment.get("file_name"),
+                file_size=attachment.get("file_size"),
+                file_type=attachment.get("file_type"),
+                file_url=upload_result["url"]
+            )
+            print(upload_result["url"])
+            
         participants = Participants.objects.filter(conversation_id=conversation_id)
         message_serializer = MessageSerializer(instance=message)
        

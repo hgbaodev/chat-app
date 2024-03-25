@@ -1,5 +1,5 @@
 import { Button, Dropdown, Flex, Input } from 'antd';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import {
   IoArrowUndoOutline,
@@ -17,15 +17,15 @@ import { useDispatch } from 'react-redux';
 import { setForwardMessage } from '~/store/slices/chatSlice';
 import data from '@emoji-mart/data';
 import Picker from '@emoji-mart/react';
-import RecordRTC, { invokeSaveAsDialog } from 'recordrtc';
+import RecordRTC from 'recordrtc';
 import { formatTimeRecord } from '~/utils/formatDayTime';
 import { FaTrash } from 'react-icons/fa';
+import { MessageTypes } from '~/utils/enum';
+import { blobToFile } from '~/utils/convertToBase64';
 
 export const ChatFooter = () => {
-  const { chat, conversations, forwardMessage } = useSelector(
-    (state) => state.chat
-  );
   const dispatch = useDispatch();
+  const { chat, forwardMessage } = useSelector((state) => state.chat);
   const { emitMessage } = useSocket();
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
@@ -41,13 +41,8 @@ export const ChatFooter = () => {
     if (text.trim()) {
       emitMessage({
         conversation_id: chat.currentConversation.id,
-        conversation:
-          conversations.find((con) => con.id == chat.currentConversation.id) ==
-          null
-            ? chat.currentConversation
-            : null,
         message: text,
-        message_type: 1,
+        message_type: MessageTypes.TEXT,
         forward: forwardMessage?.id
       });
       setText('');
@@ -55,37 +50,17 @@ export const ChatFooter = () => {
     }
   };
 
+  const handleChangeInput = (e) => {
+    setText(e.target.value);
+  };
+
   return (
-    <div className="transition-all ease-in-out delay-150">
+    <div className="relative">
+      <TypingMessage />
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
       <form onSubmit={(e) => handleSendMessage(e)}>
-        <Flex className="relative p-3" align="center" gap="small">
-          <Dropdown
-            menu={{
-              items: [
-                {
-                  key: '1',
-                  label: <p>Photo or Video</p>,
-                  icon: <IoImageOutline size={17} />
-                },
-                {
-                  key: '2',
-                  label: <p>Document</p>,
-                  icon: <IoDocumentAttachOutline size={16} />
-                }
-              ]
-            }}
-            trigger={['click']}
-          >
-            <Button
-              type="text"
-              shape="circle"
-              icon={<IoIosLink size={20} />}
-              size="middle"
-              className="text-blue-500 hover:bg-blue-700"
-            />
-          </Dropdown>
-
+        <Flex className="relative p-3 h-[56px]" align="center" gap="small">
+          <AttachmentInput />
           <Button
             type="text"
             shape="circle"
@@ -108,7 +83,7 @@ export const ChatFooter = () => {
           )}
           <TextArea
             value={text}
-            onChange={(e) => setText(e.target.value)}
+            onChange={handleChangeInput}
             placeholder="Aa..."
             className="h-full rounded-3xl bg-neutral-100 border-none focus:shadow-none hover:bg-neutral-100 focus:bg-neutral-100"
             autoSize={{
@@ -119,6 +94,9 @@ export const ChatFooter = () => {
                 e.preventDefault();
                 handleSendMessage(e);
               }
+            }}
+            onKeyUp={() => {
+              console.log('up');
             }}
           />
           {text.trim() ? (
@@ -139,7 +117,104 @@ export const ChatFooter = () => {
   );
 };
 
+const TypingMessage = () => {
+  return (
+    <div className="absolute top-[-20px] left-0 bg-white text-xs px-4 py-1 rounded-tr-md flex items-center gap-2">
+      <p>Sinh is typing</p>
+      <div className="flex gap-1">
+        <div className="h-1 w-1 bg-slate-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+        <div className="h-1 w-1 bg-slate-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+        <div className="h-1 w-1 bg-slate-600 rounded-full animate-bounce"></div>
+      </div>
+    </div>
+  );
+};
+
+const AttachmentInput = () => {
+  const { emitMessage } = useSocket();
+  const inputFileRef = useRef(null);
+  const [fileType, setFileType] = useState(null);
+  const { chat, forwardMessage } = useSelector((state) => state.chat);
+  const [messageType, setMessageType] = useState(MessageTypes.IMAGE);
+
+  const handleDropdownItemClick = (type) => {
+    if (type === 'photoOrVideo') {
+      setMessageType(MessageTypes.IMAGE);
+      setFileType('image/*,video/*');
+    } else if (type === 'document') {
+      setMessageType(MessageTypes.DOCUMENT);
+      setFileType('.pdf,.doc,.docx,.xls,.xlsx');
+    }
+    setTimeout(() => {
+      inputFileRef.current.value = null;
+      inputFileRef.current.click();
+    }, 0);
+  };
+
+  const handleFileInputChange = async (e) => {
+    const selectedFiles = e.target.files;
+    const fileArray = Array.from(selectedFiles);
+    console.log(fileArray);
+    fileArray.forEach((file) => {
+      emitMessage({
+        conversation_id: chat.currentConversation.id,
+        attachment: file,
+        message_type: messageType,
+        forward: forwardMessage?.id
+      });
+    });
+  };
+
+  useEffect(() => {
+    if (fileType) {
+      inputFileRef.current.setAttribute('accept', fileType);
+    }
+  }, [fileType]);
+  return (
+    <>
+      <input
+        type="file"
+        ref={inputFileRef}
+        style={{ display: 'none' }}
+        accept={fileType}
+        onChange={handleFileInputChange}
+        multiple
+      />
+      <Dropdown
+        menu={{
+          items: [
+            {
+              key: '1',
+              label: 'Photo or Video',
+              icon: <IoImageOutline size={17} />,
+              onClick: () => handleDropdownItemClick('photoOrVideo')
+            },
+            {
+              key: '2',
+              label: 'Document',
+              icon: <IoDocumentAttachOutline size={16} />,
+              onClick: () => handleDropdownItemClick('document')
+              // disabled: true
+            }
+          ]
+        }}
+        trigger={['click']}
+      >
+        <Button
+          type="text"
+          shape="circle"
+          icon={<IoIosLink size={20} />}
+          size="middle"
+          className="text-blue-500 hover:bg-blue-700"
+        />
+      </Dropdown>
+    </>
+  );
+};
+
 const RecordButton = () => {
+  const { emitMessage } = useSocket();
+  const { chat, forwardMessage } = useSelector((state) => state.chat);
   const [isRecording, setRecording] = useState(false);
   const [recorder, setRecorder] = useState(null);
   const [recordedTime, setRecordedTime] = useState(0);
@@ -172,7 +247,14 @@ const RecordButton = () => {
       setRecording(false);
       clearInterval(recorder.interval);
       setRecordedTime(0);
-      invokeSaveAsDialog(blob);
+
+      emitMessage({
+        conversation_id: chat.currentConversation.id,
+        attachment: blobToFile(blob, 'voice.webm'),
+        message_type: MessageTypes.AUDIO,
+        forward: forwardMessage?.id
+      });
+
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());
       }

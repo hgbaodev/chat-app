@@ -85,7 +85,7 @@ export const ContactInfo = () => {
 
         <Divider className="mb-2 mt-0" />
         <Flex justify="space-between" align="center">
-          <Typography className="font-bold m-0">
+          <Typography className="font-semibold m-0">
             Media, Links and Docs
           </Typography>
           <Button
@@ -98,7 +98,9 @@ export const ContactInfo = () => {
 
         <Divider className="my-2" />
         <Flex justify="space-between" align="center">
-          <Typography className="font-bold m-0">Starred Messages</Typography>
+          <Typography className="font-semibold m-0">
+            Starred Messages
+          </Typography>
           <Button
             type="text"
             shape="circle"
@@ -116,7 +118,7 @@ export const ContactInfo = () => {
 const AboutSection = () => {
   return (
     <>
-      <Typography className="font-bold mb-2">About</Typography>
+      <Typography className="font-semibold mb-2">About</Typography>
       <Typography>{faker.lorem.sentence()}</Typography>
     </>
   );
@@ -127,7 +129,7 @@ const MembersSection = () => {
   const { currentConversation } = useSelector((state) => state.chat.chat);
   return (
     <>
-      <Typography className="font-bold m-0">Members</Typography>
+      <Typography className="font-semibold m-0">Members</Typography>
       <ContactInfoItem
         icon={<LuUsers size={20} />}
         title={`${currentConversation.members.length} members`}
@@ -172,7 +174,7 @@ const HeaderInfoTool = () => {
 const PrivacySection = () => {
   return (
     <>
-      <Typography className="font-bold mb-2">Privacy settings</Typography>
+      <Typography className="font-semibold mb-2">Privacy settings</Typography>
       <Flex vertical>
         <ContactInfoItem
           icon={<LuTrash2 size={20} />}

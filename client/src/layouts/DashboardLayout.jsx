@@ -7,17 +7,12 @@ import {
   Tooltip,
   Typography
 } from 'antd';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import logo_dark from '~/assets/icon_app.svg';
+import { NavLink, Outlet } from 'react-router-dom';
 import {
   IoChatbubbleEllipses,
-  IoChatbubbleEllipsesOutline,
   IoNotifications,
-  IoNotificationsOutline,
-  IoPeopleOutline,
   IoPeopleSharp,
-  IoSettings,
-  IoSettingsOutline
+  IoSettings
 } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';

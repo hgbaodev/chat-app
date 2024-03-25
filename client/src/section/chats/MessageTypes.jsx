@@ -1,12 +1,14 @@
 import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-import pdf from '~/assets/pdf.png';
+import pdf from '~/assets/pdf_icon.svg';
+import word from '~/assets/word_icon.svg';
+import excel from '~/assets/excel_icon.svg';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
-
 import { memo, useState } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
+import { formatFileSize } from '~/utils/formatFileSize';
 
 const MessageWrapper = memo(
   ({
@@ -84,33 +86,55 @@ export const TextMessage = ({ id, sender, message, forward, created }) => {
   );
 };
 
-export const MediaMessage = ({ from, image, created }) => {
+export const MediaMessage = ({ id, sender, attachments, forward, created }) => {
   return (
     <MessageWrapper
-      from={from}
+      messageId={id}
+      from={sender.id}
       created={created}
+      forward={forward}
       className="p-0 rounded-lg overflow-hidden"
     >
-      <Image width={320} className="w-full" src={image} />
+      <Image width={320} className="w-full" src={attachments[0].file_url} />
     </MessageWrapper>
   );
 };
 
-export const DocMessage = ({ from, text, created }) => {
+const getIcon = (type) => {
+  if (type == 'xlsx' || type == 'xls') return excel;
+  if (type == 'pdf') return pdf;
+  if (type == 'doc' || type == 'docx') return word;
+};
+
+export const DocMessage = ({ id, sender, attachments, forward, created }) => {
   return (
-    <MessageWrapper from={from} created={created}>
-      <Flex align="center" justify="space-between" className="w-[260px]">
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      forward={forward}
+    >
+      <Flex align="center" justify="space-between" className="w-[300px]">
         <Flex align="center" gap={5}>
-          <img src={pdf} className="w-[60px] h-[60px] " />{' '}
-          <p className="font-semibold text-ellipsis text-nowrap overflow-hidden w-[150px]">
-            {text}
-          </p>
+          <img
+            src={getIcon(attachments[0].file_type)}
+            className="w-[50px] h-[50px] "
+          />
+          <div>
+            <p className="font-semibold text-ellipsis text-nowrap overflow-hidden text-sm">
+              {attachments[0].file_name}
+            </p>
+            <p className="text-xs mt-2 text-gray-500">
+              {formatFileSize(attachments[0].file_size)}
+            </p>
+          </div>
         </Flex>
         <Button
           type="text"
           shape="circle"
           icon={<GoDownload size={20} />}
           className="text-inherit"
+          href={attachments[0].file_url}
         />
       </Flex>
     </MessageWrapper>
@@ -149,5 +173,20 @@ const ForwardMessage = ({ replyFrom }) => {
       </p>
       <p className="text-xs text-gray-600">{message}</p>
     </div>
+  );
+};
+
+export const AudioMessage = ({ id, sender, forward, created, attachments }) => {
+  return (
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      forward={forward}
+    >
+      <audio controls>
+        <source src={attachments[0]?.file_url} type="audio/mpeg" />
+      </audio>
+    </MessageWrapper>
   );
 };

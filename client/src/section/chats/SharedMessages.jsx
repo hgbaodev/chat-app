@@ -3,7 +3,7 @@ import { Button, Col, Flex, Image, Row, Tabs } from 'antd';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showContactInfo } from '~/store/slices/appSlice';
-import pdf from '~/assets/pdf.png';
+import pdf from '~/assets/pdf_icon.svg';
 import { GoDownload } from 'react-icons/go';
 
 export const SharedMessages = () => {
