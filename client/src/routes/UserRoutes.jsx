@@ -34,7 +34,7 @@ const UserRoutes = {
       ]
     },
     {
-      path: '/video-call/:conversation_id',
+      path: '/video-call/:peer_id',
       element: <VideoCall />
     }
   ]

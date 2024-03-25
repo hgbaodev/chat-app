@@ -3,6 +3,7 @@ import { IoClose, IoVideocam } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
 import { setCall } from '~/store/slices/chatSlice';
+import { v4 as uuidv4 } from 'uuid';
 
 const VideoCallModal = () => {
   const dispatch = useDispatch();
@@ -15,10 +16,24 @@ const VideoCallModal = () => {
   const handleAccept = () => {
     localStorage.setItem(
       'call',
-      JSON.stringify({ open: false, calling: true, owner: false })
+      JSON.stringify({
+        open: false,
+        calling: true,
+        owner: false,
+        user: call.user
+      })
     );
-    window.open(`/video-call/${call.user.conversation_id}`, '_blank');
-    emitAcceptVideoCall({ user_id: call.user.id });
+    const peer_id = uuidv4();
+    const width = 800;
+    const height = 600;
+    window.open(
+      `/video-call/${peer_id}`,
+      '_blank',
+      `width=${width}, height=${600}, left=${
+        (window.innerWidth - width) / 2
+      }, top=${(window.innerHeight - height) / 2}`
+    );
+    emitAcceptVideoCall({ user_id: call.user.id, peer_id });
   };
   // render
   return (

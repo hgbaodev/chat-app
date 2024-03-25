@@ -24,22 +24,24 @@ export const useSocket = () => {
     );
   };
 
-  const emitVideoCall = ({ conversation_id }) => {
+  const emitVideoCall = ({ conversation_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'video_call',
-          conversation_id
+          conversation_id,
+          peer_id
         })
       );
     }
   };
-  const emitAcceptVideoCall = ({ user_id }) => {
+  const emitAcceptVideoCall = ({ user_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'accept_video_call',
-          user_id
+          user_id,
+          peer_id
         })
       );
     }

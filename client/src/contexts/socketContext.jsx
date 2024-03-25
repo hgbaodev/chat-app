@@ -57,12 +57,18 @@ export const SocketProvider = ({ children }) => {
             dispatch(
               setCall({
                 calling: true,
-                owner: true
+                owner: true,
+                user: JSON.parse(data.message)
               })
             );
             localStorage.setItem(
               'call',
-              JSON.stringify({ open: false, calling: true, owner: true })
+              JSON.stringify({
+                open: false,
+                calling: true,
+                owner: true,
+                user: JSON.parse(data.message)
+              })
             );
           }
         } catch (error) {
