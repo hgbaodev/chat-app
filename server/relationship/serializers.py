@@ -4,7 +4,6 @@ from django.db.models import Q
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
 from chat.models import Conversation, Message, Participants
-from utils.cloudinary import get_image_url
 
 class UserSerializer(serializers.ModelSerializer):
     avatar = serializers.SerializerMethodField()
@@ -166,7 +165,6 @@ class DeleteFriendSerializer(serializers.Serializer):
         return value
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about']
@@ -202,8 +200,6 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
         unique_friends = list(friends.distinct())
 
         return unique_friends 
-    def get_avatar(self, obj):
-        return get_image_url(obj.avatar)
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()

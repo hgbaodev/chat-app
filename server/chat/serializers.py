@@ -2,16 +2,12 @@ from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
 from .models import Conversation, Message, Participants, DeleteMessage
-from utils.cloudinary import get_image_url
 
 class MemberConversationSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
     class Meta:
         model = User
         fields = ['id','first_name', 'last_name', 'avatar'] 
 
-    def get_avatar(self, obj):
-        return get_image_url(obj.avatar)
 
 class NewestMessage(serializers.ModelSerializer):
     class Meta: 

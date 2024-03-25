@@ -9,8 +9,6 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
-import cloudinary.api
-from utils.cloudinary import get_image_url
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -72,7 +70,7 @@ class LoginSerializer(serializers.ModelSerializer):
             'id': user.id,
             'email': user.email,
             'full_name': user.get_full_name,
-            'avatar': get_image_url(user.avatar),
+            'avatar': user.avatar,
             'access_token': str(tokens.get('access')),
             'refresh_token': str(tokens.get('refresh')),
         }
@@ -158,7 +156,7 @@ class SetNewPasswordSerializer(serializers.Serializer):
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.CharField(max_length=255, read_only=True)
     full_name = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+    avatar = serializers.CharField(max_length=255, read_only=True)
 
     class Meta:
         model = User
@@ -167,12 +165,10 @@ class UserSerializer(serializers.ModelSerializer):
     def get_full_name(self, obj):
         return obj.get_full_name
 
-    def get_avatar(self, obj):
-        return get_image_url(obj.avatar)
 
 class GetInfoUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+    avatar = serializers.CharField(max_length=255, read_only=True)
     first_name = serializers.CharField(max_length=255, read_only=True)
     last_name = serializers.CharField(max_length=255, read_only=True)
     phone = serializers.CharField(max_length=20, read_only=True)
@@ -185,6 +181,3 @@ class GetInfoUserSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return obj.get_full_name
-
-    def get_avatar(self, obj):
-        return get_image_url(obj.avatar)
