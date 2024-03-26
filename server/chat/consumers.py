@@ -52,6 +52,28 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_refuse_video_call(data)
         elif data_source == "interrupt_video_call":
             self.receive_interrupt_video_call(data)
+        elif data_source == "typing_indicator":
+            self.receive_typing_indicator(data)
+        
+    def receive_typing_indicator(self, data):
+        conversation_id = data["conversation_id"]
+        typing = data["typing"]
+        user = self.scope["user"]
+        
+        user_dict = {
+            'conversation_id': conversation_id,
+            'user_id': user.id,
+            'fullname': user.first_name + ' ' + user.last_name,
+            'typing': typing
+        }
+        
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            print(room_group_name)
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "typing_indicator", "message": json.dumps(user_dict)}
+                )
         
     def receive_message_send(self, data):
         message = data["message"]
@@ -84,7 +106,6 @@ class ChatConsumer(WebsocketConsumer):
         if attachment:
             decoded_file = base64.b64decode(attachment.get("base64").split(",")[1])
             file_name = f"{secrets.token_hex(8)}"
-            
             upload_result = cloudinary.uploader.upload(decoded_file,public_id=file_name,resource_type="auto")
             
             Attachments.objects.create(
@@ -94,7 +115,6 @@ class ChatConsumer(WebsocketConsumer):
                     file_type=attachment.get("file_type"),
                     file_url=upload_result["url"]
                 )
-            
             print(upload_result["url"])
                 
             
@@ -192,4 +212,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
     
     def interrupt_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+        
+    def typing_indicator(self, event):
         self.send(text_data=json.dumps(event))

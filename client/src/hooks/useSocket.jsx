@@ -28,6 +28,18 @@ export const useSocket = () => {
     );
   };
 
+  const emitTypingIndicator = ({ conversation_id, typing }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'typing_indicator',
+          conversation_id,
+          typing
+        })
+      );
+    }
+  };
+
   const emitVideoCall = ({ conversation_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
@@ -78,6 +90,7 @@ export const useSocket = () => {
     emitVideoCall,
     emitAcceptVideoCall,
     emitInterruptVideoCall,
-    emitRefuseVideoCall
+    emitRefuseVideoCall,
+    emitTypingIndicator
   };
 };

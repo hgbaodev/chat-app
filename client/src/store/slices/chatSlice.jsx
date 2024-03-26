@@ -113,6 +113,7 @@ const initialState = {
       members: [],
       is_pinned: null
     },
+    typingIndicator: null,
     messages: [],
     lastPage: 0,
     currentPage: 1,
@@ -196,6 +197,9 @@ const chatSlice = createSlice({
     },
     setConversationCall(state, action) {
       state.call.conversation_id = action.payload.conversation_id;
+    },
+    setTypingIndicator(state, action) {
+      state.chat.typingIndicator = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -291,5 +295,6 @@ export const {
   setCurrentPage,
   openCall,
   setCall,
-  setConversationCall
+  setConversationCall,
+  setTypingIndicator
 } = chatSlice.actions;

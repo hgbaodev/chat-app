@@ -22,13 +22,16 @@ import { formatTimeRecord } from '~/utils/formatDayTime';
 import { FaTrash } from 'react-icons/fa';
 import { MessageTypes } from '~/utils/enum';
 import { blobToFile } from '~/utils/convertToBase64';
+import useDebounce from '~/hooks/useDebounce';
 
 export const ChatFooter = () => {
   const dispatch = useDispatch();
   const { chat, forwardMessage } = useSelector((state) => state.chat);
-  const { emitMessage } = useSocket();
+  const { emitMessage, emitTypingIndicator } = useSocket();
   const [text, setText] = useState('');
   const [isOpenEmojiPicker, setOpenEmojiPicker] = useState(false);
+  const [isTyping, setTyping] = useState(false);
+  const debouncedText = useDebounce(text, 1000);
 
   // handle
   const handleEmojiClick = (emoji) => {
@@ -50,13 +53,36 @@ export const ChatFooter = () => {
     }
   };
 
+  useEffect(() => {
+    if (text !== debouncedText) {
+      if (!isTyping) {
+        emitTypingIndicator({
+          conversation_id: chat.currentConversation.id,
+          typing: true
+        });
+        setTyping(true);
+      }
+    } else {
+      emitTypingIndicator({
+        conversation_id: chat.currentConversation.id,
+        typing: false
+      });
+      setTyping(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [text, debouncedText]);
+
   const handleChangeInput = (e) => {
     setText(e.target.value);
   };
 
   return (
     <div className="relative">
-      <TypingMessage />
+      {chat.typingIndicator &&
+        chat.typingIndicator.conversation_id === chat.currentConversation.id &&
+        chat.typingIndicator.typing === true && (
+          <TypingMessage fullname={chat.typingIndicator?.fullname} />
+        )}
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
       <form onSubmit={(e) => handleSendMessage(e)}>
         <Flex className="relative p-3 h-[56px]" align="center" gap="small">
@@ -95,9 +121,6 @@ export const ChatFooter = () => {
                 handleSendMessage(e);
               }
             }}
-            onKeyUp={() => {
-              console.log('up');
-            }}
           />
           {text.trim() ? (
             <Button
@@ -117,10 +140,10 @@ export const ChatFooter = () => {
   );
 };
 
-const TypingMessage = () => {
+const TypingMessage = ({ fullname }) => {
   return (
     <div className="absolute top-[-20px] left-0 bg-white text-xs px-4 py-1 rounded-tr-md flex items-center gap-2">
-      <p>Sinh is typing</p>
+      <p>{fullname} is typing</p>
       <div className="flex gap-1">
         <div className="h-1 w-1 bg-slate-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
         <div className="h-1 w-1 bg-slate-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>

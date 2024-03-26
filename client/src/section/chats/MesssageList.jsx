@@ -35,7 +35,7 @@ const MesssageList = () => {
 
   return (
     <div
-      className="p-4 overflow-auto custom-scrollbar bg-gradient-to-b from-neutral-200 to-neutral-400"
+      className="p-4 pb-6 overflow-auto custom-scrollbar bg-gradient-to-b from-neutral-200 to-neutral-400"
       style={{
         height: 'calc(100vh - 120px)',
         boxShadow:

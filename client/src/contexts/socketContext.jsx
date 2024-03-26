@@ -6,7 +6,8 @@ import {
   createGroup,
   recallMessage,
   receiverMessage,
-  setCall
+  setCall,
+  setTypingIndicator
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
@@ -36,6 +37,9 @@ export const SocketProvider = ({ children }) => {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
             dispatch(receiverMessage(data));
+          } else if (data.type === 'typing_indicator') {
+            console.log(JSON.parse(data.message));
+            dispatch(setTypingIndicator(JSON.parse(data.message)));
           } else if (data.type === 'receive_friend_request') {
             dispatch(receiveFriendRequest(data.message));
           } else if (data.type === 'receive_notification') {
