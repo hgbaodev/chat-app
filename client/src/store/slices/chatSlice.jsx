@@ -85,6 +85,20 @@ export const unPinConversation = createAsyncThunk(
   }
 );
 
+export const leaveConversation = createAsyncThunk(
+  'chat/leave-conversation',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`chat/leave-conversation/`, {
+        conversation_id
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -249,6 +263,19 @@ const chatSlice = createSlice({
         if (state.chat.currentConversation.id == id) {
           state.chat.currentConversation.is_pinned = false;
         }
+      })
+      .addCase(leaveConversation.fulfilled, (state) => {
+        const id = state.chat.currentConversation.id;
+        state.conversations.filter((conversation) => conversation.id != id);
+        state.chat.currentConversation = {
+          id: null,
+          title: null,
+          image: null,
+          type: null,
+          latest_message: null,
+          members: [],
+          is_pinned: null
+        };
       });
   }
 });

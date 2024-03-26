@@ -21,7 +21,7 @@ import {
 } from 'react-icons/lu';
 import { ConversationTypes } from '~/utils/enum';
 import { RiUnpinLine } from 'react-icons/ri';
-import { pinConversation, unPinConversation } from '~/store/slices/chatSlice';
+import { leaveConversation, pinConversation, unPinConversation } from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
 import { useMemo } from 'react';
 const { useBreakpoint } = Grid;
@@ -174,6 +174,10 @@ const HeaderInfoTool = () => {
   const handleUnPin = () => {
     dispatch(unPinConversation(currentConversation.id));
   };
+
+  const handleLeaveConversation = () => {
+    dispatch(leaveConversation(currentConversation.id));
+  };
   return (
     <Flex>
       {currentConversation.type === ConversationTypes.FRIEND && (
@@ -185,13 +189,13 @@ const HeaderInfoTool = () => {
       {!currentConversation.is_pinned ? (
         <ToolButton icon={<GrPin onClick={handlePin} />} text="Pin" />
       ) : (
-        <ToolButton
-          icon={<RiUnpinLine onClick={handleUnPin} />}
-          text="Un Pin"
-        />
+        <ToolButton icon={<RiUnpinLine onClick={handleUnPin} />} text="Unpin" />
       )}
       {currentConversation.type === ConversationTypes.GROUP && (
-        <ToolButton icon={<LuLogOut />} text="Leave group" />
+        <ToolButton
+          icon={<LuLogOut onClick={handleLeaveConversation} />}
+          text="Leave group"
+        />
       )}
     </Flex>
   );

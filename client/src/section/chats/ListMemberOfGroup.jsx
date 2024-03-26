@@ -36,7 +36,6 @@ const ListMemberOfGroup = () => {
         />
         <p className="m-0 font-semibold">Members</p>
       </Flex>
-
       <Space className="p-4" direction="vertical">
         <Button type="primary" className="w-full" icon={<LuUserPlus />}>
           Add members
@@ -66,7 +65,7 @@ const MemberItem = ({ avatar, first_name, last_name }) => {
           </p>
         </Space>
       </Space>
-      <Button type="dashed" icon={<FiUserPlus />} shape="round" />
+      <Button type="text" icon={<FiUserPlus />} shape="round" />
     </Flex>
   );
 };

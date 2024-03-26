@@ -60,7 +60,7 @@ class ConversationList(APIView):
                 conversation=conversation,
                 sender=sender,
                 message="Tôi đã tạo ra group này!",
-                message_type=Message.MessageType.TEXT
+                message_type=Message.MessageType.INIT_CONVERSATION
             )
             members_info = [
                 {
@@ -227,7 +227,6 @@ class MesssageDetail(generics.DestroyAPIView):
                         'message': serializer.data
                     }
                 )
-        print(users)
         return SuccessResponse(data=serializer.data)
     
 class ConversationListFind(APIView):
@@ -298,7 +297,7 @@ class UnpinConversationUser(APIView):
         pinned_conversation.delete()
         return SuccessResponse(data={"conversation_id": conversation_id}, status=status.HTTP_200_OK)
 
-class CloseConversation(APIView):
+class LeaveConversation(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
@@ -306,9 +305,16 @@ class CloseConversation(APIView):
         serializer.is_valid(raise_exception=True)
         user = request.user
         conversation_id = serializer.validated_data['conversation_id']
+        conversation = Conversation.objects.get(id=conversation_id)
         try:
             participant = Participants.objects.get(conversation_id=conversation_id, user=user)
             participant.delete()
+            message = Message.objects.create(
+                    conversation=conversation,
+                    sender=user,
+                    message=f'{user.first_name} {user.last_name} left the conversation',
+                    message_type=Message.MessageType.INIT_CONVERSATION
+                )
         except Participants.DoesNotExist:
             return ErrorResponse(error_message="Conversation does not exist for this user", status=status.HTTP_400_BAD_REQUEST)
         return SuccessResponse(data={"conversation_id": conversation_id,

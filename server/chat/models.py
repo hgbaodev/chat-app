@@ -30,7 +30,7 @@ class Participants(models.Model): #tham gia, out
     def __str__(self) -> str:
         return f" id: {self.pk} | ConversationID: {self.conversation.pk} |User: {self.user}"
     
-class Message(models.Model): # gửi, xoá
+class Message(models.Model):
     class MessageType(IntEnum):
         TEXT = 1
         IMAGE = 2
@@ -38,6 +38,7 @@ class Message(models.Model): # gửi, xoá
         AUDIO = 4
         DOCUMENT = 5
         RECALL = 6
+        NEWS = 7
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
