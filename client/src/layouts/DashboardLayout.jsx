@@ -1,15 +1,8 @@
-import {
-  Avatar,
-  Badge,
-  Dropdown,
-  Flex,
-  Space,
-  Tooltip,
-  Typography
-} from 'antd';
+import { Avatar, Badge, Flex, Space, Tooltip } from 'antd';
 import { NavLink, Outlet } from 'react-router-dom';
 import {
   IoChatbubbleEllipses,
+  IoLogOut,
   IoNotifications,
   IoPeopleSharp,
   IoSettings
@@ -24,11 +17,9 @@ import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice
 import Notification from '~/pages/dashboard/Notification';
 import VideoCallModal from '~/section/call/VideoCallModal';
 
-const { Text } = Typography;
-
 const DashboardLayout = () => {
   const dispatch = useDispatch();
-  const { avatar, fullName } = useSelector((state) => state.auth.user);
+  const { avatar } = useSelector((state) => state.auth.user);
   const { received_friend_requests } = useSelector(
     (state) => state.relationship
   );
@@ -42,35 +33,6 @@ const DashboardLayout = () => {
     dispatch(getNumberOfUnseenNotifications());
   }, [dispatch]);
 
-  const items = [
-    {
-      key: '0',
-      label: <Text>{fullName}</Text>,
-      disabled: true
-    },
-    {
-      key: '2',
-      label: 'Profile'
-    },
-    {
-      key: '3',
-      label: 'Setting'
-    },
-    {
-      key: '4',
-      label: 'Logout'
-    }
-  ];
-
-  const onClick = ({ key }) => {
-    if (key == 4) {
-      dispatch(logout());
-    }
-    if (key == 2) {
-      setOpenProfile(true);
-    }
-  };
-
   return (
     <>
       <Flex className="h-[100vh]">
@@ -82,17 +44,12 @@ const DashboardLayout = () => {
         >
           <Flex vertical align="center">
             <Flex vertical className="w-[100%]" gap="middle">
-              <Dropdown
-                menu={{
-                  items,
-                  onClick
-                }}
-                placement="topRight"
-                trigger={['click']}
-                arrow="true"
-              >
-                <Avatar size={40} src={avatar} />
-              </Dropdown>
+              <Avatar
+                size={40}
+                src={avatar}
+                className="cursor-pointer"
+                onClick={() => setOpenProfile(true)}
+              />
               <NavButton
                 href="/"
                 tooltip="Messages"
@@ -116,12 +73,19 @@ const DashboardLayout = () => {
               />
             </Flex>
           </Flex>
-          <Space direction="vertical" size={18} align="center" className="mb-4">
+          <Space direction="vertical" align="center">
             <NavButton
               href="/settings"
               tooltip="Settings"
               icon={<IoSettings size={27} className="text-gray-500" />}
               badge={0}
+            />
+            <NavButton
+              href="#"
+              tooltip="Logout"
+              icon={<IoLogOut size={27} className="text-gray-500" />}
+              badge={0}
+              onClick={() => dispatch(logout())}
             />
           </Space>
         </Flex>
@@ -138,6 +102,7 @@ const DashboardLayout = () => {
           setOpenNotification(false);
         }}
       />
+
       <VideoCallModal />
     </>
   );

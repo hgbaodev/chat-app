@@ -96,7 +96,7 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
 class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attachments
-        fields = ['file_name', 'file_type', 'file_url', 'file_size']
+        fields = '__all__'
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()

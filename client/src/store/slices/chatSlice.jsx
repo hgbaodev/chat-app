@@ -99,6 +99,20 @@ export const leaveConversation = createAsyncThunk(
   }
 );
 
+export const getAttachmentsOfConversation = createAsyncThunk(
+  'chat/getAttachmentsOfConversation',
+  async ({ conversation_id, page }, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `/chat/conversations/${conversation_id}/attachmemts/?page=${page}`
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -114,10 +128,12 @@ const initialState = {
       is_pinned: null
     },
     typingIndicator: null,
-    messages: [],
-    lastPage: 0,
-    currentPage: 1,
-    isLoading: false
+    attachmemts: [],
+    messages: {
+      data: [],
+      lastPage: 0,
+      currentPage: 1
+    }
   },
   call: {
     open: false,
@@ -139,9 +155,9 @@ const chatSlice = createSlice({
   reducers: {
     setCurrentConversation(state, action) {
       state.chat.currentConversation = action.payload;
-      state.chat.lastPage = 0;
-      state.chat.currentPage = 1;
-      state.chat.messages = [];
+      state.chat.messages.lastPage = 0;
+      state.chat.messages.currentPage = 1;
+      state.chat.messages.data = [];
     },
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
@@ -165,7 +181,7 @@ const chatSlice = createSlice({
       state.conversations.push(action.payload);
     },
     setPage(state, action) {
-      state.chat.currentPage = action.payload;
+      state.chat.messages.currentPage = action.payload;
     },
     setForwardMessage(state, action) {
       state.forwardMessage = state.chat.messages.find(
@@ -219,25 +235,18 @@ const chatSlice = createSlice({
       .addCase(getConversations.rejected, (state) => {
         state.isLoading = false;
       })
-      .addCase(getMessagesOfConversation.pending, (state) => {
-        state.chat.isLoading = true;
-      })
       .addCase(getMessagesOfConversation.fulfilled, (state, action) => {
         if (
-          !state.chat.messages.find(
+          !state.chat.messages.data.find(
             (message) => message.id === action.payload.data.results[0].id
           )
         ) {
-          state.chat.messages = [
+          state.chat.messages.data = [
             ...action.payload.data.results,
-            ...state.chat.messages
+            ...state.chat.messages.data
           ];
-          state.chat.lastPage = action.payload.data.meta.last_page;
-          state.chat.isLoading = false;
+          state.chat.messages.lastPage = action.payload.data.meta.last_page;
         }
-      })
-      .addCase(getMessagesOfConversation.rejected, (state) => {
-        state.chat.isLoading = false;
       })
       .addCase(deleteMessage.fulfilled, (state, action) => {
         state.chat.messages = state.chat.messages.filter(

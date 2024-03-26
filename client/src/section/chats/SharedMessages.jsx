@@ -73,23 +73,12 @@ export const SharedMessages = () => {
 export const Media = () => {
   return (
     <Row gutter={[8, 8]}>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
-      </Col>
-      <Col span={6}>
-        <Image src={faker.image.urlLoremFlickr()} />
+      <Col span={8}>
+        <Image
+          src={faker.image.urlLoremFlickr()}
+          className="rounded-md overflow-hidden cursor-pointer"
+          preview={{ mask: false }}
+        />
       </Col>
     </Row>
   );

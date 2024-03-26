@@ -55,7 +55,7 @@ export const ContactItem = ({
       key: '1',
       label: (
         <p className="m-0 min-w-[180px]">
-          {is_pinned ? 'Un pin this conversation' : 'Pin this conversation'}
+          {is_pinned ? 'Unpin this conversation' : 'Pin this conversation'}
         </p>
       ),
       onClick: handlePin

@@ -14,22 +14,24 @@ import { MessageTypes } from '~/utils/enum';
 
 const MesssageList = () => {
   const dispatch = useDispatch();
-  const { chat } = useSelector((state) => state.chat);
+  const { currentConversation, messages } = useSelector(
+    (state) => state.chat.chat
+  );
 
   useEffect(() => {
-    if (chat.currentConversation.id) {
+    if (currentConversation.id) {
       dispatch(
         getMessagesOfConversation({
-          conversation_id: chat.currentConversation.id,
-          page: chat.currentPage
+          conversation_id: currentConversation.id,
+          page: messages.currentPage
         })
       );
     }
-  }, [dispatch, chat.currentConversation, chat.currentPage]);
+  }, [dispatch, currentConversation, messages.currentPage]);
 
   const fetchMoreData = () => {
     setTimeout(() => {
-      dispatch(setPage(chat.currentPage + 1));
+      dispatch(setPage(messages.currentPage + 1));
     }, 1000);
   };
 
@@ -47,21 +49,21 @@ const MesssageList = () => {
       id="scrollableDiv"
     >
       <InfiniteScroll
-        dataLength={chat.messages.length}
+        dataLength={messages.data.length}
         className="flex flex-col-reverse overflow-y-auto"
         next={fetchMoreData}
         inverse={true}
-        hasMore={chat.currentPage < chat.lastPage}
+        hasMore={messages.currentPage < messages.lastPage}
         loader={<Spin className="py-2" />}
         scrollableTarget="scrollableDiv"
       >
         <Space direction="vertical">
-          {chat.messages.map((message, index) => {
+          {messages.data.map((message, index) => {
             let check = false;
             if (index > 0) {
               const currentMessageTime = new Date(message.created_at);
               const prevMessageTime = new Date(
-                chat.messages[index - 1].created_at
+                messages.data[index - 1].created_at
               );
               const timeDiff = Math.abs(currentMessageTime - prevMessageTime);
               const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));

@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
+from .serializers import AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Conversation, Participants, Message, DeleteMessage, PinConversation
+from .models import Conversation, Participants, Message, DeleteMessage, PinConversation, Attachments
 from django.http import Http404
 from django.db.models import Max
 from config.paginations import CustomPagination
@@ -319,3 +319,25 @@ class LeaveConversation(APIView):
             return ErrorResponse(error_message="Conversation does not exist for this user", status=status.HTTP_400_BAD_REQUEST)
         return SuccessResponse(data={"conversation_id": conversation_id,
                                      "message": "Close successfully"}, status=status.HTTP_200_OK)
+        
+class GetAttachmentConversation(generics.ListAPIView):
+    permission_classes = [IsAuthenticated]
+    pagination_class = CustomPagination  
+
+    def get_queryset(self):
+        pk = self.kwargs.get('pk')
+        message_type = self.request.query_params.get('type')
+        queryset = Attachments.objects.filter(message__conversation_id=pk)
+        queryset = queryset.exclude(message__deletemessage__user=self.request.user)
+        if message_type:
+            queryset = queryset.filter(message__message_type=message_type)
+        return queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)[::-1]
+        if page is not None:
+            serializer = AttachmentSerializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        serializer = AttachmentSerializer(queryset, many=True)
+        return Response(serializer.data)
