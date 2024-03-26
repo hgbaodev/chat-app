@@ -175,7 +175,7 @@ const chatSlice = createSlice({
           conversation.latest_message = result.message;
         }
       });
-      state.chat.messages.push(result.message);
+      state.chat.messages.data.push(result.message);
     },
     createGroup(state, action) {
       state.conversations.push(action.payload);
@@ -184,7 +184,7 @@ const chatSlice = createSlice({
       state.chat.messages.currentPage = action.payload;
     },
     setForwardMessage(state, action) {
-      state.forwardMessage = state.chat.messages.find(
+      state.forwardMessage = state.chat.messages.data.find(
         (message) => message.id === action.payload
       );
     },
