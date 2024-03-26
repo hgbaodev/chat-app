@@ -35,6 +35,7 @@ export const ContactItem = ({
   const [openOptions, setOpenOptions] = useState(false);
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const user = useSelector((state) => state.auth.user);
 
   const handleDeleteConversation = (e) => {
     e.stopPropagation();
@@ -82,6 +83,24 @@ export const ContactItem = ({
       );
     }
   };
+
+  const displayLastestMessage = ({ message_type, message, sender }) => {
+    let name = user.id == sender.id ? 'You' : sender.last_name;
+    if (message_type == MessageTypes.RECALL) {
+      return `${name} unsent a message.`;
+    } else if (message_type == MessageTypes.AUDIO) {
+      return `${name} sent a voice message.`;
+    } else if (
+      message_type == MessageTypes.IMAGE ||
+      message_type == MessageTypes.DOCUMENT
+    ) {
+      return `${name} sent an attachment.`;
+    } else if (user.id == sender.id) return 'You: ' + message;
+    else if (type == ConversationTypes.GROUP)
+      return sender.last_name + ': ' + message;
+    return message;
+  };
+
   return (
     <Flex
       ref={hoverRef}
@@ -103,9 +122,7 @@ export const ContactItem = ({
             {title}
           </Typography>
           <Typography className="text-xs text-neutral-500 overflow-hidden whitespace-nowrap text-ellipsis max-w-[190px]">
-            {lastestMessage?.message_type == MessageTypes.RECALL
-              ? 'You unsent a message'
-              : lastestMessage.message}
+            {displayLastestMessage(lastestMessage)}
           </Typography>
         </Flex>
       </Space>

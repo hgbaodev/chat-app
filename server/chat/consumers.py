@@ -84,15 +84,19 @@ class ChatConsumer(WebsocketConsumer):
         if attachment:
             decoded_file = base64.b64decode(attachment.get("base64").split(",")[1])
             file_name = f"{secrets.token_hex(8)}"
-            upload_result = cloudinary.uploader.upload(decoded_file, public_id=file_name,resource_type = "auto")
-            attachment_instance = Attachments.objects.create(
-                message=message,
-                file_name=attachment.get("file_name"),
-                file_size=attachment.get("file_size"),
-                file_type=attachment.get("file_type"),
-                file_url=upload_result["url"]
-            )
+            
+            upload_result = cloudinary.uploader.upload(decoded_file,public_id=file_name,resource_type="auto")
+            
+            Attachments.objects.create(
+                    message=message,
+                    file_name=attachment.get("file_name"),
+                    file_size=attachment.get("file_size"),
+                    file_type=attachment.get("file_type"),
+                    file_url=upload_result["url"]
+                )
+            
             print(upload_result["url"])
+                
             
         participants = Participants.objects.filter(conversation_id=conversation_id)
         message_serializer = MessageSerializer(instance=message)

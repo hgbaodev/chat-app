@@ -8,8 +8,13 @@ class MemberConversationSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id','first_name', 'last_name', 'avatar'] 
 
+class SenderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'avatar']
 
 class NewestMessage(serializers.ModelSerializer):
+    sender = SenderSerializer()
     class Meta: 
         model = Message
         fields = ['id','message','sender','message_type','created_at']
@@ -88,13 +93,6 @@ class ParticipantDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Participants
         fields = ['id','title']
-
-
-
-class SenderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'first_name', 'last_name', 'avatar']
 
 class AttachmentSerializer(serializers.ModelSerializer):
     class Meta:
