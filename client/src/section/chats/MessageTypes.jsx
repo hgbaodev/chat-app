@@ -1,14 +1,14 @@
 import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-import pdf from '~/assets/pdf_icon.svg';
-import word from '~/assets/word_icon.svg';
-import excel from '~/assets/excel_icon.svg';
+
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/MessageAction';
 import { useSelector } from '~/store';
 import { memo, useState } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
+import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
+import { MessageTypes } from '~/utils/enum';
 
 const MessageWrapper = memo(
   ({
@@ -100,12 +100,6 @@ export const MediaMessage = ({ id, sender, attachments, forward, created }) => {
   );
 };
 
-const getIcon = (type) => {
-  if (type == 'xlsx' || type == 'xls') return excel;
-  if (type == 'pdf') return pdf;
-  if (type == 'doc' || type == 'docx') return word;
-};
-
 export const DocMessage = ({ id, sender, attachments, forward, created }) => {
   return (
     <MessageWrapper
@@ -117,7 +111,7 @@ export const DocMessage = ({ id, sender, attachments, forward, created }) => {
       <Flex align="center" justify="space-between" className="w-[300px]">
         <Flex align="center" gap={5}>
           <img
-            src={getIcon(attachments[0].file_type)}
+            src={getIconDocument(attachments[0].file_type)}
             className="w-[50px] h-[50px] "
           />
           <div>
@@ -165,14 +159,29 @@ export const RecallMessage = ({ id, sender, created }) => {
 };
 
 const ForwardMessage = ({ replyFrom }) => {
-  const { message, sender } = replyFrom;
+  const { message_type, sender, attachments } = replyFrom;
   return (
-    <div className="border-l-4 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2 cursor-pointer">
-      <p className="text-xs font-semibold text-blue mb-1">
-        {sender.first_name + ' ' + sender.last_name}
-      </p>
-      <p className="text-xs text-gray-600">{message}</p>
-    </div>
+    <Flex
+      gap="small"
+      align="center"
+      className="border-l-3 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2 cursor-pointer"
+    >
+      {message_type == MessageTypes.DOCUMENT && (
+        <img
+          src={getIconDocument(attachments[0].file_type)}
+          className="w-[30px] h-[30px] "
+        />
+      )}
+      {message_type == MessageTypes.IMAGE && (
+        <img src={attachments[0].file_url} className="w-[40px] h-[40px] " />
+      )}
+      <Flex vertical>
+        <p className="text-xs font-semibold text-blue mb-1">
+          {sender.first_name + ' ' + sender.last_name}
+        </p>
+        <p className="text-xs text-gray-600">{getContentMessage(replyFrom)}</p>
+      </Flex>
+    </Flex>
   );
 };
 

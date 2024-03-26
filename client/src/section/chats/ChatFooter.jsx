@@ -2,7 +2,6 @@ import { Button, Dropdown, Flex, Input } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import {
-  IoArrowUndoOutline,
   IoDocumentAttachOutline,
   IoHappyOutline,
   IoImageOutline,
@@ -23,6 +22,7 @@ import { FaTrash } from 'react-icons/fa';
 import { MessageTypes } from '~/utils/enum';
 import { blobToFile } from '~/utils/convertToBase64';
 import useDebounce from '~/hooks/useDebounce';
+import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
 
 export const ChatFooter = () => {
   const dispatch = useDispatch();
@@ -85,7 +85,7 @@ export const ChatFooter = () => {
         )}
       {forwardMessage && <ForwardMessage {...forwardMessage} />}
       <form onSubmit={(e) => handleSendMessage(e)}>
-        <Flex className="relative p-3 h-[56px]" align="center" gap="small">
+        <Flex className="relative p-3 " align="center" gap="small">
           <AttachmentInput />
           <Button
             type="text"
@@ -331,9 +331,11 @@ const RecordButton = () => {
   );
 };
 
-const ForwardMessage = ({ message, sender }) => {
+const ForwardMessage = ({ message, sender, attachments, message_type }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  console.log(attachments, message_type);
+
   return (
     <Flex
       className="w-full px-4 pt-2"
@@ -342,14 +344,29 @@ const ForwardMessage = ({ message, sender }) => {
       align="center"
     >
       <Flex className="flex-1" gap={10} align="center">
-        <IoArrowUndoOutline size={30} className="text-blue-500" />
-        <div className="rounded-md py-2 border-l-4 border-t-0 border-r-0 border-b-0 border-solid border-blue-500 ps-2 bg-blue-100 flex-1">
-          <p className="text-sm mb-[2px]">
-            Replying to{' '}
-            {`${sender.id === user.id ? 'yourself' : sender.last_name}`}
-          </p>
-          <p className="text-xs text-gray-500">{message}</p>
-        </div>
+        <Flex
+          gap="middle"
+          className="rounded-md py-2 border-l-4 border-t-0 border-r-0 border-b-0 border-solid border-blue-500 ps-2 bg-blue-100 flex-1"
+        >
+          {message_type == MessageTypes.DOCUMENT && (
+            <img
+              src={getIconDocument(attachments[0].file_type)}
+              className="w-[40px] h-[40px] "
+            />
+          )}
+          {message_type == MessageTypes.IMAGE && (
+            <img src={attachments[0].file_url} className="w-[40px] h-[40px] " />
+          )}
+          <Flex vertical>
+            <p className="text-sm mb-[2px]">
+              Replying to{' '}
+              {`${sender.id === user.id ? 'yourself' : sender.last_name}`}
+            </p>
+            <p className="text-xs text-gray-500">
+              {getContentMessage({ message, attachments, message_type })}
+            </p>
+          </Flex>
+        </Flex>
       </Flex>
       <Button
         type="text"
