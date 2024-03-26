@@ -2,17 +2,17 @@ import { Avatar } from 'antd';
 const AvatarGroup = ({ users }) => {
   if (users.length < 2) return <Avatar>B</Avatar>;
   if (users.length === 2) {
-    let szie = 35;
+    let size = 35;
     return (
       <div className="flex justify-center">
         <div className="relative w-[50px] h-[50px]">
           <Avatar
-            size={szie}
+            size={size}
             src={users[0].avatar}
             className="border-2 border-white left-4"
           />
           <Avatar
-            size={szie}
+            size={size}
             src={users[1].avatar}
             className="absolute top-4 left-0 z-0 border-2 border-white"
           />

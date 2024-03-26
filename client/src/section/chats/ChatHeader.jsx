@@ -1,4 +1,4 @@
-import { Avatar, Badge, Button, Flex, Space, Typography } from 'antd';
+import { Badge, Button, Flex, Space, Typography } from 'antd';
 import {
   SearchOutlined,
   ExclamationCircleOutlined,
@@ -9,16 +9,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { openCall } from '~/store/slices/chatSlice';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
 import { ConversationTypes } from '~/utils/enum';
-import AvatarGroup from '~/components/AvatarGroup';
 import { v4 as uuidv4 } from 'uuid';
+import AvatarImage from '~/section/users/AvatarImage';
 
 export const ChatHeader = () => {
   const dispatch = useDispatch();
   const { contactInfo } = useSelector((state) => state.app);
-  const { user } = useSelector((state) => state.auth);
   const { currentConversation } = useSelector((state) => state.chat.chat);
-  const { call } = useSelector((state) => state.chat);
-
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
   };
@@ -57,32 +54,6 @@ export const ChatHeader = () => {
         </span>
       );
     } else return <span>Online</span>;
-  };
-
-  const AvatarImage = () => {
-    if (currentConversation.type == ConversationTypes.FRIEND) {
-      return (
-        <Avatar
-          src={
-            currentConversation.members.find((member) => member.id != user.id)[
-              'avatar'
-            ]
-          }
-          size="large"
-        />
-      );
-    } else if (currentConversation.type == ConversationTypes.GROUP) {
-      if (currentConversation.image != null) {
-        return <Avatar src={currentConversation.image} size="large" />;
-      }
-      return (
-        <AvatarGroup
-          users={currentConversation.members.filter(
-            (member) => member != user.id
-          )}
-        />
-      );
-    }
   };
 
   return (
