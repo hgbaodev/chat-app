@@ -19,7 +19,7 @@ import {
 import { ConversationTypes, MessageTypes } from '~/utils/enum';
 import { useState } from 'react';
 import AvatarGroup from '~/components/AvatarGroup';
-import { GrFormPin } from 'react-icons/gr';
+import { GrPin } from 'react-icons/gr';
 
 export const ContactItem = ({
   id,
@@ -135,7 +135,7 @@ export const ContactItem = ({
             {formatTimeAgo(lastestMessage?.created_at)}
           </Typography>
         </>
-        <Flex justify="end">{is_pinned && <GrFormPin size={20} />}</Flex>
+        <Flex justify="end">{is_pinned && <GrPin size={15} />}</Flex>
       </Flex>
     </Flex>
   );
