@@ -1,4 +1,4 @@
-import { Avatar, Button, Divider, Flex, Grid, Space, Typography } from 'antd';
+import { Button, Divider, Flex, Grid, Space, Typography } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { CloseOutlined } from '@ant-design/icons';
 import { IoChevronForward } from 'react-icons/io5';
@@ -8,7 +8,6 @@ import {
   showSharedMessage,
   toggleContactInfo
 } from '~/store/slices/appSlice';
-import { faker } from '@faker-js/faker';
 import { GrGroup, GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { useSelector } from '~/store';
@@ -24,6 +23,7 @@ import { ConversationTypes } from '~/utils/enum';
 import { RiUnpinLine } from 'react-icons/ri';
 import { pinConversation, unPinConversation } from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
+import { useMemo } from 'react';
 const { useBreakpoint } = Grid;
 
 export const ContactInfo = () => {
@@ -119,10 +119,18 @@ export const ContactInfo = () => {
 };
 
 const AboutSection = () => {
+  const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { user } = useSelector((state) => state.auth);
+
+  const member = useMemo(
+    () => currentConversation.members.filter((m) => m.id !== user.id)[0],
+    [currentConversation, user]
+  );
+
   return (
     <>
       <Typography className="font-semibold mb-2">About</Typography>
-      <Typography>{faker.lorem.sentence()}</Typography>
+      <Typography>{member.about}</Typography>
     </>
   );
 };

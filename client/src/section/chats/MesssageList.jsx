@@ -11,6 +11,7 @@ import {
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
+
 const MesssageList = () => {
   const dispatch = useDispatch();
   const { chat } = useSelector((state) => state.chat);

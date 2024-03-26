@@ -121,7 +121,7 @@ export const DocMessage = ({ id, sender, attachments, forward, created }) => {
             className="w-[50px] h-[50px] "
           />
           <div>
-            <p className="font-semibold text-ellipsis text-nowrap overflow-hidden text-sm">
+            <p className="font-semibold text-ellipsis text-nowrap overflow-hidden max-w-[200px] text-sm">
               {attachments[0].file_name}
             </p>
             <p className="text-xs mt-2 text-gray-500">

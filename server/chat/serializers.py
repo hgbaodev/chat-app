@@ -6,13 +6,12 @@ from .models import Conversation, Message, Participants, DeleteMessage, Attachme
 class MemberConversationSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'avatar'] 
+        fields = ['id','first_name', 'last_name', 'avatar', 'about'] 
 
 class SenderSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['id', 'first_name', 'last_name', 'avatar']
-
 class NewestMessage(serializers.ModelSerializer):
     sender = SenderSerializer()
     class Meta: 

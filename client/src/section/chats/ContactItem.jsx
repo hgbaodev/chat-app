@@ -20,6 +20,7 @@ import { ConversationTypes, MessageTypes } from '~/utils/enum';
 import { useState } from 'react';
 import AvatarGroup from '~/components/AvatarGroup';
 import { GrFormPin } from 'react-icons/gr';
+import { showContactInfo } from '~/store/slices/appSlice';
 
 export const ContactItem = ({
   id,
@@ -53,10 +54,11 @@ export const ContactItem = ({
     {
       key: '1',
       label: (
-        <p onClick={handlePin} className="m-0 min-w-[180px]">
+        <p className="m-0 min-w-[180px]">
           {is_pinned ? 'Un pin this conversation' : 'Pin this conversation'}
         </p>
-      )
+      ),
+      onClick: handlePin
     },
     {
       key: '2',
@@ -81,6 +83,7 @@ export const ContactItem = ({
       dispatch(
         setCurrentConversation({ id, title, image, members, type, is_pinned })
       );
+      dispatch(showContactInfo());
     }
   };
 
