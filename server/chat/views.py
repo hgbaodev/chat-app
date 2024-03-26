@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer
+from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Conversation, Participants, Message, DeleteMessage
+from .models import Conversation, Participants, Message, DeleteMessage, PinConversation
 from django.http import Http404
 from django.db.models import Max
 from config.paginations import CustomPagination
@@ -31,6 +31,7 @@ class ConversationList(APIView):
         
         conversation_data = []
         for conversation in result_page:
+            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
             users = User.objects.filter(participants__conversation=conversation)
             latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             if latest_message is not None:
@@ -40,7 +41,8 @@ class ConversationList(APIView):
                     'image': conversation.image,
                     'latest_message': latest_message,
                     'type': conversation.type,
-                    'members': users
+                    'members': users,
+                    'is_pinned': is_pinned
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
@@ -228,8 +230,6 @@ class MesssageDetail(generics.DestroyAPIView):
         print(users)
         return SuccessResponse(data=serializer.data)
     
-    
-
 class ConversationListFind(APIView):
     serializer_class = ConversationSerializer
     permission_classes = [IsAuthenticated]
@@ -266,4 +266,35 @@ class ConversationListFind(APIView):
         serializer = self.serializer_class(conversation_data, many=True)
         return SuccessResponse(data=serializer.data)
 
+
+class PinConversationUser(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = PinConversationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        conversation_id = serializer.validated_data['conversation_id']
+        conversation = Conversation.objects.get(id=conversation_id)
+        check_pin = PinConversation.objects.filter(conversation=conversation, user=request.user).exists()
+        if check_pin: 
+            return ErrorResponse(error_message="You have already pinned this conversation", status=status.HTTP_400_BAD_REQUEST)
+        pin_conversation = PinConversation.objects.create(
+            user=request.user,
+            conversation=conversation
+        )
+        serializer = PinConversationSerializer(pin_conversation)
+        return SuccessResponse(data=serializer.data, status=status.HTTP_201_CREATED)
+
+class UnpinConversationUser(APIView):
+    permission_classes = [IsAuthenticated]
+    def post(self, request):
+        serializer = PinConversationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        conversation_id = serializer.validated_data['conversation_id']
+        conversation = Conversation.objects.get(id=conversation_id)
+        try:
+            pinned_conversation = PinConversation.objects.get(conversation=conversation, user=request.user)
+        except PinConversation.DoesNotExist:
+            return ErrorResponse(error_message="You have not pinned this conversation", status=status.HTTP_400_BAD_REQUEST)
+        pinned_conversation.delete()
+        return SuccessResponse(data={"conversation_id": conversation_id}, status=status.HTTP_200_OK)
 

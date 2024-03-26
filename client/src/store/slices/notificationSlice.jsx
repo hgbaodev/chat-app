@@ -35,9 +35,8 @@ const notificationSlice = createSlice({
   name: 'relationship',
   initialState,
   reducers: {
-    receiveNotification(state, action) {
+    receiveNotification(state) {
       state.totalUnseen += 1;
-      console.log({ action });
     }
   },
   extraReducers: (builder) => {
