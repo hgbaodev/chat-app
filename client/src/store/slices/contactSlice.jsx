@@ -5,7 +5,9 @@ export const findConversations = createAsyncThunk(
   'contact/find-conversations',
   async (query) => {
     try {
-      const response = await AxiosInstance.get(`/chat/find-conversations/?query=${query}`);
+      const response = await AxiosInstance.get(
+        `/chat/find-conversations/?query=${query}`
+      );
       return response;
     } catch (error) {
       console.log(error);
@@ -18,9 +20,7 @@ export const createConversation = createAsyncThunk(
   'contact/create-conversation',
   async (value, { rejectWithValue }) => {
     try {
-      const response = await AxiosInstance.post(
-        `chat/conversations/`, value
-      );
+      const response = await AxiosInstance.post(`chat/conversations/`, value);
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -50,7 +50,7 @@ const contactSlice = createSlice({
       })
       .addCase(findConversations.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.searchConversation = action.payload.data?.result
+        state.searchConversation = action.payload.data?.result;
       })
       .addCase(findConversations.rejected, (state) => {
         state.isLoading = false;
@@ -63,11 +63,9 @@ const contactSlice = createSlice({
       })
       .addCase(createConversation.rejected, (state) => {
         state.isLoadingCreateConversation = false;
-      })
+      });
   }
 });
 
 export default contactSlice.reducer;
-export const {
-  setOpenSearch,
-} = contactSlice.actions;
+export const { setOpenSearch } = contactSlice.actions;

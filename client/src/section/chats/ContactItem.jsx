@@ -11,10 +11,15 @@ import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 import { useDispatch, useSelector } from '~/store';
-import { setCurrentConversation } from '~/store/slices/chatSlice';
+import {
+  pinConversation,
+  setCurrentConversation,
+  unPinConversation
+} from '~/store/slices/chatSlice';
 import { ConversationTypes, MessageTypes } from '~/utils/enum';
 import { useState } from 'react';
 import AvatarGroup from '~/components/AvatarGroup';
+import { GrFormPin } from 'react-icons/gr';
 
 export const ContactItem = ({
   id,
@@ -23,7 +28,8 @@ export const ContactItem = ({
   lastestMessage,
   type,
   members,
-  active
+  active,
+  is_pinned
 }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
@@ -35,21 +41,28 @@ export const ContactItem = ({
     message.success('Delete conversation successfully!');
   };
 
+  const handlePin = () => {
+    if (!is_pinned) dispatch(pinConversation(id));
+    else {
+      dispatch(unPinConversation(id));
+    }
+  };
+
   const items = [
     {
       key: '1',
-      label: <p className="m-0 min-w-[180px]">Pin this conversation</p>
+      label: (
+        <p onClick={handlePin} className="m-0 min-w-[180px]">
+          {is_pinned ? 'Un pin this conversation' : 'Pin this conversation'}
+        </p>
+      )
     },
     {
       key: '2',
-      label: <p className="m-0 w-[180px]">Mark as unread</p>
-    },
-    {
-      key: '3',
       label: <p className="m-0 w-[180px]">Hide conversation</p>
     },
     {
-      key: '4',
+      key: '3',
       label: (
         <p
           onClick={handleDeleteConversation}
@@ -64,7 +77,9 @@ export const ContactItem = ({
   // handle get all messages
   const getAllMessages = () => {
     if (currentConversation.id != id) {
-      dispatch(setCurrentConversation({ id, title, image, members, type }));
+      dispatch(
+        setCurrentConversation({ id, title, image, members, type, is_pinned })
+      );
     }
   };
   return (
@@ -78,7 +93,11 @@ export const ContactItem = ({
       onClick={getAllMessages}
     >
       <Space className="flex-1">
-        {image==null && type === ConversationTypes.GROUP ? <AvatarGroup users={members}/> : <Avatar size={50} src={image} />}
+        {image == null && type === ConversationTypes.GROUP ? (
+          <AvatarGroup users={members} />
+        ) : (
+          <Avatar size={50} src={image} />
+        )}
         <Flex vertical justify="center">
           <Typography className="text-slate-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {title}
@@ -90,29 +109,34 @@ export const ContactItem = ({
           </Typography>
         </Flex>
       </Space>
-      <Dropdown
-        menu={{ items }}
-        placement="bottomLeft"
-        onClick={(e) => e.stopPropagation()}
-        className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
-        onOpenChange={(o) => setOpenOptions(o)}
-        trigger={['click']}
-        arrow={true}
-      >
-        <Button
-          type="text"
-          size="small"
-          className={openOptions && 'bg-slate-200'}
-          icon={<AiOutlineEllipsis size={20} />}
-        />
-      </Dropdown>
-      <Typography
-        className={`${
-          isHovering || openOptions ? 'hidden' : 'block'
-        } text-[10px] text-neutral-500`}
-      >
-        {formatTimeAgo(lastestMessage?.created_at)}
-      </Typography>
+      <Flex vertical>
+        <>
+          <Dropdown
+            menu={{ items }}
+            placement="bottomLeft"
+            onClick={(e) => e.stopPropagation()}
+            className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
+            onOpenChange={(o) => setOpenOptions(o)}
+            trigger={['click']}
+            arrow={true}
+          >
+            <Button
+              type="text"
+              size="small"
+              className={openOptions && 'bg-slate-200'}
+              icon={<AiOutlineEllipsis size={20} />}
+            />
+          </Dropdown>
+          <Typography
+            className={`${
+              isHovering || openOptions ? 'hidden' : 'block'
+            } text-[10px] text-neutral-500 pb-2`}
+          >
+            {formatTimeAgo(lastestMessage?.created_at)}
+          </Typography>
+        </>
+        <Flex justify="end">{is_pinned && <GrFormPin size={20} />}</Flex>
+      </Flex>
     </Flex>
   );
 };

@@ -54,13 +54,20 @@ export const Contacts = ({ ...props }) => {
                 {!isLoading
                   ? conversationsList
                       .sort((a, b) => {
-                        const createdA = new Date(
-                          a.latest_message.created_at
-                        ).getTime();
-                        const createdB = new Date(
-                          b.latest_message.created_at
-                        ).getTime();
-                        return createdB - createdA;
+                        const isPinnedA = a.is_pinned ? 1 : -1;
+                        const isPinnedB = b.is_pinned ? 1 : -1;
+
+                        if (!a.is_pinned && !b.is_pinned) {
+                          const createdA = new Date(
+                            a.latest_message.created_at
+                          ).getTime();
+                          const createdB = new Date(
+                            b.latest_message.created_at
+                          ).getTime();
+                          return createdB - createdA;
+                        }
+
+                        return isPinnedB - isPinnedA;
                       })
                       .map((conversation) => {
                         const us = conversation?.members.filter(
@@ -86,6 +93,7 @@ export const Contacts = ({ ...props }) => {
                             active={
                               conversation.id == chat.currentConversation.id
                             }
+                            is_pinned={conversation.is_pinned}
                           />
                         );
                       })

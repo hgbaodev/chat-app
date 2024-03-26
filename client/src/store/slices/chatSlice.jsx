@@ -57,6 +57,34 @@ export const recallMessageRequest = createAsyncThunk(
   }
 );
 
+export const pinConversation = createAsyncThunk(
+  'chat/pin-conversation',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`chat/pin-conversation/`, {
+        conversation_id
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const unPinConversation = createAsyncThunk(
+  'chat/unpin-conversation',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`chat/unpin-conversation/`, {
+        conversation_id
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -68,7 +96,8 @@ const initialState = {
       image: null,
       type: null,
       latest_message: null,
-      members: []
+      members: [],
+      is_pinned: null
     },
     messages: [],
     lastPage: 0,
@@ -196,6 +225,30 @@ const chatSlice = createSlice({
         state.chat.messages = state.chat.messages.filter(
           (message) => message.id !== action.payload.data.result.message
         );
+      })
+      .addCase(pinConversation.fulfilled, (state, action) => {
+        const id = action.payload.data.result.conversation_id;
+        const conversationIndex = state.conversations.findIndex(
+          (conversation) => conversation.id === id
+        );
+        if (conversationIndex !== -1) {
+          state.conversations[conversationIndex].is_pinned = true;
+        }
+        if (state.chat.currentConversation.id == id) {
+          state.chat.currentConversation.is_pinned = true;
+        }
+      })
+      .addCase(unPinConversation.fulfilled, (state, action) => {
+        const id = action.payload.data.result.conversation_id;
+        const conversationIndex = state.conversations.findIndex(
+          (conversation) => conversation.id === id
+        );
+        if (conversationIndex !== -1) {
+          state.conversations[conversationIndex].is_pinned = false;
+        }
+        if (state.chat.currentConversation.id == id) {
+          state.chat.currentConversation.is_pinned = false;
+        }
       });
   }
 });

@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import Conversation, Message, Participants, DeleteMessage, Attachments
+from .models import Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation
 
 class MemberConversationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,10 +19,11 @@ class ConversationSerializer(serializers.ModelSerializer):
     latest_message = NewestMessage(read_only=True)
     type = serializers.IntegerField(read_only=True)
     members = MemberConversationSerializer(many=True, read_only=True)
+    is_pinned = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants', 'members']
+        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants', 'members', 'is_pinned']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')
@@ -122,3 +123,22 @@ class DeleteMessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeleteMessage
         fields = '__all__'
+
+
+class PinConversationSerializer(serializers.ModelSerializer):
+    conversation_id = serializers.IntegerField()
+
+    def validate_conversation_id(self, value):
+        try:
+            conversation = Conversation.objects.get(id=value)
+        except Conversation.DoesNotExist:
+            raise serializers.ValidationError("Conversation does not exist")
+        return value
+
+    class Meta:
+        model = PinConversation
+        fields = ['id', 'user', 'conversation', 'created_at', 'conversation_id']
+        extra_kwargs = {
+            'user': {'required': False},
+            'conversation': {'required': False}
+        }

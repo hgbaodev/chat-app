@@ -87,7 +87,6 @@ export const deleteFriendRequest = createAsyncThunk(
       );
       return response;
     } catch (error) {
-      console.log(error);
       return rejectWithValue(error.response.data);
     }
   }
@@ -174,7 +173,6 @@ const relationshipSlice = createSlice({
         state.isLoading = true;
       })
       .addCase(deleteFriendRequest.fulfilled, (state, action) => {
-        console.log({ action });
         state.sent_friend_requests = state.sent_friend_requests.filter(
           (item) => item.id !== action.payload.data.id
         );
