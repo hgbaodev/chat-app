@@ -183,6 +183,7 @@ export const AudioMessage = ({ id, sender, forward, created, attachments }) => {
       from={sender.id}
       created={created}
       forward={forward}
+      className="p-0 rounded-lg overflow-hidden"
     >
       <audio controls>
         <source src={attachments[0]?.file_url} type="audio/mpeg" />
