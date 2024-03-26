@@ -140,3 +140,25 @@ class PinConversationSerializer(serializers.ModelSerializer):
             'user': {'required': False},
             'conversation': {'required': False}
         }
+
+class CloseConversationSerializer(serializers.ModelSerializer):
+    conversation_id = serializers.IntegerField()
+
+    def validate(self, data):
+        user = self.context['request'].user
+        conversation_id = data.get('conversation_id')
+
+        try:
+            participant = Participants.objects.get(conversation_id=conversation_id, user=user)
+        except Participants.DoesNotExist:
+            raise serializers.ValidationError("Conversation does not exist for this user")
+
+        return data
+
+    class Meta:
+        model = Participants
+        fields = ['id', 'user', 'conversation', 'created_at', 'conversation_id']
+        extra_kwargs = {
+            'user': {'required': False},
+            'conversation': {'required': False}
+        }

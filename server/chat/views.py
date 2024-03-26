@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer
+from .serializers import MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message, DeleteMessage, PinConversation
 from django.http import Http404
@@ -298,3 +298,18 @@ class UnpinConversationUser(APIView):
         pinned_conversation.delete()
         return SuccessResponse(data={"conversation_id": conversation_id}, status=status.HTTP_200_OK)
 
+class CloseConversation(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = CloseConversationSerializer(data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = request.user
+        conversation_id = serializer.validated_data['conversation_id']
+        try:
+            participant = Participants.objects.get(conversation_id=conversation_id, user=user)
+            participant.delete()
+        except Participants.DoesNotExist:
+            return ErrorResponse(error_message="Conversation does not exist for this user", status=status.HTTP_400_BAD_REQUEST)
+        return SuccessResponse(data={"conversation_id": conversation_id,
+                                     "message": "Close successfully"}, status=status.HTTP_200_OK)

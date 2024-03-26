@@ -23,6 +23,7 @@ import {
 import { ConversationTypes } from '~/utils/enum';
 import { RiUnpinLine } from 'react-icons/ri';
 import { pinConversation, unPinConversation } from '~/store/slices/chatSlice';
+import AvatarImage from '~/section/users/AvatarImage';
 const { useBreakpoint } = Grid;
 
 export const ContactInfo = () => {
@@ -61,7 +62,7 @@ export const ContactInfo = () => {
         direction="vertical"
       >
         <Space className="w-full" direction="vertical" align="center">
-          <Avatar size={64} src={currentConversation.image} />
+          <AvatarImage size={64} sizeGroup={45} />
           <Space align="center" className="mb-4">
             <Title level={5} className="!m-0">
               {currentConversation.title}
