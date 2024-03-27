@@ -313,8 +313,20 @@ class LeaveConversation(APIView):
                     conversation=conversation,
                     sender=user,
                     message=f'{user.first_name} {user.last_name} left the conversation',
-                    message_type=Message.MessageType.INIT_CONVERSATION
+                    message_type=Message.MessageType.NEWS
                 )
+            message_serializer = MessageSerializer(instance=message)
+            channel_layer = get_channel_layer()
+            users = User.objects.filter(participants__conversation=message.conversation)
+            for user in users:
+                    room_group_name = f"user_{user.id}"
+                    async_to_sync(channel_layer.group_send)(
+                        room_group_name,
+                        {
+                            'type': 'chat_message',
+                            'message': message_serializer.data
+                        }
+                    )
         except Participants.DoesNotExist:
             return ErrorResponse(error_message="Conversation does not exist for this user", status=status.HTTP_400_BAD_REQUEST)
         return SuccessResponse(data={"conversation_id": conversation_id,

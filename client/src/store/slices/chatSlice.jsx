@@ -277,9 +277,11 @@ const chatSlice = createSlice({
           state.chat.currentConversation.is_pinned = false;
         }
       })
-      .addCase(leaveConversation.fulfilled, (state) => {
-        const id = state.chat.currentConversation.id;
-        state.conversations.filter((conversation) => conversation.id != id);
+      .addCase(leaveConversation.fulfilled, (state, action) => {
+        const id = action.payload.data.result.conversation_id;
+        state.conversations = state.conversations.filter(
+          (conversation) => conversation.id != id
+        );
         state.chat.currentConversation = {
           id: null,
           title: null,

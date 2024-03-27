@@ -86,6 +86,20 @@ export const TextMessage = ({ id, sender, message, forward, created }) => {
   );
 };
 
+export const NewMessage = ({ message, created }) => {
+  console.log('created', created);
+  return (
+    <Flex vertical>
+      {created && <TimeLine text={formatDateTime(created)} />}
+      <Flex justify="center" className="mb-3">
+        <Flex className=" bg-black bg-opacity-30 text-white px-4 py-1 rounded-[999px] text-[12px]">
+          {message}
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+
 export const MediaMessage = ({ id, sender, attachments, forward, created }) => {
   return (
     <MessageWrapper

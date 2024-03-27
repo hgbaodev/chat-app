@@ -5,6 +5,7 @@ import {
   AudioMessage,
   DocMessage,
   MediaMessage,
+  NewMessage,
   RecallMessage,
   TextMessage
 } from '~/section/chats/MessageTypes';
@@ -66,8 +67,8 @@ const MesssageList = () => {
                 messages.data[index - 1].created_at
               );
               const timeDiff = Math.abs(currentMessageTime - prevMessageTime);
-              const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 60));
-              if (hoursDiff > 1) check = true;
+              const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 30));
+              if (hoursDiff >= 1) check = true;
             }
 
             switch (message.message_type) {
@@ -106,6 +107,14 @@ const MesssageList = () => {
               case MessageTypes.IMAGE:
                 return (
                   <MediaMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
+              case MessageTypes.NEWS:
+                return (
+                  <NewMessage
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
