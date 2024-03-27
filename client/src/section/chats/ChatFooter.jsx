@@ -2,6 +2,7 @@ import { Button, Dropdown, Flex, Input } from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import {
+  IoCardOutline,
   IoDocumentAttachOutline,
   IoHappyOutline,
   IoImageOutline,
@@ -156,6 +157,7 @@ const TypingMessage = ({ fullname }) => {
 const AttachmentInput = () => {
   const { emitMessage } = useSocket();
   const inputFileRef = useRef(null);
+  const dispatch = useDispatch();
   const [fileType, setFileType] = useState(null);
   const { chat, forwardMessage } = useSelector((state) => state.chat);
   const [messageType, setMessageType] = useState(MessageTypes.IMAGE);
@@ -186,6 +188,7 @@ const AttachmentInput = () => {
         forward: forwardMessage?.id
       });
     });
+    dispatch(setForwardMessage(null));
   };
 
   useEffect(() => {
@@ -218,6 +221,13 @@ const AttachmentInput = () => {
               icon: <IoDocumentAttachOutline size={16} />,
               onClick: () => handleDropdownItemClick('document')
               // disabled: true
+            },
+            {
+              key: '3',
+              label: 'Name card',
+              icon: <IoCardOutline size={16} />,
+              onClick: () => handleDropdownItemClick('document')
+              // disabled: true
             }
           ]
         }}
@@ -242,6 +252,7 @@ const RecordButton = () => {
   const [recorder, setRecorder] = useState(null);
   const [recordedTime, setRecordedTime] = useState(0);
   const [stream, setStream] = useState(null);
+  const dispatch = useDispatch();
 
   const startRecording = async () => {
     try {
@@ -277,6 +288,7 @@ const RecordButton = () => {
         message_type: MessageTypes.AUDIO,
         forward: forwardMessage?.id
       });
+      dispatch(setForwardMessage(null));
 
       if (stream) {
         stream.getTracks().forEach((track) => track.stop());

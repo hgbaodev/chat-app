@@ -47,6 +47,10 @@ class Message(models.Model):
     forward = models.ForeignKey('self', on_delete=models.CASCADE,related_name='forward_messages', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
+    @property
+    def is_pinned(self):
+        return PinnedMessages.objects.filter(message=self).exists()
+    
     def __str__(self) -> str:
         return f"{self.conversation_id}:{self.message_type}:{self.created_at}:{self.message}"
     
@@ -66,4 +70,10 @@ class DeleteMessage(models.Model):
 class PinConversation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+class PinnedMessages(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
+    pinned_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

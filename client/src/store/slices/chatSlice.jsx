@@ -101,10 +101,39 @@ export const leaveConversation = createAsyncThunk(
 
 export const getAttachmentsOfConversation = createAsyncThunk(
   'chat/getAttachmentsOfConversation',
-  async ({ conversation_id, page }, { rejectWithValue }) => {
+  async ({ conversation_id, type, page }, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.get(
-        `/chat/conversations/${conversation_id}/attachmemts/?page=${page}`
+        `/chat/conversations/${conversation_id}/attachmemts/?type=${type}&page=${page}`
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const pinMessage = createAsyncThunk(
+  'chat/pinMessage',
+  async ({ conversation_id, message_id }, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(
+        `/chat/conversations/${conversation_id}/pinned/`,
+        { message_id }
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const unpinMessage = createAsyncThunk(
+  'chat/unpinMessage',
+  async ({ conversation_id, message_id }, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `/chat/conversations/${conversation_id}/pinned/${message_id}`
       );
       return response;
     } catch (error) {
@@ -175,7 +204,8 @@ const chatSlice = createSlice({
           conversation.latest_message = result.message;
         }
       });
-      state.chat.messages.data.push(result.message);
+      if (state.chat.currentConversation.id === result.message.conversation_id)
+        state.chat.messages.data.push(result.message);
     },
     createGroup(state, action) {
       state.conversations.push(action.payload);
@@ -192,7 +222,7 @@ const chatSlice = createSlice({
       const { currentConversation, messages } = state.chat;
       const { conversation_id, id } = action.payload;
       if (currentConversation.id === conversation_id) {
-        let message = messages.find((message) => message.id === id);
+        let message = messages.data.find((message) => message.id === id);
         if (message) {
           message.message_type = MessageTypes.RECALL;
         }

@@ -20,13 +20,13 @@ const { Text } = Typography;
 
 const ProfileModal = ({ open, setOpen }) => {
   const [type, setType] = useState(0);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   useEffect(() => {
     const fetch = () => {
-      dispatch(getInfoUser())
-    }
-    fetch()
-  })
+      dispatch(getInfoUser());
+    };
+    fetch();
+  });
   const handleClose = () => {
     setType(0);
     setOpen(false);
@@ -51,11 +51,14 @@ const ProfileModal = ({ open, setOpen }) => {
           </Flex>
         }
         width={450}
+        centered
       >
         <Flex vertical>
           <Image
             height={180}
             src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709748276/chat_app/t0aytyt93yhgj5yb3fce.jpg"
+            preview={{ mask: false }}
+            className="cursor-pointer"
           />
           <Space
             style={{
@@ -77,15 +80,6 @@ const ProfileModal = ({ open, setOpen }) => {
               src="https://res.cloudinary.com/dw3oj3iju/image/upload/v1709749732/chat_app/b1rj7epnhdqo6t7mcu5w.jpg"
             />
             <Text strong>Hoàng Gia Bảo</Text>
-            <Button
-              type="text"
-              style={{
-                border: 0
-              }}
-              size="small"
-              shape="circle"
-              icon={<AiOutlineEdit />}
-            />
           </Space>
           <Space className="px-5 py-4" direction="vertical">
             <Text strong>Information</Text>
@@ -141,6 +135,7 @@ const ProfileModal = ({ open, setOpen }) => {
             <Button type="primary">Update</Button>
           </Flex>
         }
+        centered
       >
         <Space direction="vertical" className="w-full px-[20px] py-[10px]">
           <Flex justify="center">

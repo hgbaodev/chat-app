@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation
+from .models import Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation, PinnedMessages
+from django.shortcuts import get_object_or_404
 
 class MemberConversationSerializer(serializers.ModelSerializer):
     class Meta:
@@ -105,7 +106,7 @@ class MessageSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'is_pinned']
 
     def get_forward(self, obj):
         if obj.forward:
@@ -161,3 +162,18 @@ class CloseConversationSerializer(serializers.ModelSerializer):
             'user': {'required': False},
             'conversation': {'required': False}
         }
+
+class PinnedMessagesCreateSerializer(serializers.Serializer):
+    message_id = serializers.IntegerField(write_only=True)
+
+    def create(self, validated_data):
+        request = self.context.get('request')
+        pk = self.context.get('pk')
+        user = request.user
+        conversation = get_object_or_404(Conversation, pk=pk)
+
+        return PinnedMessages.objects.create(
+            message_id=validated_data['message_id'],
+            pinned_by=user,
+            conversation=conversation
+        )

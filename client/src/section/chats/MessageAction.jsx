@@ -8,8 +8,10 @@ import {
 import { useDispatch, useSelector } from '~/store';
 import {
   deleteMessage,
+  pinMessage,
   recallMessageRequest,
-  setForwardMessage
+  setForwardMessage,
+  unpinMessage
 } from '~/store/slices/chatSlice';
 import {
   BsArrow90DegLeft,
@@ -17,10 +19,12 @@ import {
   BsPin,
   BsTrash3
 } from 'react-icons/bs';
+import { RiUnpinLine } from 'react-icons/ri';
 
-const MessageAction = ({ messageId, from, setOpen, ...props }) => {
+const MessageAction = ({ messageId, from, setOpen, isPinned, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
+  const { currentConversation } = useSelector((state) => state.chat.chat);
 
   const items = [
     {
@@ -31,8 +35,25 @@ const MessageAction = ({ messageId, from, setOpen, ...props }) => {
     },
     {
       key: '2',
-      label: 'Pin',
-      icon: <BsPin size={16} />
+      label: isPinned ? 'Unpin' : 'Pin',
+      icon: isPinned ? <RiUnpinLine size={16} /> : <BsPin size={16} />,
+      onClick: () => {
+        if (isPinned) {
+          dispatch(
+            unpinMessage({
+              conversation_id: currentConversation.id,
+              message_id: messageId
+            })
+          );
+        } else {
+          dispatch(
+            pinMessage({
+              conversation_id: currentConversation.id,
+              message_id: messageId
+            })
+          );
+        }
+      }
     },
     {
       key: '3',

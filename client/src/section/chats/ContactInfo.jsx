@@ -1,4 +1,4 @@
-import { Button, Divider, Flex, Grid, Space, Typography } from 'antd';
+import { Button, Divider, Flex, Grid, Modal, Space, Typography } from 'antd';
 import Title from 'antd/es/typography/Title';
 import { CloseOutlined } from '@ant-design/icons';
 import { IoChevronForward } from 'react-icons/io5';
@@ -21,15 +21,20 @@ import {
 } from 'react-icons/lu';
 import { ConversationTypes } from '~/utils/enum';
 import { RiUnpinLine } from 'react-icons/ri';
-import { leaveConversation, pinConversation, unPinConversation } from '~/store/slices/chatSlice';
+import {
+  leaveConversation,
+  pinConversation,
+  unPinConversation
+} from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 const { useBreakpoint } = Grid;
 
 export const ContactInfo = () => {
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const screens = useBreakpoint();
+  const [isPinnedModalOpen, setIsPinnedModalOpen] = useState(false);
 
   const handleClose = () => dispatch(toggleContactInfo());
   const handleOpenSharedMessages = () => dispatch(showSharedMessage());
@@ -87,22 +92,35 @@ export const ContactInfo = () => {
         )}
 
         <Divider className="mb-2 mt-0" />
-        <Flex justify="space-between" align="center">
+
+        <Flex
+          justify="space-between"
+          align="center"
+          className="cursor-pointer"
+          onClick={() => setIsPinnedModalOpen(true)}
+        >
           <Typography className="font-semibold m-0">
-            Media, Links and Docs
+            View pinned messages
           </Typography>
           <Button
             type="text"
             shape="circle"
             icon={<IoChevronForward size={20} />}
-            onClick={handleOpenSharedMessages}
           />
         </Flex>
-
+        <PinnedMessagesModal
+          isModalOpen={isPinnedModalOpen}
+          handleCancel={() => setIsPinnedModalOpen(false)}
+        />
         <Divider className="my-2" />
-        <Flex justify="space-between" align="center">
+        <Flex
+          justify="space-between"
+          align="center"
+          className="cursor-pointer"
+          onClick={handleOpenSharedMessages}
+        >
           <Typography className="font-semibold m-0">
-            Starred Messages
+            Media, files and links
           </Typography>
           <Button
             type="text"
@@ -110,11 +128,25 @@ export const ContactInfo = () => {
             icon={<IoChevronForward size={20} />}
           />
         </Flex>
-
         <Divider className="my-2" />
         <PrivacySection />
       </Space>
     </Flex>
+  );
+};
+
+const PinnedMessagesModal = ({ isModalOpen, handleCancel }) => {
+  return (
+    <Modal
+      title="Pinned messages"
+      open={isModalOpen}
+      onCancel={handleCancel}
+      footer={null}
+    >
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+      <p>Some contents...</p>
+    </Modal>
   );
 };
 

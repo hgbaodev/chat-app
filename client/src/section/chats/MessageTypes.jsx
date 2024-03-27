@@ -9,15 +9,18 @@ import { formatDateTime } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
 import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
 import { MessageTypes } from '~/utils/enum';
+import { convertLinksToAnchorTags } from '~/utils/textProcessing';
 
 const MessageWrapper = memo(
   ({
     messageId,
     from,
     forward,
+    message_type,
     created = null,
     hideAction = false,
     children,
+    isPinned,
     ...props
   }) => {
     const { user } = useSelector((state) => state.auth);
@@ -52,7 +55,11 @@ const MessageWrapper = memo(
               {...props}
               direction="vertical"
             >
-              {forward && <ForwardMessage replyFrom={forward} />}
+              {forward &&
+                message_type != MessageTypes.AUDIO &&
+                message_type != MessageTypes.IMAGE && (
+                  <ForwardMessage replyFrom={forward} isMe={from === user.id} />
+                )}
               {children}
             </Space>
             {!hideAction && (
@@ -61,6 +68,7 @@ const MessageWrapper = memo(
                   from === user.id ? '-order-last flex-row-reverse' : ''
                 } ${isHovering || open ? 'visible' : 'invisible'}`}
                 messageId={messageId}
+                isPinned={isPinned}
                 from={from}
                 open={open}
                 setOpen={setOpen}
@@ -73,21 +81,33 @@ const MessageWrapper = memo(
   }
 );
 
-export const TextMessage = ({ id, sender, message, forward, created }) => {
+export const TextMessage = ({
+  id,
+  sender,
+  message,
+  forward,
+  created,
+  is_pinned = false,
+  ...props
+}) => {
   return (
     <MessageWrapper
       messageId={id}
       from={sender.id}
       created={created}
       forward={forward}
+      isPinned={is_pinned}
+      {...props}
     >
-      <Typography className="text-inherit">{message}</Typography>
+      <Typography
+        className="text-inherit"
+        dangerouslySetInnerHTML={{ __html: convertLinksToAnchorTags(message) }}
+      />
     </MessageWrapper>
   );
 };
 
 export const NewMessage = ({ message, created }) => {
-  console.log('created', created);
   return (
     <Flex vertical>
       {created && <TimeLine text={formatDateTime(created)} />}
@@ -100,7 +120,15 @@ export const NewMessage = ({ message, created }) => {
   );
 };
 
-export const MediaMessage = ({ id, sender, attachments, forward, created }) => {
+export const MediaMessage = ({
+  id,
+  sender,
+  attachments,
+  forward,
+  created,
+  is_pinned = false,
+  ...props
+}) => {
   return (
     <MessageWrapper
       messageId={id}
@@ -108,19 +136,31 @@ export const MediaMessage = ({ id, sender, attachments, forward, created }) => {
       created={created}
       forward={forward}
       className="p-0 rounded-lg overflow-hidden"
+      isPinned={is_pinned}
+      {...props}
     >
       <Image width={320} className="w-full" src={attachments[0].file_url} />
     </MessageWrapper>
   );
 };
 
-export const DocMessage = ({ id, sender, attachments, forward, created }) => {
+export const DocMessage = ({
+  id,
+  sender,
+  attachments,
+  forward,
+  created,
+  is_pinned = false,
+  ...props
+}) => {
   return (
     <MessageWrapper
       messageId={id}
       from={sender.id}
       created={created}
       forward={forward}
+      isPinned={is_pinned}
+      {...props}
     >
       <Flex align="center" justify="space-between" className="w-[300px]">
         <Flex align="center" gap={5}>
@@ -172,14 +212,17 @@ export const RecallMessage = ({ id, sender, created }) => {
   );
 };
 
-const ForwardMessage = ({ replyFrom }) => {
+const ForwardMessage = ({ replyFrom, isMe }) => {
   const { message_type, sender, attachments } = replyFrom;
   return (
     <Flex
       gap="small"
       align="center"
-      className="border-l-3 border-r-0 border-t-0 border-b-0 border-blue-500 border-solid ps-2 cursor-pointer"
+      className={`cursor-pointer p-3 py-2 rounded-md ${
+        isMe ? `bg-blue-300` : `bg-gray-100`
+      }`}
     >
+      <div className="h-10 w-[2px] bg-blue-500" />
       {message_type == MessageTypes.DOCUMENT && (
         <img
           src={getIconDocument(attachments[0].file_type)}
@@ -199,7 +242,15 @@ const ForwardMessage = ({ replyFrom }) => {
   );
 };
 
-export const AudioMessage = ({ id, sender, forward, created, attachments }) => {
+export const AudioMessage = ({
+  id,
+  sender,
+  forward,
+  created,
+  attachments,
+  is_pinned = false,
+  ...props
+}) => {
   return (
     <MessageWrapper
       messageId={id}
@@ -207,6 +258,8 @@ export const AudioMessage = ({ id, sender, forward, created, attachments }) => {
       created={created}
       forward={forward}
       className="p-0 rounded-lg overflow-hidden"
+      isPinned={is_pinned}
+      {...props}
     >
       <audio controls>
         <source src={attachments[0]?.file_url} type="audio/mpeg" />
