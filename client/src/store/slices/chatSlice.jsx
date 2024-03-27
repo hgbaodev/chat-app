@@ -92,21 +92,21 @@ export const leaveConversation = createAsyncThunk(
       const response = await AxiosInstance.post(`chat/leave-conversation/`, {
         conversation_id
       });
-      return response;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response.data);
     }
   }
 );
 
-export const getAttachmentsOfConversation = createAsyncThunk(
-  'chat/getAttachmentsOfConversation',
-  async ({ conversation_id, type, page }, { rejectWithValue }) => {
+export const getAttachments = createAsyncThunk(
+  'chat/getAttachments',
+  async ({ conversation_id, type }, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.get(
-        `/chat/conversations/${conversation_id}/attachmemts/?type=${type}&page=${page}`
+        `/chat/conversations/${conversation_id}/attachments?type=${type}`
       );
-      return response;
+      return { type, data: response.data };
     } catch (error) {
       throw rejectWithValue(error.response.data);
     }
@@ -157,11 +157,14 @@ const initialState = {
       is_pinned: null
     },
     typingIndicator: null,
-    attachmemts: [],
     messages: {
       data: [],
       lastPage: 0,
       currentPage: 1
+    },
+    attachments: {
+      images: [],
+      documents: []
     }
   },
   call: {
@@ -321,6 +324,13 @@ const chatSlice = createSlice({
           members: [],
           is_pinned: null
         };
+      })
+      .addCase(getAttachments.fulfilled, (state, action) => {
+        if (action.payload.type === MessageTypes.IMAGE) {
+          state.chat.attachments.images = action.payload.data;
+        } else if (action.payload.type === MessageTypes.DOCUMENT) {
+          state.chat.attachments.documents = action.payload.data;
+        }
       });
   }
 });

@@ -182,6 +182,7 @@ export const DocMessage = ({
           shape="circle"
           icon={<GoDownload size={20} />}
           className="text-inherit"
+          target="_blank"
           href={attachments[0].file_url}
         />
       </Flex>

@@ -1,10 +1,14 @@
-import { faker } from '@faker-js/faker';
 import { Button, Col, Flex, Image, Row, Tabs } from 'antd';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showContactInfo } from '~/store/slices/appSlice';
-import pdf from '~/assets/pdf_icon.svg';
 import { GoDownload } from 'react-icons/go';
+import { useSelector } from '~/store';
+import { useEffect } from 'react';
+import { getAttachments } from '~/store/slices/chatSlice';
+import { MessageTypes } from '~/utils/enum';
+import { getIconDocument } from '~/utils/getPropertyMessage';
+import { formatFileSize } from '~/utils/formatFileSize';
 
 export const SharedMessages = () => {
   const dispatch = useDispatch();
@@ -21,18 +25,10 @@ export const SharedMessages = () => {
     },
     {
       key: '2',
-      label: 'Links',
-      children: <Links />
-    },
-    {
-      key: '3',
       label: 'Docs',
       children: <Docs />
     }
   ];
-  const onChange = (key) => {
-    console.log('key', key);
-  };
 
   // render
   return (
@@ -54,82 +50,94 @@ export const SharedMessages = () => {
           size={20}
           onClick={handleReturnContactInfo}
         />
-        <p className="m-0 font-semibold">Shared Messages</p>
+        <p className="m-0 font-semibold">Media, files and links</p>
       </Flex>
 
       <Flex className="p-4">
-        <Tabs
-          centered
-          defaultActiveKey="1"
-          items={items}
-          onChange={onChange}
-          className="w-full"
-        />
+        <Tabs centered items={items} className="w-full" />
       </Flex>
     </Flex>
   );
 };
 
 export const Media = () => {
+  const dispatch = useDispatch();
+  const { attachments, currentConversation } = useSelector(
+    (state) => state.chat.chat
+  );
+
+  console.log(attachments);
+
+  useEffect(() => {
+    dispatch(
+      getAttachments({
+        conversation_id: currentConversation.id,
+        type: MessageTypes.IMAGE
+      })
+    );
+  }, [currentConversation, dispatch]);
+
   return (
     <Row gutter={[8, 8]}>
-      <Col span={8}>
-        <Image
-          src={faker.image.urlLoremFlickr()}
-          className="rounded-md overflow-hidden cursor-pointer"
-          preview={{ mask: false }}
-        />
-      </Col>
+      {attachments.images.map((image) => (
+        <Col span={8} key={image.id}>
+          <Image
+            src={image.file_url}
+            className="rounded-md overflow-hidden cursor-pointer object-cover"
+            preview={{ mask: false }}
+            height={100}
+          />
+        </Col>
+      ))}
     </Row>
   );
 };
 
-export const Links = () => {
-  return (
-    <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
-      Links
-    </Flex>
-  );
-};
-
 export const Docs = () => {
+  const dispatch = useDispatch();
+  const { attachments, currentConversation } = useSelector(
+    (state) => state.chat.chat
+  );
+
+  useEffect(() => {
+    dispatch(
+      getAttachments({
+        conversation_id: currentConversation.id,
+        type: MessageTypes.DOCUMENT
+      })
+    );
+  }, [currentConversation, dispatch]);
+
   return (
     <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
-      <DocItem />
+      {attachments.documents.map((document) => (
+        <DocItem key={document.id} {...document} />
+      ))}
     </Flex>
   );
 };
 
-export const DocItem = () => {
+export const DocItem = ({ file_name, file_size, file_url, file_type }) => {
   return (
     <Flex
       align="center"
       justify="space-between"
-      className="p-2 w-full hover:bg-blue-50 rounded"
+      className="p-2 w-full hover:bg-blue-50 rounded cursor-pointer"
     >
       <Flex align="center" gap={4}>
-        <img src={pdf} className="w-[50px] h-[50px]" />
+        <img src={getIconDocument(file_type)} className="w-[40px] h-[40px]" />
         <div>
-          <p className="m-0 font-semibold">{faker.lorem.words()}</p>
-          <p className="m-0">32.5 MB</p>
+          <p className="font-semibold text-sm line-clamp-1 mb-1">{file_name}</p>
+          <p className="text-xs text-gray-500">{formatFileSize(file_size)}</p>
         </div>
       </Flex>
-      <Button type="text" shape="circle" icon={<GoDownload size={20} />} />
+      <Button
+        type="text"
+        shape="circle"
+        href={file_url}
+        target="_blank"
+        icon={<GoDownload size={20} />}
+      />
     </Flex>
   );
 };

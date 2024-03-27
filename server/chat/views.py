@@ -312,8 +312,7 @@ class LeaveConversation(APIView):
             send_message_to_conversation_members(message.conversation_id, 'chat_message', message_serializer.data)
         except Participants.DoesNotExist:
             return ErrorResponse(error_message="Conversation does not exist for this user", status=status.HTTP_400_BAD_REQUEST)
-        return SuccessResponse(data={"conversation_id": conversation_id,
-                                     "message": "Close successfully"}, status=status.HTTP_200_OK)
+        return SuccessResponse(data={"conversation_id": conversation_id}, status=status.HTTP_200_OK)
         
 class GetAttachmentConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -330,12 +329,14 @@ class GetAttachmentConversation(generics.ListAPIView):
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        page = self.paginate_queryset(queryset)[::-1]
-        if page is not None:
-            serializer = AttachmentSerializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
+        # page = self.paginate_queryset(queryset)[::-1]
+        # if page is not None:
+        #     serializer = AttachmentSerializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
         serializer = AttachmentSerializer(queryset, many=True)
         return Response(serializer.data)
+    
+    
     
 class PinnedMessagesList(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
@@ -374,7 +375,7 @@ class PinnedMessagesList(generics.ListAPIView):
             )
             message_serializer = MessageSerializer(instance=message)
             send_message_to_conversation_members(message.conversation.id, 'chat_message', message_serializer.data)
-            return SuccessResponse(data={"message_id": pinned_message.message.id, "message": "Pinned message successfully"}, status=status.HTTP_201_CREATED)
+            return SuccessResponse(data={"message_id": pinned_message.message.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class DeletePinnedMessage(APIView):
@@ -396,6 +397,6 @@ class DeletePinnedMessage(APIView):
             )
             message_serializer = MessageSerializer(instance=message)
             send_message_to_conversation_members(message.conversation.id, 'chat_message', message_serializer.data)
-            return SuccessResponse(data={"message_id": message_id, "message": "Delete pinned message successfully"}, status=status.HTTP_200_OK)
+            return SuccessResponse(data={"message_id": message_id}, status=status.HTTP_200_OK)
         else:
             raise Http404
