@@ -28,12 +28,12 @@ const VideoCallModal = () => {
     const peer_id = uuidv4();
     const width = 800;
     const height = 600;
+    const leftPos = (window.innerWidth - width) / 2;
+    const topPos = (window.innerHeight - height) / 2;
     window.open(
       `/video-call/${peer_id}`,
       '_blank',
-      `width=${width}, height=${600}, left=${
-        (window.innerWidth - width) / 2
-      }, top=${(window.innerHeight - height) / 2}`
+      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
     emitAcceptVideoCall({ user_id: call.user.id, peer_id });
   };

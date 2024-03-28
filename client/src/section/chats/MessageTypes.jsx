@@ -37,9 +37,8 @@ const MessageWrapper = memo(
             <Avatar
               className="mr-2 cursor-pointer"
               src={
-                chat.currentConversation.members.find((mem) => mem.id == from)[
-                  'avatar'
-                ]
+                chat.currentConversation.members.find((mem) => mem.id == from)
+                  ?.avatar
               }
             />
           )}

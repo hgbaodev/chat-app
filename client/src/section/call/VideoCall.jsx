@@ -21,6 +21,7 @@ const VideoCall = () => {
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
+  console.log('call', call);
   const { emitVideoCall, emitInterruptVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -32,25 +33,25 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (socketInstance) {
+      const peerInstance = new Peer(peer_id);
       const callTranfer = JSON.parse(localStorage.getItem('call'));
       dispatch(setCall(callTranfer));
       dispatch(
         setConversationCall({ conversation_id: callTranfer.conversation_id })
       );
       if (peer) peer.destroy();
-      const peerInstance = new Peer(peer_id);
-      console.log('peerInstance', peerInstance, now());
-
+      peerInstance.on('open', (peer_id) => {
+        console.log('My peer id' + peer_id);
+      });
       setPeer(peerInstance);
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
         .then((localStream) => {
           setStream(localStream);
+          console.log('peerInstance', peerInstance, now());
           // on call
           peerInstance.on('call', (call) => {
-            console.log({ call });
             call.answer(localStream);
-            // on stream
             call.on('stream', (remoteStream) => {
               setRemoteStream(remoteStream);
             });
@@ -73,16 +74,25 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (peer && call.calling && stream && !call.owner) {
-      const myCall = peer.call(call.user.peer_id, stream);
-      console.log('myCall', myCall, now());
-      if (myCall) {
-        myCall.on('stream', (remoteStream) => {
-          setRemoteStream(remoteStream);
-        });
-        myCall.on('error', function (err) {
-          console.log('Error occurred:', err);
-        });
-      }
+      peer.on('open', (peer_id) => {
+        console.log('My peer id' + peer_id);
+        try {
+          const myCall = peer.call(call.user.peer_id, stream);
+          myCall.on('stream', (remoteStream) => {
+            setRemoteStream(remoteStream);
+          });
+
+          myCall.on('close', () => {
+            confirm('Are you sure you want to');
+          });
+
+          myCall.on('error', (err) => {
+            console.log('Error occurred:', err);
+          });
+        } catch (error) {
+          console.log('Error occurred:', error);
+        }
+      });
     }
   }, [peer, stream, call]);
   // set stream to video
@@ -152,9 +162,9 @@ const VideoCall = () => {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       if (call.calling) {
-        handleInteruptCall();
+        // handleInteruptCall();
       } else {
-        handleCloseCall();
+        // handleCloseCall();
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
@@ -173,7 +183,7 @@ const VideoCall = () => {
               ref={remoteVideoRef}
               autoPlay
               playsInline
-              className="w-full h-full"
+              className="w-full h-full overflow-hidden"
             />
           </div>
         </>
@@ -200,7 +210,7 @@ const VideoCall = () => {
         <div className="absolute top-0 right-0 w-[320px] h-auto m-4 rounded-lg overflow-hidden">
           <video
             ref={videoRef}
-            className="w-full h-full"
+            className="w-full h-full rounded-lg"
             autoPlay
             playsInline
           />
