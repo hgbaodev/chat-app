@@ -23,23 +23,13 @@ export const ChatHeader = () => {
   // handle video call
   const handleVideoCall = () => {
     dispatch(openCall());
-    localStorage.setItem(
-      'call',
-      JSON.stringify({
-        calling: false,
-        refused: false,
-        ended: false,
-        owner: true,
-        conversation_id: currentConversation.id
-      })
-    );
     const peer_id = uuidv4();
     const width = 800;
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}`,
+      `/video-call/${peer_id}?calling=false&refused=false&ended=false&owner=true&conversation_id=${currentConversation.id}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );

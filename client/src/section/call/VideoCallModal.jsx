@@ -13,25 +13,15 @@ const VideoCallModal = () => {
 
   const handleAccept = () => {
     dispatch(setCall({ open: false }));
-    localStorage.setItem(
-      'call',
-      JSON.stringify({
-        open: false,
-        calling: true,
-        refused: false,
-        ended: false,
-        owner: false,
-        user: call.user,
-        conversation_id: call.user.conversation_id
-      })
-    );
     const peer_id = uuidv4();
     const width = 800;
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}`,
+      `/video-call/${peer_id}?calling=true&refused=false&ended=false&owner=false&conversation_id=${
+        call.user.conversation_id
+      }&user=${JSON.stringify(call.user)}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
