@@ -52,12 +52,12 @@ export const useSocket = () => {
     }
   };
 
-  const emitAcceptVideoCall = ({ user_id, peer_id }) => {
+  const emitAcceptVideoCall = ({ conversation_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'accept_video_call',
-          user_id,
+          conversation_id,
           peer_id
         })
       );

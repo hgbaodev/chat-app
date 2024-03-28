@@ -150,7 +150,7 @@ class ChatConsumer(WebsocketConsumer):
                 )
             
     def receive_accept_video_call(self, data):
-        user_id = data["user_id"]
+        conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         user_dict = {
             'id': self.scope["user"].id,
@@ -158,11 +158,13 @@ class ChatConsumer(WebsocketConsumer):
             'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
             'peer_id': peer_id,
         }
-        room_group_name = f"user_{user_id}"
-        async_to_sync(self.channel_layer.group_send)(
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "accept_video_call", "message": json.dumps(user_dict)}
                 )
-    
+       
     def receive_refuse_video_call(self, data):
         user_id = data["user_id"]
         user_dict = {

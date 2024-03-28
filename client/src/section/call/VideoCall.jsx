@@ -1,7 +1,7 @@
-import { Avatar, Button, Space } from 'antd';
+import { Avatar, Button, Col, Row, Space } from 'antd';
 import { now } from 'lodash';
 import Peer from 'peerjs';
-import { useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
 import { FaPhoneAlt } from 'react-icons/fa';
 import {
@@ -25,10 +25,10 @@ const VideoCall = () => {
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
-  const remoteVideoRef = useRef(null);
   const [peer, setPeer] = useState();
   const [stream, setStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
+  const [remoteStreams, setRemoteStreams] = useState([]);
+  const videoRefs = remoteStreams.map(() => React.createRef());
 
   useEffect(() => {
     let params = new URLSearchParams(window.location.search);
@@ -57,7 +57,7 @@ const VideoCall = () => {
             console.log('Call received', call);
             call.answer(localStream);
             call.on('stream', (remoteStream) => {
-              setRemoteStream(remoteStream);
+              setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
             });
           });
           peerInstance.on('error', function (err) {
@@ -73,6 +73,11 @@ const VideoCall = () => {
           peer_id
         });
       }
+      return () => {
+        if (peerInstance) {
+          peerInstance.destroy();
+        }
+      };
     }
   }, [socketInstance]);
 
@@ -82,12 +87,15 @@ const VideoCall = () => {
         try {
           const myCall = peer.call(call.user.peer_id, stream);
           myCall.on('stream', (remoteStream) => {
-            setRemoteStream(remoteStream);
+            setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
           });
 
           myCall.on('error', (err) => {
             console.log('Error occurred:', err);
           });
+          return () => {
+            myCall.close();
+          };
         } catch (error) {
           console.log('Error occurred:', error);
         }
@@ -102,10 +110,13 @@ const VideoCall = () => {
   }, [stream, videoRef, call.calling]);
   // set remote video stream
   useEffect(() => {
-    if (remoteVideoRef.current) {
-      remoteVideoRef.current.srcObject = remoteStream;
-    }
-  }, [remoteStream, remoteVideoRef, call.calling]);
+    remoteStreams.forEach((stream, index) => {
+      const videoEl = videoRefs[index].current;
+      if (videoEl && videoEl.srcObject !== stream) {
+        videoEl.srcObject = stream;
+      }
+    });
+  }, [remoteStreams]);
   // handle toggle microphone
   const toggleMicrophone = () => {
     if (stream) {
@@ -153,9 +164,9 @@ const VideoCall = () => {
   };
   // handle close call
   const handleCloseCall = () => {
-    window.close();
     // destrop peer
     stopStreamAndDestroyPeer();
+    window.close();
   };
 
   useEffect(() => {
@@ -176,16 +187,26 @@ const VideoCall = () => {
   return (
     <div className="w-[100vw] h-[100vh] relative bg-[#efecec] flex items-center justify-center text-white">
       {call.calling ? (
-        <>
-          <div className="absolute top-0 right-0 w-full h-full">
+        <div id="video-frame" className={`grid grid-cols-4 w-full h-full`}>
+          <div className="p-4">
             <video
-              ref={remoteVideoRef}
+              ref={videoRef}
               autoPlay
               playsInline
-              className="w-full h-full overflow-hidden"
+              className="w-full h-auto"
             />
           </div>
-        </>
+          {remoteStreams.map((stream, index) => (
+            <div key={index} className="p-4">
+              <video
+                ref={videoRefs[index]}
+                autoPlay
+                playsInline
+                className="w-full h-auto"
+              />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center ">
           <Avatar
@@ -202,17 +223,6 @@ const VideoCall = () => {
           ) : (
             <p className="text-[#777]">Đang gọi...</p>
           )}
-        </div>
-      )}
-
-      {!call.refused && !call.ended && (
-        <div className="absolute top-0 right-0 w-[320px] h-auto m-4 rounded-lg overflow-hidden">
-          <video
-            ref={videoRef}
-            className="w-full h-full rounded-lg"
-            autoPlay
-            playsInline
-          />
         </div>
       )}
 
