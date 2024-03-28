@@ -21,7 +21,6 @@ const VideoCall = () => {
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  console.log('call', call);
   const { emitVideoCall, emitInterruptVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -32,13 +31,18 @@ const VideoCall = () => {
   const videoRefs = remoteStreams.map(() => React.createRef());
 
   useEffect(() => {
+    let params = new URLSearchParams(window.location.search);
+    let calling = params.get('calling') === 'true';
+    let refused = params.get('refused') === 'true';
+    let ended = params.get('ended') === 'true';
+    let owner = params.get('owner') === 'true';
+    let user = JSON.parse(params.get('user'));
+    let conversation_id = params.get('conversation_id');
+
     if (socketInstance) {
       const peerInstance = new Peer(peer_id);
-      const callTranfer = JSON.parse(localStorage.getItem('call'));
-      dispatch(setCall(callTranfer));
-      dispatch(
-        setConversationCall({ conversation_id: callTranfer.conversation_id })
-      );
+      dispatch(setCall({ calling, refused, ended, owner, user }));
+      dispatch(setConversationCall({ conversation_id }));
       if (peer) peer.destroy();
       peerInstance.on('open', (peer_id) => {
         console.log('My peer id' + peer_id);
@@ -48,9 +52,9 @@ const VideoCall = () => {
         .getUserMedia({ video: true, audio: true })
         .then((localStream) => {
           setStream(localStream);
-          console.log('peerInstance', peerInstance, now());
           // on call
           peerInstance.on('call', (call) => {
+            console.log('Call received', call);
             call.answer(localStream);
             call.on('stream', (remoteStream) => {
               setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
@@ -63,9 +67,9 @@ const VideoCall = () => {
         .catch((err) => {
           console.error('Failed to get local stream', err);
         });
-      if (callTranfer.owner) {
+      if (owner) {
         emitVideoCall({
-          conversation_id: callTranfer.conversation_id,
+          conversation_id,
           peer_id
         });
       }
