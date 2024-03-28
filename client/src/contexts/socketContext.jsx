@@ -18,6 +18,7 @@ export const SocketContext = createContext({
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { call } = useSelector((state) => state.chat);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
@@ -58,22 +59,18 @@ export const SocketProvider = ({ children }) => {
               })
             );
           } else if (data.type === 'accept_video_call') {
-            dispatch(
-              setCall({
-                calling: true,
-                owner: true,
-                user: JSON.parse(data.message)
-              })
-            );
-            localStorage.setItem(
-              'call',
-              JSON.stringify({
-                open: false,
-                calling: true,
-                owner: true,
-                user: JSON.parse(data.message)
-              })
-            );
+            if (!call.open) {
+              console.log('====================================');
+              console.log('send me');
+              console.log('====================================');
+              dispatch(
+                setCall({
+                  calling: true,
+                  owner: true,
+                  user: JSON.parse(data.message)
+                })
+              );
+            }
           } else if (data.type === 'refuse_video_call') {
             dispatch(
               setCall({
@@ -84,16 +81,6 @@ export const SocketProvider = ({ children }) => {
                 user: null
               })
             );
-            localStorage.setItem(
-              'call',
-              JSON.stringify({
-                calling: false,
-                ended: false,
-                refused: true,
-                owner: true,
-                user: JSON.parse(data.message)
-              })
-            );
           } else if (data.type === 'interrupt_video_call') {
             console.log({ msg: data.message });
             dispatch(
@@ -102,16 +89,6 @@ export const SocketProvider = ({ children }) => {
                 calling: false,
                 ended: true,
                 user: null
-              })
-            );
-            localStorage.setItem(
-              'call',
-              JSON.stringify({
-                calling: false,
-                ended: true,
-                refused: false,
-                owner: true,
-                user: JSON.parse(data.message)
               })
             );
           }
@@ -131,7 +108,7 @@ export const SocketProvider = ({ children }) => {
         socket.close();
       };
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, isAuthenticated, call.open]);
   return (
     <SocketContext.Provider value={{ socketInstance }}>
       {children}

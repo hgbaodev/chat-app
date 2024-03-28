@@ -26,7 +26,7 @@ const VideoCallModal = () => {
       })
     );
     const peer_id = uuidv4();
-    const width = 800;
+    const width = 1000;
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
@@ -35,7 +35,10 @@ const VideoCallModal = () => {
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
-    emitAcceptVideoCall({ user_id: call.user.id, peer_id });
+    emitAcceptVideoCall({
+      conversation_id: call.user.conversation_id,
+      peer_id
+    });
   };
 
   // handle refuse

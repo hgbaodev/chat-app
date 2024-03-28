@@ -34,7 +34,7 @@ export const ChatHeader = () => {
       })
     );
     const peer_id = uuidv4();
-    const width = 800;
+    const width = 1000;
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
