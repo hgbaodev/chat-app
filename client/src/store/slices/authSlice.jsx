@@ -67,17 +67,7 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
-export const getInfoUser = createAsyncThunk(
-  'auth/getInforUser',
-  async (_, { rejectWithValue }) => {
-    try {
-      const response = await AxiosInstance.get(`auth/get-info-user`);
-      return response;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+
 
 const initialState = {
   isAuthenticated: false,
