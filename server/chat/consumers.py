@@ -168,9 +168,24 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         # return
+        conversation = Conversation.objects.get(id=conversation_id)
+        conversation_type = conversation.type
+        conversation_title = conversation.title
+        conversation_image = conversation.image
+        if conversation.type == Conversation.ConversationType.FRIEND:
+            participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
+            conversation_title = participant.user.first_name + ' ' + participant.user.last_name
+            conversation_image = participant.user.avatar
+        conversation_dict = {
+            'conversation_id': conversation_id,
+            'title': conversation_title,
+            'image' : conversation_image,
+            'type': conversation_type,
+        }
         return_data = {
             'peer_ids' : self.call_store[conversation_id],
-            'peer_id': peer_id
+            'peer_id': peer_id,
+            'conversation': conversation_dict,
         }
         async_to_sync(self.channel_layer.group_send)(
             f"user_{self.scope['user'].id}", {"type": "return_accept_video_call", "message": json.dumps(return_data)}
@@ -200,16 +215,11 @@ class ChatConsumer(WebsocketConsumer):
             
     def receive_interrupt_video_call(self, data):
         conversation_id = data["conversation_id"]
-        user_dict = {
-            'id': self.scope["user"].id,
-        }
-
-        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
-        for participant in participants:
-            room_group_name = f"user_{participant.user.id}"
-            async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "interrupt_video_call", "message": json.dumps(user_dict)}
-                )
+        participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
+        room_group_name = f"user_{participant.user.id}"
+        async_to_sync(self.channel_layer.group_send)(
+            room_group_name, {"type": "interrupt_video_call", "message": "empty"}
+            )
        
 
     def receive_friend_request(self, event):

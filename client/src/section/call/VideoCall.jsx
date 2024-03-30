@@ -19,6 +19,7 @@ import {
   setConversationCall,
   setPeerIds
 } from '~/store/slices/chatSlice';
+import { ConversationTypes } from '~/utils/enum';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
@@ -39,7 +40,7 @@ const VideoCall = () => {
     let refused = params.get('refused') === 'true';
     let ended = params.get('ended') === 'true';
     let conversation_id = params.get('conversation_id');
-    let type = params.get('type');
+    let type = parseInt(params.get('type'));
     let image = params.get('image');
     let title = params.get('title');
     let peer_ids = JSON.parse(params.get('peer_ids'));
@@ -178,13 +179,18 @@ const VideoCall = () => {
   };
   // handle interrupt call
   const handleInteruptCall = () => {
-    // emitInterruptVideoCall({ conversation_id: call.conversation_id });
+    console.log('into interrupt call');
+    if (call.conversation.type === ConversationTypes.FRIEND) {
+      console.log('interrupt call');
+      emitInterruptVideoCall({
+        conversation_id: call.conversation.conversation_id
+      });
+    }
     dispatch(
       setCall({
         calling: false,
         refused: false,
-        ended: true,
-        owner: call.owner
+        ended: true
       })
     );
 
@@ -229,6 +235,8 @@ const VideoCall = () => {
       <div className="flex-1 w-full flex items-center justify-center">
         {call.refused ? (
           <p>{call.conversation?.title} has refused this call.</p>
+        ) : call.ended ? (
+          <p>This call has ended.</p>
         ) : (
           <div
             id="video-frame"
