@@ -73,12 +73,12 @@ export const useSocket = () => {
       );
     }
   };
-  const emitRefuseVideoCall = ({ user_id }) => {
+  const emitRefuseVideoCall = ({ conversation_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'refuse_video_call',
-          user_id
+          conversation_id
         })
       );
     }
