@@ -7,6 +7,8 @@ import {
   recallMessage,
   receiverMessage,
   setCall,
+  setConversationCall,
+  setPeerIds,
   setTypingIndicator
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
@@ -51,25 +53,28 @@ export const SocketProvider = ({ children }) => {
           } else if (data.type === 'recall_message') {
             dispatch(recallMessage(data.message));
           } else if (data.type === 'video_call') {
+            const { conversation, peer_ids } = JSON.parse(data.message);
             dispatch(
               setCall({
                 open: true,
                 calling: false,
-                owner: false,
-                user: JSON.parse(data.message)
+                ended: false,
+                refused: false
               })
             );
+            dispatch(setConversationCall({ conversation }));
+            dispatch(setPeerIds({ peer_ids }));
           } else if (data.type === 'accept_video_call') {
             if (!call.open) {
-              const user = JSON.parse(data.message);
+              const { conversation, peer_ids } = JSON.parse(data.message);
               console.log('====================================');
-              console.log(`accept_video_call from `, user);
+              console.log(`accept_video_call from `, peer_ids);
               console.log('====================================');
               dispatch(
                 setCall({
                   calling: true,
-                  owner: true,
-                  user: user
+                  refused: false,
+                  ended: false
                 })
               );
             }

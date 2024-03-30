@@ -135,18 +135,18 @@ class ChatConsumer(WebsocketConsumer):
     def receive_video_call(self, data):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
-        user_dict = {
-            'id': self.scope["user"].id,
-            'email': self.scope["user"].email,
-            'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
+        conversation_dict = {
             'conversation_id': conversation_id,
-            'peer_id': peer_id
+        }
+        message_dict = {
+            'conversation': conversation_dict,
+            'peer_ids': [peer_id],
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "video_call", "message": json.dumps(user_dict)}
+                room_group_name, {"type": "video_call", "message": json.dumps(message_dict)}
                 )
             
     def receive_accept_video_call(self, data):
@@ -154,20 +154,21 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps({
         'message': 'return from server',
         }))
-        
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
-        user_dict = {
-            'id': self.scope["user"].id,
-            'email': self.scope["user"].email,
-            'full_name' : self.scope["user"].first_name + ' ' + self.scope["user"].last_name,
-            'peer_id': peer_id,
+
+        conversation_dict = {
+            'conversation_id': conversation_id,
+        }
+        message_dict = {
+            'conversation': conversation_dict,
+            'peer_ids': [peer_id],
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "accept_video_call", "message": json.dumps(user_dict)}
+                room_group_name, {"type": "accept_video_call", "message": json.dumps(message_dict)}
                 )
             
 
