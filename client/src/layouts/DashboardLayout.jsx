@@ -16,15 +16,16 @@ import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSli
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
 import VideoCallModal from '~/section/call/VideoCallModal';
+import { setOpenProfile } from '~/store/slices/contactSlice';
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
   const { avatar } = useSelector((state) => state.auth.user);
+  const { openProfile } = useSelector((state) => state.contact);
   const { received_friend_requests } = useSelector(
     (state) => state.relationship
   );
   const { totalUnseen } = useSelector((state) => state.notifications);
-  const [openProfile, setOpenProfile] = useState(false);
   const [openNotification, setOpenNotification] = useState(false);
 
   // effect
@@ -48,7 +49,9 @@ const DashboardLayout = () => {
                 size={40}
                 src={avatar}
                 className="cursor-pointer"
-                onClick={() => setOpenProfile(true)}
+                onClick={() => {
+                  dispatch(setOpenProfile(true));
+                }}
               />
               <NavButton
                 href="/"
@@ -93,9 +96,7 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </Flex>
-      {openProfile && (
-        <ProfileModal open={openProfile} setOpen={setOpenProfile} />
-      )}
+      {openProfile && <ProfileModal />}
       <Notification
         open={openNotification}
         handleClose={() => {

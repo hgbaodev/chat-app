@@ -11,7 +11,7 @@ const ModalComponent = ({
 }) => {
   const modalStyles = {
     header: {
-      padding: '16px 24px 8px',
+      padding: '16px 20px 8px',
       borderBottom: BorderHeader ? '1px solid #edebeb' : ''
     },
     body: {

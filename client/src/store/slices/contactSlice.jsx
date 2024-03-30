@@ -28,11 +28,25 @@ export const createConversation = createAsyncThunk(
   }
 );
 
+export const getInfoUser = createAsyncThunk(
+  'auth/getInforUser',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`auth/get-info-user`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   searchConversation: [],
   openSearch: false,
   isLoading: false,
-  isLoadingCreateConversation: false
+  isLoadingCreateConversation: false,
+  openProfile: false,
+  info: null
 };
 
 const contactSlice = createSlice({
@@ -41,6 +55,9 @@ const contactSlice = createSlice({
   reducers: {
     setOpenSearch(state, action) {
       state.openSearch = action.payload;
+    },
+    setOpenProfile(state, action) {
+      state.openProfile = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -63,9 +80,12 @@ const contactSlice = createSlice({
       })
       .addCase(createConversation.rejected, (state) => {
         state.isLoadingCreateConversation = false;
+      })
+      .addCase(getInfoUser.fulfilled, (state, action) => {
+        state.info = action.payload.data?.result;
       });
   }
 });
 
 export default contactSlice.reducer;
-export const { setOpenSearch } = contactSlice.actions;
+export const { setOpenSearch, setOpenProfile } = contactSlice.actions;

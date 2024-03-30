@@ -21,11 +21,10 @@ const MessageWrapper = memo(
     hideAction = false,
     children,
     isPinned,
+    sender,
     ...props
   }) => {
     const { user } = useSelector((state) => state.auth);
-    const { chat } = useSelector((state) => state.chat);
-
     const [hoverRef, isHovering] = useHover();
     const [open, setOpen] = useState(false);
 
@@ -34,13 +33,7 @@ const MessageWrapper = memo(
         {created && <TimeLine text={formatDateTime(created)} />}
         <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
           {from !== user.id && (
-            <Avatar
-              className="mr-2 cursor-pointer"
-              src={
-                chat.currentConversation.members.find((mem) => mem.id == from)
-                  ?.avatar
-              }
-            />
+            <Avatar className="mr-2 cursor-pointer" src={sender?.avatar} />
           )}
           <Flex
             align="center"
@@ -95,6 +88,7 @@ export const TextMessage = ({
       from={sender.id}
       created={created}
       forward={forward}
+      sender={sender}
       isPinned={is_pinned}
       {...props}
     >
@@ -136,6 +130,7 @@ export const MediaMessage = ({
       forward={forward}
       className="p-0 rounded-lg overflow-hidden"
       isPinned={is_pinned}
+      sender={sender}
       {...props}
     >
       <Image width={320} className="w-full" src={attachments[0].file_url} />
@@ -159,6 +154,7 @@ export const DocMessage = ({
       created={created}
       forward={forward}
       isPinned={is_pinned}
+      sender={sender}
       {...props}
     >
       <Flex align="center" justify="space-between" className="w-[300px]">
@@ -205,6 +201,7 @@ export const RecallMessage = ({ id, sender, created }) => {
       messageId={id}
       from={sender.id}
       created={created}
+      sender={sender}
       hideAction={true}
     >
       <Typography className="text-gray-500 italic">Message recalled</Typography>
@@ -257,6 +254,7 @@ export const AudioMessage = ({
       from={sender.id}
       created={created}
       forward={forward}
+      sender={sender}
       className="p-0 rounded-lg overflow-hidden"
       isPinned={is_pinned}
       {...props}
