@@ -56,8 +56,21 @@ const VideoCall = () => {
           peerInstance.on('call', (call) => {
             console.log('Call received', call);
             call.answer(localStream);
+
             call.on('stream', (remoteStream) => {
-              setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
+              console.log('Received peer_id on stream:', call.peer);
+              setRemoteStreams((prevStreams) => {
+                if (
+                  !prevStreams.some((stream) => stream.peer_id === call.peer)
+                ) {
+                  return [
+                    ...prevStreams,
+                    { peer_id: call.peer, stream: remoteStream }
+                  ];
+                } else {
+                  return prevStreams;
+                }
+              });
             });
           });
           peerInstance.on('error', function (err) {
@@ -86,8 +99,21 @@ const VideoCall = () => {
       peer.on('open', (peer_id) => {
         try {
           const myCall = peer.call(call.user.peer_id, stream);
+
           myCall.on('stream', (remoteStream) => {
-            setRemoteStreams((prevStreams) => [...prevStreams, remoteStream]);
+            console.log('Received peer_id on stream:', myCall.peer);
+            setRemoteStreams((prevStreams) => {
+              if (
+                !prevStreams.some((stream) => stream.peer_id === myCall.peer)
+              ) {
+                return [
+                  ...prevStreams,
+                  { peer_id: myCall.peer, stream: remoteStream }
+                ];
+              } else {
+                return prevStreams;
+              }
+            });
           });
 
           myCall.on('error', (err) => {
@@ -112,8 +138,8 @@ const VideoCall = () => {
   useEffect(() => {
     remoteStreams.forEach((stream, index) => {
       const videoEl = videoRefs[index].current;
-      if (videoEl && videoEl.srcObject !== stream) {
-        videoEl.srcObject = stream;
+      if (videoEl && videoEl.srcObject !== stream.stream) {
+        videoEl.srcObject = stream.stream;
       }
     });
   }, [remoteStreams]);
