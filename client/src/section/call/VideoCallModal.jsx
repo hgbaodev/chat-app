@@ -18,13 +18,13 @@ const VideoCallModal = () => {
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
-    window.open(
-      `/video-call/${peer_id}?calling=true&refused=false&ended=false&owner=false&conversation_id=${
-        call.user.conversation_id
-      }&user=${JSON.stringify(call.user)}`,
-      '_blank',
-      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
-    );
+    // window.open(
+    //   `/video-call/${peer_id}?calling=true&refused=false&ended=false&owner=false&conversation_id=${
+    //     call.user.conversation_id
+    //   }&user=${JSON.stringify(call.user)}`,
+    //   '_blank',
+    //   `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+    // );
     emitAcceptVideoCall({
       conversation_id: call.user.conversation_id,
       peer_id

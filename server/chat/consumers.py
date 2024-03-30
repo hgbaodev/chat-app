@@ -150,6 +150,11 @@ class ChatConsumer(WebsocketConsumer):
                 )
             
     def receive_accept_video_call(self, data):
+        # return
+        self.send(text_data=json.dumps({
+        'message': 'return from server',
+        }))
+        
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         user_dict = {
@@ -164,6 +169,9 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "accept_video_call", "message": json.dumps(user_dict)}
                 )
+            
+
+        
        
     def receive_refuse_video_call(self, data):
         user_id = data["user_id"]
@@ -209,7 +217,7 @@ class ChatConsumer(WebsocketConsumer):
 
     def accept_video_call(self, event):
         self.send(text_data=json.dumps(event))
-
+    
     def refuse_video_call(self, event):
         self.send(text_data=json.dumps(event))
     
