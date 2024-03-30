@@ -7,6 +7,8 @@ import {
   recallMessage,
   receiverMessage,
   setCall,
+  setConversationCall,
+  setPeerIds,
   setTypingIndicator
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
@@ -34,6 +36,7 @@ export const SocketProvider = ({ children }) => {
       };
 
       socket.onmessage = function (event) {
+        console.log('socket event', event.data);
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
@@ -50,45 +53,62 @@ export const SocketProvider = ({ children }) => {
           } else if (data.type === 'recall_message') {
             dispatch(recallMessage(data.message));
           } else if (data.type === 'video_call') {
+            const { conversation, peer_ids } = JSON.parse(data.message);
             dispatch(
               setCall({
                 open: true,
                 calling: false,
-                owner: false,
-                user: JSON.parse(data.message)
+                ended: false,
+                refused: false
               })
             );
+            dispatch(setConversationCall({ conversation }));
+            dispatch(setPeerIds({ peer_ids }));
           } else if (data.type === 'accept_video_call') {
             if (!call.open) {
-              console.log('====================================');
-              console.log('send me');
-              console.log('====================================');
+              const { peer_ids } = JSON.parse(data.message);
+              console.log(`accept_video_call from `, peer_ids);
               dispatch(
                 setCall({
                   calling: true,
-                  owner: true,
-                  user: JSON.parse(data.message)
+                  refused: false,
+                  ended: false
                 })
               );
             }
+          } else if (data.type === 'return_accept_video_call') {
+            const { peer_id, peer_ids, conversation } = JSON.parse(
+              data.message
+            );
+            const width = 1000;
+            const height = 600;
+            const leftPos = (window.innerWidth - width) / 2;
+            const topPos = (window.innerHeight - height) / 2;
+            window.open(
+              `/video-call/${peer_id}?calling=true&refused=false&ended=false&conversation_id=${
+                conversation.conversation_id
+              }&peer_ids=${JSON.stringify(peer_ids)}&type=${
+                conversation.type
+              }&title=${conversation.title}&image=${conversation.image}`,
+              '_blank',
+              `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+            );
+            dispatch(setCall({ open: false }));
           } else if (data.type === 'refuse_video_call') {
             dispatch(
               setCall({
                 calling: false,
                 ended: false,
-                refused: true,
-                owner: true,
-                user: null
+                refused: true
               })
             );
           } else if (data.type === 'interrupt_video_call') {
-            console.log({ msg: data.message });
+            console.log('receiver here');
             dispatch(
               setCall({
                 open: false,
                 calling: false,
-                ended: true,
-                user: null
+                ended: true
               })
             );
           }
@@ -108,7 +128,7 @@ export const SocketProvider = ({ children }) => {
         socket.close();
       };
     }
-  }, [dispatch, isAuthenticated, call.open]);
+  }, [dispatch, isAuthenticated]);
   return (
     <SocketContext.Provider value={{ socketInstance }}>
       {children}
