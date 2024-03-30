@@ -11,7 +11,8 @@ import secrets
 import cloudinary.uploader
 
 class ChatConsumer(WebsocketConsumer):
-    
+    call_store = {}
+
     def connect(self):
         token = self.scope["url_route"]["kwargs"]["token"]
         
@@ -135,8 +136,22 @@ class ChatConsumer(WebsocketConsumer):
     def receive_video_call(self, data):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
+        # init call store
+        self.call_store[conversation_id] = [peer_id]
+
+        conversation = Conversation.objects.get(id=conversation_id)
+        conversation_type = conversation.type
+        conversation_title = conversation.title
+        conversation_image = conversation.image
+        if conversation.type == Conversation.ConversationType.FRIEND:
+            participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
+            conversation_title = participant.user.first_name + ' ' + participant.user.last_name
+            conversation_image = participant.user.avatar
         conversation_dict = {
             'conversation_id': conversation_id,
+            'title': conversation_title,
+            'image' : conversation_image,
+            'type': conversation_type,
         }
         message_dict = {
             'conversation': conversation_dict,
@@ -150,18 +165,22 @@ class ChatConsumer(WebsocketConsumer):
                 )
             
     def receive_accept_video_call(self, data):
-        # return
-        self.send(text_data=json.dumps({
-        'message': 'return from server',
-        }))
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
-
-        conversation_dict = {
-            'conversation_id': conversation_id,
+        # return
+        return_data = {
+            'peer_ids' : self.call_store[conversation_id],
+            'peer_id': peer_id
         }
+        async_to_sync(self.channel_layer.group_send)(
+            f"user_{self.scope['user'].id}", {"type": "return_accept_video_call", "message": json.dumps(return_data)}
+            )
+        
+        
+        # append peer_id into call store
+        self.call_store[conversation_id].append(peer_id)
+
         message_dict = {
-            'conversation': conversation_dict,
             'peer_ids': [peer_id],
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
@@ -170,9 +189,6 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "accept_video_call", "message": json.dumps(message_dict)}
                 )
-            
-
-        
        
     def receive_refuse_video_call(self, data):
         user_id = data["user_id"]
@@ -217,6 +233,9 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
 
     def accept_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def return_accept_video_call(self, event):
         self.send(text_data=json.dumps(event))
     
     def refuse_video_call(self, event):

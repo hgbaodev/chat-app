@@ -31,7 +31,7 @@ export const ChatHeader = () => {
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}?calling=false&refused=false&ended=false&conversation_id=${currentConversation.id}`,
+      `/video-call/${peer_id}?calling=false&refused=false&ended=false&conversation_id=${currentConversation.id}&type=${currentConversation.type}&title=${currentConversation.title}&image=${currentConversation.image}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );

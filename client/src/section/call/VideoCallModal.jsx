@@ -12,19 +12,7 @@ const VideoCallModal = () => {
   // handle
 
   const handleAccept = () => {
-    dispatch(setCall({ open: false }));
     const peer_id = uuidv4();
-    const width = 1000;
-    const height = 600;
-    const leftPos = (window.innerWidth - width) / 2;
-    const topPos = (window.innerHeight - height) / 2;
-    window.open(
-      `/video-call/${peer_id}?calling=true&refused=false&ended=false&conversation_id=${
-        call.conversation.conversation_id
-      }&peer_ids=${JSON.stringify(call.peer_ids)}`,
-      '_blank',
-      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
-    );
     emitAcceptVideoCall({
       conversation_id: call.conversation.conversation_id,
       peer_id
@@ -33,7 +21,7 @@ const VideoCallModal = () => {
 
   // handle refuse
   const handleRefuse = () => {
-    emitRefuseVideoCall({ user_id: call.user.id });
+    // emitRefuseVideoCall({ user_id: call.user.id });
     dispatch(setCall({ open: false }));
   };
   // render
@@ -48,14 +36,9 @@ const VideoCallModal = () => {
       >
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center mb-5">
-            <Avatar
-              size={70}
-              src={
-                'https://res.cloudinary.com/dw3oj3iju/image/upload/v1709628794/chat_app/b6pswhnwsreustbzr8d0.jpg'
-              }
-            />
+            <Avatar size={70} src={call.conversation?.image} />
             <h2 className="my-3 text-[20px] font-semibold text-center">
-              {call?.user?.full_name}
+              {call.conversation?.title}
             </h2>
             <p className="text-[#777] text-center">
               Cuộc gọi sẽ bắt đầu ngay khi bạn chấp nhận

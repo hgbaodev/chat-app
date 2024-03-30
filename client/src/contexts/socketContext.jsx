@@ -66,10 +66,8 @@ export const SocketProvider = ({ children }) => {
             dispatch(setPeerIds({ peer_ids }));
           } else if (data.type === 'accept_video_call') {
             if (!call.open) {
-              const { conversation, peer_ids } = JSON.parse(data.message);
-              console.log('====================================');
+              const { peer_ids } = JSON.parse(data.message);
               console.log(`accept_video_call from `, peer_ids);
-              console.log('====================================');
               dispatch(
                 setCall({
                   calling: true,
@@ -78,11 +76,24 @@ export const SocketProvider = ({ children }) => {
                 })
               );
             }
-          } else if (data.type === 'receive_accept_video_call') {
-            const json_data = JSON.parse(data.message);
-            console.log('====================================');
-            console.log(`json_data`, json_data);
-            console.log('====================================');
+          } else if (data.type === 'return_accept_video_call') {
+            const { peer_id, peer_ids } = JSON.parse(data.message);
+            const width = 1000;
+            const height = 600;
+            const leftPos = (window.innerWidth - width) / 2;
+            const topPos = (window.innerHeight - height) / 2;
+            window.open(
+              `/video-call/${peer_id}?calling=true&refused=false&ended=false&conversation_id=${
+                call.conversation.conversation_id
+              }&peer_ids=${JSON.stringify(peer_ids)}&type=${
+                call.conversation.type
+              }&title=${call.conversation.title}&image=${
+                call.conversation.image
+              }`,
+              '_blank',
+              `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+            );
+            dispatch(setCall({ open: false }));
           } else if (data.type === 'refuse_video_call') {
             dispatch(
               setCall({
