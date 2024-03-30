@@ -34,6 +34,7 @@ export const SocketProvider = ({ children }) => {
       };
 
       socket.onmessage = function (event) {
+        console.log('socket event', event.data);
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
@@ -60,17 +61,23 @@ export const SocketProvider = ({ children }) => {
             );
           } else if (data.type === 'accept_video_call') {
             if (!call.open) {
+              const user = JSON.parse(data.message);
               console.log('====================================');
-              console.log('send me');
+              console.log(`accept_video_call from `, user);
               console.log('====================================');
               dispatch(
                 setCall({
                   calling: true,
                   owner: true,
-                  user: JSON.parse(data.message)
+                  user: user
                 })
               );
             }
+          } else if (data.type === 'receive_accept_video_call') {
+            const json_data = JSON.parse(data.message);
+            console.log('====================================');
+            console.log(`json_data`, json_data);
+            console.log('====================================');
           } else if (data.type === 'refuse_video_call') {
             dispatch(
               setCall({

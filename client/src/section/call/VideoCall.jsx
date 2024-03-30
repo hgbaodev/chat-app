@@ -95,9 +95,10 @@ const VideoCall = () => {
   }, [socketInstance]);
 
   useEffect(() => {
-    if (peer && call.calling && stream && !call.owner) {
+    if (peer && call.calling && stream) {
       peer.on('open', (peer_id) => {
         try {
+          console.log('send a call to:', call.user.peer_id);
           const myCall = peer.call(call.user.peer_id, stream);
 
           myCall.on('stream', (remoteStream) => {
@@ -211,25 +212,31 @@ const VideoCall = () => {
   }, [call]);
 
   return (
-    <div className="w-[100vw] h-[100vh] relative bg-[#efecec] flex items-center justify-center text-white">
+    <div className="w-[100vw] h-[100vh] relative bg-[#4b4b4b] flex items-center justify-center text-white">
       {call.calling ? (
         <div id="video-frame" className={`grid grid-cols-4 w-full h-full`}>
           <div className="p-4">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className="w-full h-auto"
-            />
-          </div>
-          {remoteStreams.map((stream, index) => (
-            <div key={index} className="p-4">
+            <div className="bg-[#3d3d3d] p-2">
               <video
-                ref={videoRefs[index]}
+                ref={videoRef}
                 autoPlay
                 playsInline
                 className="w-full h-auto"
               />
+              <p>You</p>
+            </div>
+          </div>
+          {remoteStreams.map((stream, index) => (
+            <div key={index} className="p-4">
+              <div className="bg-[#3d3d3d] p-2">
+                <video
+                  ref={videoRefs[index]}
+                  autoPlay
+                  playsInline
+                  className="w-full h-auto"
+                />
+                <p>{stream.peer_id}</p>
+              </div>
             </div>
           ))}
         </div>
