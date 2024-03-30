@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Flex,
+  Form,
   Image,
   Input,
   Space,
@@ -108,14 +109,18 @@ const UpdateProfile = ({ setType }) => {
   const dispatch = useDispatch();
   const { openProfile, info } = useSelector((state) => state.contact);
   const [imageSrc, setImageSrc] = useState(info.avatar);
+  const [imageFile, setImageFile] = useState(null);
   const [hovered, setHovered] = useState(false);
   const fileInputRef = useRef(null);
+
   const handleClose = () => {
     setType(0);
     dispatch(setOpenProfile(false));
   };
+
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
+    setImageFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
@@ -124,6 +129,12 @@ const UpdateProfile = ({ setType }) => {
       reader.readAsDataURL(file);
     }
   };
+
+  const handleSubmit = (values) => {
+    if (imageFile != null) values['image'] = imageFile;
+    console.log('Form values:', values);
+  };
+
   return (
     <ModalComponent
       open={openProfile}
@@ -143,88 +154,116 @@ const UpdateProfile = ({ setType }) => {
       }
       onCancel={handleClose}
       BorderHeader={true}
-      BorderFooter={true}
       width={450}
-      footer={
-        <Flex className="px-[20px] py-[10px]" justify="flex-end">
-          <Button
-            type="text"
-            style={{
-              marginRight: '10px',
-              backgroundColor: '#ebebeb'
-            }}
-          >
-            Cancel
-          </Button>
-          <Button type="primary">Update</Button>
-        </Flex>
-      }
       centered
+      footer={null}
     >
-      <Space direction="vertical" className="w-full px-[20px] py-[10px]">
-        <Flex justify="center">
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileInputChange}
-          />
-          <div
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="relative"
-          >
-            <Avatar
-              size={80}
-              src={imageSrc}
-              className={hovered ? 'filter brightness-75' : ''}
+      <Form
+        onFinish={handleSubmit}
+        initialValues={{
+          first_name: info.first_name,
+          last_name: info.last_name,
+          email: info.email,
+          phone: info.phone,
+          birthday: info.birthday,
+          about: info.about
+        }}
+        layout="vertical"
+        className="w-full"
+        requiredMark="optional"
+      >
+        <Space direction="vertical" className="w-full px-[20px] py-[10px]">
+          <Flex justify="center">
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileInputChange}
             />
-            {hovered && (
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                <Button
-                  type="text"
-                  shape="circle"
-                  icon={<MdEdit className="text-white" />}
-                  onClick={() => fileInputRef.current.click()}
-                  size={40}
-                />
-              </div>
-            )}
+            <div
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              className="relative"
+            >
+              <Avatar
+                size={80}
+                src={imageSrc}
+                className={hovered ? 'filter brightness-75' : ''}
+              />
+              {hovered && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<MdEdit className="text-white" />}
+                    onClick={() => fileInputRef.current.click()}
+                    size={40}
+                  />
+                </div>
+              )}
+            </div>
+          </Flex>
+          <div className="form-items-wrapper">
+            <Form.Item
+              name="first_name"
+              label="First Name"
+              rules={[
+                { required: true, message: 'Please input your first name!' }
+              ]}
+            >
+              <Input placeholder="First Name" />
+            </Form.Item>
+            <Form.Item
+              name="last_name"
+              label="Last Name"
+              rules={[
+                { required: true, message: 'Please input your last name!' }
+              ]}
+            >
+              <Input placeholder="Last Name" />
+            </Form.Item>
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: 'Please input your email!' }]}
+              label="Email"
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
+            <Form.Item
+              name="phone"
+              label="Phone"
+              rules={[
+                { required: true, message: 'Please input your phone number!' }
+              ]}
+            >
+              <Input placeholder="Phone" />
+            </Form.Item>
+            <Form.Item
+              name="birthday"
+              label="Birthday"
+              rules={[
+                { required: true, message: 'Please choose your birthday!' }
+              ]}
+            >
+              <DatePicker className="w-full" placeholder="Birthday" />
+            </Form.Item>
+            <Form.Item name="about" label="About" rules={[{ required: false }]}>
+              <Input.TextArea rows={3} placeholder="About" maxLength={100} />
+            </Form.Item>
+            <Form.Item>
+              <Flex justify="end">
+                <Button onClick={handleClose} style={{ marginRight: 8 }}>
+                  Cancel
+                </Button>
+                <Button type="primary" htmlType="submit">
+                  Update
+                </Button>
+              </Flex>
+            </Form.Item>
           </div>
-        </Flex>
-        <Space size="middle">
-          <Space direction="vertical">
-            <Text>FirtName</Text>
-            <Input value={info.first_name}></Input>
-          </Space>
-          <Space direction="vertical">
-            <Text>LastName</Text>
-            <Input value={info.last_name}></Input>
-          </Space>
         </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Email</Text>
-          <Input value={info.email}></Input>
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Phone</Text>
-          <Input value={info.phone}></Input>
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Birthday</Text>
-          <DatePicker className={info.birthday} />
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>About</Text>
-          <Input.TextArea
-            rows={3}
-            value={info.about}
-            placeholder="maxLength is 100"
-            maxLength={100}
-          ></Input.TextArea>
-        </Space>
-      </Space>
+      </Form>
     </ModalComponent>
   );
 };

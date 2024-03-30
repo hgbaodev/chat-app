@@ -67,8 +67,6 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
-
-
 const initialState = {
   isAuthenticated: false,
   loaded: false,
