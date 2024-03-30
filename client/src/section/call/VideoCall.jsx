@@ -1,5 +1,4 @@
-import { Avatar, Button, Col, Row, Space } from 'antd';
-import { now } from 'lodash';
+import { Avatar, Button, Space } from 'antd';
 import Peer from 'peerjs';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useState } from 'react';
@@ -15,13 +14,17 @@ import { useParams } from 'react-router-dom';
 import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
-import { setCall, setConversationCall } from '~/store/slices/chatSlice';
+import {
+  setCall,
+  setConversationCall,
+  setPeerIds
+} from '~/store/slices/chatSlice';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitVideoCall, emitInterruptVideoCall } = useSocket();
+  const { emitInterruptVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -35,14 +38,14 @@ const VideoCall = () => {
     let calling = params.get('calling') === 'true';
     let refused = params.get('refused') === 'true';
     let ended = params.get('ended') === 'true';
-    let owner = params.get('owner') === 'true';
-    let user = JSON.parse(params.get('user'));
     let conversation_id = params.get('conversation_id');
+    let peer_ids = JSON.parse(params.get('peer_ids'));
 
     if (socketInstance) {
       const peerInstance = new Peer(peer_id);
-      dispatch(setCall({ calling, refused, ended, owner, user }));
-      dispatch(setConversationCall({ conversation_id }));
+      dispatch(setCall({ calling, refused, ended }));
+      dispatch(setConversationCall({ conversation: { conversation_id } }));
+      dispatch(setPeerIds({ peer_ids }));
       if (peer) peer.destroy();
       peerInstance.on('open', (peer_id) => {
         console.log('My peer id' + peer_id);
@@ -80,12 +83,6 @@ const VideoCall = () => {
         .catch((err) => {
           console.error('Failed to get local stream', err);
         });
-      if (owner) {
-        emitVideoCall({
-          conversation_id,
-          peer_id
-        });
-      }
       return () => {
         if (peerInstance) {
           peerInstance.destroy();
@@ -98,8 +95,8 @@ const VideoCall = () => {
     if (peer && call.calling && stream) {
       peer.on('open', (peer_id) => {
         try {
-          console.log('send a call to:', call.user.peer_id);
-          const myCall = peer.call(call.user.peer_id, stream);
+          console.log('send a call to:', call.peer_ids[0]);
+          const myCall = peer.call(call.peer_ids[0], stream);
 
           myCall.on('stream', (remoteStream) => {
             console.log('Received peer_id on stream:', myCall.peer);

@@ -11,9 +11,11 @@ import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
 import { ConversationTypes } from '~/utils/enum';
 import { v4 as uuidv4 } from 'uuid';
 import AvatarImage from '~/section/users/AvatarImage';
+import { useSocket } from '~/hooks/useSocket';
 
 export const ChatHeader = () => {
   const dispatch = useDispatch();
+  const { emitVideoCall } = useSocket();
   const { contactInfo } = useSelector((state) => state.app);
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const handleOpenContactInfo = () => {
@@ -29,10 +31,14 @@ export const ChatHeader = () => {
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}?calling=false&refused=false&ended=false&owner=true&conversation_id=${currentConversation.id}`,
+      `/video-call/${peer_id}?calling=false&refused=false&ended=false&conversation_id=${currentConversation.id}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
+    emitVideoCall({
+      conversation_id: currentConversation.id,
+      peer_id
+    });
   };
   const handleOpenSharedMessages = () => dispatch(showMembersGroup());
 

@@ -172,9 +172,8 @@ const initialState = {
     calling: false,
     refused: false,
     ended: false,
-    owner: false,
-    user: null,
-    conversation_id: null
+    peer_ids: null,
+    conversation: null
   },
   forwardMessage: null,
   isLoading: false,
@@ -233,19 +232,19 @@ const chatSlice = createSlice({
     },
     openCall(state) {
       state.call.calling = false;
-      state.call.owner = true;
-      state.call.user = {};
+      state.call.peer_ids = [];
     },
     setCall(state, action) {
-      state.call.calling = action.payload.calling || false;
-      state.call.refused = action.payload.refused || false;
-      state.call.ended = action.payload.ended || false;
-      state.call.owner = action.payload.owner || false;
-      state.call.open = action.payload.open || false;
-      state.call.user = action.payload.user || null;
+      state.call.calling = action.payload.calling;
+      state.call.refused = action.payload.refused;
+      state.call.ended = action.payload.ended;
+      state.call.open = action.payload.open;
+    },
+    setPeerIds(state, action) {
+      state.call.peer_ids = action.payload.peer_ids;
     },
     setConversationCall(state, action) {
-      state.call.conversation_id = action.payload.conversation_id;
+      state.call.conversation = action.payload.conversation;
     },
     setTypingIndicator(state, action) {
       state.chat.typingIndicator = action.payload;
@@ -347,5 +346,6 @@ export const {
   openCall,
   setCall,
   setConversationCall,
+  setPeerIds,
   setTypingIndicator
 } = chatSlice.actions;
