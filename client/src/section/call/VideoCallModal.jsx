@@ -4,6 +4,7 @@ import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
 import { setCall } from '~/store/slices/chatSlice';
 import { v4 as uuidv4 } from 'uuid';
+import { ConversationTypes } from '~/utils/enum';
 
 const VideoCallModal = () => {
   const dispatch = useDispatch();
@@ -21,7 +22,11 @@ const VideoCallModal = () => {
 
   // handle refuse
   const handleRefuse = () => {
-    // emitRefuseVideoCall({ user_id: call.user.id });
+    if (call.conversation.type === ConversationTypes.FRIEND) {
+      emitRefuseVideoCall({
+        conversation_id: call.conversation.conversation_id
+      });
+    }
     dispatch(setCall({ open: false }));
   };
   // render

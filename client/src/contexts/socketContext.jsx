@@ -99,9 +99,7 @@ export const SocketProvider = ({ children }) => {
               setCall({
                 calling: false,
                 ended: false,
-                refused: true,
-                owner: true,
-                user: null
+                refused: true
               })
             );
           } else if (data.type === 'interrupt_video_call') {

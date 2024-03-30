@@ -191,14 +191,12 @@ class ChatConsumer(WebsocketConsumer):
                 )
        
     def receive_refuse_video_call(self, data):
-        user_id = data["user_id"]
-        user_dict = {
-            'id': self.scope["user"].id,
-        }
-        room_group_name = f"user_{user_id}"
+        conversation_id = data["conversation_id"]
+        participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
+        room_group_name = f"user_{participant.user.id}"
         async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "refuse_video_call", "message": json.dumps(user_dict)}
-                )
+            room_group_name, {"type": "refuse_video_call", "message": "empty"}
+            )
             
     def receive_interrupt_video_call(self, data):
         conversation_id = data["conversation_id"]

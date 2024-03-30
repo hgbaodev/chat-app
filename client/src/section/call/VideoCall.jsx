@@ -227,37 +227,41 @@ const VideoCall = () => {
         </p>
       </div>
       <div className="flex-1 w-full flex items-center justify-center">
-        <div
-          id="video-frame"
-          className={`grid grid-cols-${
-            remoteStreams.length + 1
-          } gap-4 p-4 w-full h-full`}
-        >
-          <div>
-            <div className="bg-[#3d3d3d] p-2 ">
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="w-full max-h-[calc(100vh-192px)]"
-              />
-              <p>You</p>
-            </div>
-          </div>
-          {remoteStreams.map((stream, index) => (
-            <div key={index}>
-              <div className="bg-[#3d3d3d] p-2">
+        {call.refused ? (
+          <p>{call.conversation?.title} has refused this call.</p>
+        ) : (
+          <div
+            id="video-frame"
+            className={`grid grid-cols-${
+              remoteStreams.length + 1
+            } gap-4 p-4 w-full h-full`}
+          >
+            <div>
+              <div className="bg-[#3d3d3d] p-2 ">
                 <video
-                  ref={videoRefs[index]}
+                  ref={videoRef}
                   autoPlay
                   playsInline
                   className="w-full max-h-[calc(100vh-192px)]"
                 />
-                <p>{stream.peer_id}</p>
+                <p>You</p>
               </div>
             </div>
-          ))}
-        </div>
+            {remoteStreams.map((stream, index) => (
+              <div key={index}>
+                <div className="bg-[#3d3d3d] p-2">
+                  <video
+                    ref={videoRefs[index]}
+                    autoPlay
+                    playsInline
+                    className="w-full max-h-[calc(100vh-192px)]"
+                  />
+                  <p>{stream.peer_id}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <div className="bg-[#3d3d3d] w-full flex justify-center p-3">
