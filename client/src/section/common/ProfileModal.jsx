@@ -15,18 +15,19 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { IoChevronBack } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
+import { MdEdit } from 'react-icons/md';
 import moment from 'moment';
 import {
   getInfoUser,
   setOpenProfile,
+  setType,
   uploadProfile
 } from '~/store/slices/contactSlice';
 
 const { Text } = Typography;
 
 const ProfileModal = () => {
-  const { openProfile, info } = useSelector((state) => state.contact);
-  const [type, setType] = useState(0);
+  const { openProfile, info, type } = useSelector((state) => state.contact);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetch = () => {
@@ -35,7 +36,7 @@ const ProfileModal = () => {
     fetch();
   }, [dispatch]);
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
   if (!info) return;
@@ -52,7 +53,7 @@ const ProfileModal = () => {
               size="middle"
               icon={<AiOutlineEdit />}
               className="w-full"
-              onClick={() => setType(1)}
+              onClick={() => dispatch(setType(1))}
             >
               Update Profile
             </Button>
@@ -108,9 +109,7 @@ const ProfileModal = () => {
 
   if (type == 1) return <UpdateProfile setType={setType} />;
 };
-import { MdEdit } from 'react-icons/md';
-
-const UpdateProfile = ({ setType }) => {
+const UpdateProfile = () => {
   const dispatch = useDispatch();
   const { openProfile, info, isLoadingUploadProfile } = useSelector(
     (state) => state.contact
@@ -121,7 +120,7 @@ const UpdateProfile = ({ setType }) => {
   const fileInputRef = useRef(null);
 
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
 
@@ -138,10 +137,8 @@ const UpdateProfile = ({ setType }) => {
   };
 
   const handleSubmit = (values) => {
-    console.log('imageFile', imageFile);
     values.birthday = values?.birthday.format('YYYY-MM-DD');
     if (imageFile != null) values['image'] = imageFile;
-    console.log('Form values:', values);
     dispatch(uploadProfile(values));
   };
 
@@ -154,7 +151,7 @@ const UpdateProfile = ({ setType }) => {
             type="text"
             shape="circle"
             icon={<IoChevronBack size="20px" />}
-            onClick={() => setType(0)}
+            onClick={() => dispatch(setType(0))}
             style={{
               marginLeft: '-10px'
             }}

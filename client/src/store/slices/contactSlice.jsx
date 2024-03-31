@@ -59,7 +59,8 @@ const initialState = {
   isLoadingCreateConversation: false,
   openProfile: false,
   info: null,
-  isLoadingUploadProfile: false
+  isLoadingUploadProfile: false,
+  type: 0
 };
 
 const contactSlice = createSlice({
@@ -71,6 +72,9 @@ const contactSlice = createSlice({
     },
     setOpenProfile(state, action) {
       state.openProfile = action.payload;
+    },
+    setType(state, action) {
+      state.type = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -111,4 +115,4 @@ const contactSlice = createSlice({
 });
 
 export default contactSlice.reducer;
-export const { setOpenSearch, setOpenProfile } = contactSlice.actions;
+export const { setOpenSearch, setOpenProfile, setType } = contactSlice.actions;
