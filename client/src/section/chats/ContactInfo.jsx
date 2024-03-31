@@ -219,14 +219,15 @@ const HeaderInfoTool = () => {
         </>
       )}
       {!currentConversation.is_pinned ? (
-        <ToolButton icon={<GrPin onClick={handlePin} />} text="Pin" />
+        <ToolButton icon={<GrPin />} text="Pin" onClick={handlePin} />
       ) : (
-        <ToolButton icon={<RiUnpinLine onClick={handleUnPin} />} text="Unpin" />
+        <ToolButton icon={<RiUnpinLine />} text="Unpin" onClick={handleUnPin} />
       )}
       {currentConversation.type === ConversationTypes.GROUP && (
         <ToolButton
-          icon={<LuLogOut onClick={handleLeaveConversation} />}
+          icon={<LuLogOut />}
           text="Leave group"
+          onClick={handleLeaveConversation}
         />
       )}
     </Flex>
@@ -250,7 +251,7 @@ const PrivacySection = () => {
   );
 };
 
-const ToolButton = ({ text, icon }) => {
+const ToolButton = ({ text, icon, onClick }) => {
   return (
     <Space
       direction="vertical"
@@ -263,6 +264,7 @@ const ToolButton = ({ text, icon }) => {
         shape="circle"
         icon={icon}
         className="bg-neutral-100"
+        onClick={onClick}
       />
       <span className="text-xs text-gray-500">{text}</span>
     </Space>
