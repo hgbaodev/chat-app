@@ -120,8 +120,11 @@ class MessageSerializer(serializers.ModelSerializer):
         return None
     
     def get_attachments(self, obj):
-        attachments = Attachments.objects.filter(message=obj)
-        return AttachmentSerializer(attachments, many=True).data
+        try:
+            attachments = Attachments.objects.get(message=obj)
+            return AttachmentSerializer(attachments).data
+        except Attachments.DoesNotExist:
+            return None
     
     def get_namecard(self, obj):
         try:

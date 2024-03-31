@@ -133,7 +133,7 @@ export const MediaMessage = ({
       sender={sender}
       {...props}
     >
-      <Image width={320} className="w-full" src={attachments[0].file_url} />
+      <Image width={320} className="w-full" src={attachments.file_url} />
     </MessageWrapper>
   );
 };
@@ -160,15 +160,15 @@ export const DocMessage = ({
       <Flex align="center" justify="space-between" className="w-[300px]">
         <Flex align="center" gap={5}>
           <img
-            src={getIconDocument(attachments[0].file_type)}
+            src={getIconDocument(attachments.file_type)}
             className="w-[50px] h-[50px] "
           />
           <div>
             <p className="font-semibold text-ellipsis text-nowrap overflow-hidden max-w-[200px] text-sm">
-              {attachments[0].file_name}
+              {attachments.file_name}
             </p>
             <p className="text-xs mt-2 text-gray-500">
-              {formatFileSize(attachments[0].file_size)}
+              {formatFileSize(attachments.file_size)}
             </p>
           </div>
         </Flex>
@@ -178,7 +178,7 @@ export const DocMessage = ({
           icon={<GoDownload size={20} />}
           className="text-inherit"
           target="_blank"
-          href={attachments[0].file_url}
+          href={attachments.file_url}
         />
       </Flex>
     </MessageWrapper>
@@ -222,12 +222,12 @@ const ForwardMessage = ({ replyFrom, isMe }) => {
       <div className="h-10 w-[2px] bg-blue-500" />
       {message_type == MessageTypes.DOCUMENT && (
         <img
-          src={getIconDocument(attachments[0].file_type)}
+          src={getIconDocument(attachments.file_type)}
           className="w-[30px] h-[30px] "
         />
       )}
       {message_type == MessageTypes.IMAGE && (
-        <img src={attachments[0].file_url} className="w-[40px] h-[40px] " />
+        <img src={attachments.file_url} className="w-[40px] h-[40px] " />
       )}
       <Flex vertical>
         <p className="text-xs font-semibold text-blue mb-1">
@@ -260,7 +260,7 @@ export const AudioMessage = ({
       {...props}
     >
       <audio controls>
-        <source src={attachments[0]?.file_url} type="audio/mpeg" />
+        <source src={attachments?.file_url} type="audio/mpeg" />
       </audio>
     </MessageWrapper>
   );

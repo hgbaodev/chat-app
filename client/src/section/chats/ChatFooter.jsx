@@ -475,12 +475,12 @@ const ForwardMessage = ({ message, sender, attachments, message_type }) => {
         >
           {message_type == MessageTypes.DOCUMENT && (
             <img
-              src={getIconDocument(attachments[0].file_type)}
+              src={getIconDocument(attachments.file_type)}
               className="w-[40px] h-[40px] "
             />
           )}
           {message_type == MessageTypes.IMAGE && (
-            <img src={attachments[0].file_url} className="w-[40px] h-[40px] " />
+            <img src={attachments.file_url} className="w-[40px] h-[40px] " />
           )}
           <Flex vertical>
             <p className="text-sm mb-[2px]">
