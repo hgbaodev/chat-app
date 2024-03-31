@@ -11,6 +11,9 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.permissions import IsAuthenticated
 from .models import User
 from utils.responses import SuccessResponse, ErrorResponse
+import base64
+import secrets
+import cloudinary.uploader
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -113,3 +116,31 @@ class GetInforUserView(GenericAPIView):
         user = User.objects.get(id=user_id)
         serializer = self.serializer_class(user)
         return SuccessResponse(data=serializer.data)
+
+class UpdateProfileView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = GetInfoUserSerializer
+    def post(self, request):
+        try:
+            user_data = request.data
+            image_file = user_data.get('image')
+            user_id = request.user.id
+            user = User.objects.get(id=user_id)
+            if image_file is not None:
+                decoded_file = base64.b64decode(image_file.split(",")[1])
+                file_name = f"{secrets.token_hex(8)}"
+                upload_result = cloudinary.uploader.upload(decoded_file,public_id=file_name,resource_type="auto")
+                user.avatar = upload_result['secure_url']
+            user.first_name = user_data.get('first_name')
+            user.last_name = user_data.get('last_name')
+            user.email = user_data.get('email')
+            user.phone = user_data.get('phone')
+            user.about = user_data.get('about')
+            if 'birthday' in user_data and isinstance(user_data['birthday'], str):
+                user.birthday = user_data.get('birthday')
+            user.save()
+            serializer = self.serializer_class(user)
+            return SuccessResponse(data=serializer.data)
+        except Exception as e:
+            print("Error uploading image:", e)
+            return ErrorResponse(error_message=str(e))

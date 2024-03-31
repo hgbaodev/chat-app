@@ -15,7 +15,7 @@ from authentication.models import User
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.utils import timezone
-from utils.cloudinary import upload_temporary_image
+
 
 def send_message_to_conversation_members(conversation_id, type, data):
     channel_layer = get_channel_layer()
@@ -402,14 +402,3 @@ class DeletePinnedMessage(APIView):
         else:
             raise Http404
 
-class UpdateProfile(APIView):
-    def post(self, request):
-        try:
-            # Lấy file ảnh từ request
-            image_file = request.FILES.get('image')
-            if image_file is not None:
-                result = upload_temporary_image(image_file)
-            return Response({"url": result['secure_url']}, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            print("Error uploading image:", e)
-            return Response({"message": "Failed to upload image"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

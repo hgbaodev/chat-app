@@ -15,13 +15,19 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { IoChevronBack } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
-import { getInfoUser, setOpenProfile } from '~/store/slices/contactSlice';
+import { MdEdit } from 'react-icons/md';
+import moment from 'moment';
+import {
+  getInfoUser,
+  setOpenProfile,
+  setType,
+  uploadProfile
+} from '~/store/slices/contactSlice';
 
 const { Text, Title } = Typography;
 
 const ProfileModal = () => {
-  const { openProfile, info } = useSelector((state) => state.contact);
-  const [type, setType] = useState(0);
+  const { openProfile, info, type } = useSelector((state) => state.contact);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetch = () => {
@@ -30,7 +36,7 @@ const ProfileModal = () => {
     fetch();
   }, [dispatch]);
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
   if (!info) return;
@@ -47,7 +53,7 @@ const ProfileModal = () => {
               size="middle"
               icon={<AiOutlineEdit />}
               className="w-full"
-              onClick={() => setType(1)}
+              onClick={() => dispatch(setType(1))}
             >
               Update Profile
             </Button>
@@ -107,36 +113,37 @@ const ProfileModal = () => {
 
   if (type == 1) return <UpdateProfile setType={setType} />;
 };
-import { MdEdit } from 'react-icons/md';
-
-const UpdateProfile = ({ setType }) => {
+const UpdateProfile = () => {
   const dispatch = useDispatch();
-  const { openProfile, info } = useSelector((state) => state.contact);
+  const { openProfile, info, isLoadingUploadProfile } = useSelector(
+    (state) => state.contact
+  );
   const [imageSrc, setImageSrc] = useState(info.avatar);
   const [imageFile, setImageFile] = useState(null);
   const [hovered, setHovered] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
 
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
-    setImageFile(file);
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setImageSrc(reader.result);
+        setImageFile(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const handleSubmit = (values) => {
+    values.birthday = values?.birthday.format('YYYY-MM-DD');
     if (imageFile != null) values['image'] = imageFile;
-    console.log('Form values:', values);
+    dispatch(uploadProfile(values));
   };
 
   return (
@@ -148,7 +155,7 @@ const UpdateProfile = ({ setType }) => {
             type="text"
             shape="circle"
             icon={<IoChevronBack size="20px" />}
-            onClick={() => setType(0)}
+            onClick={() => dispatch(setType(0))}
             style={{
               marginLeft: '-10px'
             }}
@@ -169,7 +176,7 @@ const UpdateProfile = ({ setType }) => {
           last_name: info.last_name,
           email: info.email,
           phone: info.phone,
-          birthday: info.birthday,
+          birthday: moment(info.birthday),
           about: info.about
         }}
         layout="vertical"
@@ -209,24 +216,26 @@ const UpdateProfile = ({ setType }) => {
             </div>
           </Flex>
           <div className="form-items-wrapper">
-            <Form.Item
-              name="first_name"
-              label="First Name"
-              rules={[
-                { required: true, message: 'Please input your first name!' }
-              ]}
-            >
-              <Input placeholder="First Name" />
-            </Form.Item>
-            <Form.Item
-              name="last_name"
-              label="Last Name"
-              rules={[
-                { required: true, message: 'Please input your last name!' }
-              ]}
-            >
-              <Input placeholder="Last Name" />
-            </Form.Item>
+            <Space>
+              <Form.Item
+                name="first_name"
+                label="First Name"
+                rules={[
+                  { required: true, message: 'Please input your first name!' }
+                ]}
+              >
+                <Input placeholder="First Name" />
+              </Form.Item>
+              <Form.Item
+                name="last_name"
+                label="Last Name"
+                rules={[
+                  { required: true, message: 'Please input your last name!' }
+                ]}
+              >
+                <Input placeholder="Last Name" />
+              </Form.Item>
+            </Space>
             <Form.Item
               name="email"
               rules={[{ required: true, message: 'Please input your email!' }]}
@@ -250,7 +259,11 @@ const UpdateProfile = ({ setType }) => {
                 { required: true, message: 'Please choose your birthday!' }
               ]}
             >
-              <DatePicker className="w-full" placeholder="Birthday" />
+              <DatePicker
+                className="w-full"
+                placeholder="Birthday"
+                format="YYYY-MM-DD"
+              />
             </Form.Item>
             <Form.Item name="about" label="About" rules={[{ required: false }]}>
               <Input.TextArea rows={3} placeholder="About" maxLength={100} />
@@ -260,7 +273,11 @@ const UpdateProfile = ({ setType }) => {
                 <Button onClick={handleClose} style={{ marginRight: 8 }}>
                   Cancel
                 </Button>
-                <Button type="primary" htmlType="submit">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  loading={isLoadingUploadProfile}
+                >
                   Update
                 </Button>
               </Flex>

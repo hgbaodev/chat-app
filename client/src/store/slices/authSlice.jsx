@@ -67,6 +67,7 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
+
 const initialState = {
   isAuthenticated: false,
   loaded: false,
@@ -78,7 +79,7 @@ const initialState = {
   },
   isLoadingLogin: false,
   isLoadingRegister: false,
-  isLoadingVerifyEmail: false
+  isLoadingVerifyEmail: false,
 };
 
 const authSlice = createSlice({
