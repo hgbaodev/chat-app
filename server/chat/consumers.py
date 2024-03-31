@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from .serializers import MessageSerializer, AttachmentSerializer
-from .models import Message, Conversation, Participants, OnlineUser, Attachments
+from .models import Message, Conversation, Participants, OnlineUser, Attachments, NameCard
 from authentication.models import User
 from rest_framework_simplejwt.tokens import AccessToken
 import base64
@@ -79,6 +79,7 @@ class ChatConsumer(WebsocketConsumer):
     def receive_message_send(self, data):
         message = data["message"]
         attachment = data["attachment"]
+        namecard = data["namecard"]
         message_type = data.get("message_type", Message.MessageType.TEXT)
         conversation_id = data["conversation_id"]
         sender = self.scope["user"]
@@ -116,8 +117,12 @@ class ChatConsumer(WebsocketConsumer):
                     file_type=attachment.get("file_type"),
                     file_url=upload_result["url"]
                 )
-            print(upload_result["url"])
-                
+        
+        if namecard:
+            NameCard.objects.create(
+                message=message,
+                user= User.objects.get(pk=namecard),
+            )
             
         participants = Participants.objects.filter(conversation_id=conversation_id)
         message_serializer = MessageSerializer(instance=message)

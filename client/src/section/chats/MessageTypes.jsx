@@ -265,3 +265,39 @@ export const AudioMessage = ({
     </MessageWrapper>
   );
 };
+
+export const NameCardMessage = ({
+  id,
+  sender,
+  forward,
+  created,
+  namecard,
+  is_pinned = false,
+  ...props
+}) => {
+  return (
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      forward={forward}
+      sender={sender}
+      isPinned={is_pinned}
+      {...props}
+    >
+      <Flex
+        className={`py-2 cursor-pointer rounded`}
+        align="center"
+        justify="space-between"
+      >
+        <Space gap={12}>
+          <Avatar size="large" src={namecard.avatar} />
+          <Space direction="vertical" size={0}>
+            <p className="m-0 text-sm">{`${namecard.first_name} ${namecard.last_name}`}</p>
+            <p className="m-0 text-xs text-gray-500">{namecard.email}</p>
+          </Space>
+        </Space>
+      </Flex>
+    </MessageWrapper>
+  );
+};

@@ -39,6 +39,7 @@ class Message(models.Model):
         DOCUMENT = 5
         RECALL = 6
         NEWS = 7
+        NAMECARD = 8
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -62,6 +63,10 @@ class Attachments(models.Model):
     file_size = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     
+class NameCard(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
 class DeleteMessage(models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -77,4 +82,3 @@ class PinnedMessages(models.Model):
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     pinned_by = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
-

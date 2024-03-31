@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation, PinnedMessages
+from .models import NameCard, Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation, PinnedMessages
 from django.shortcuts import get_object_or_404
 
 class MemberConversationSerializer(serializers.ModelSerializer):
@@ -99,14 +99,20 @@ class AttachmentSerializer(serializers.ModelSerializer):
         model = Attachments
         fields = '__all__'
 
+class NameCardSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'avatar', 'email']
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
     forward = serializers.SerializerMethodField()
     attachments = serializers.SerializerMethodField()
+    namecard = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'is_pinned']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'namecard', 'is_pinned']
 
     def get_forward(self, obj):
         if obj.forward:
@@ -116,6 +122,13 @@ class MessageSerializer(serializers.ModelSerializer):
     def get_attachments(self, obj):
         attachments = Attachments.objects.filter(message=obj)
         return AttachmentSerializer(attachments, many=True).data
+    
+    def get_namecard(self, obj):
+        try:
+            namecard = NameCard.objects.get(message=obj)
+            return NameCardSerializer(namecard.user).data
+        except NameCard.DoesNotExist:
+            return None
     
 class DeleteMessageSerializer(serializers.ModelSerializer):
     class Meta:

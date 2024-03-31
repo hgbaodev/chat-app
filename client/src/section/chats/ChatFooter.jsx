@@ -1,4 +1,14 @@
-import { Button, Dropdown, Flex, Input } from 'antd';
+import {
+  Avatar,
+  Button,
+  Checkbox,
+  Dropdown,
+  Empty,
+  Flex,
+  Input,
+  Modal,
+  Space
+} from 'antd';
 import { useEffect, useRef, useState } from 'react';
 import { IoIosLink } from 'react-icons/io';
 import {
@@ -24,6 +34,9 @@ import { MessageTypes } from '~/utils/enum';
 import { blobToFile } from '~/utils/convertToBase64';
 import useDebounce from '~/hooks/useDebounce';
 import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
+import { SearchOutlined } from '@ant-design/icons';
+import Loader from '~/components/Loader';
+import { getAllFriends } from '~/store/slices/relationshipSlice';
 
 export const ChatFooter = () => {
   const dispatch = useDispatch();
@@ -159,7 +172,8 @@ const AttachmentInput = () => {
   const inputFileRef = useRef(null);
   const dispatch = useDispatch();
   const [fileType, setFileType] = useState(null);
-  const { chat, forwardMessage } = useSelector((state) => state.chat);
+  const [isOpenShareNameCard, setOpenShareNameCard] = useState(false);
+  const { chat } = useSelector((state) => state.chat);
   const [messageType, setMessageType] = useState(MessageTypes.IMAGE);
 
   const handleDropdownItemClick = (type) => {
@@ -184,8 +198,8 @@ const AttachmentInput = () => {
       emitMessage({
         conversation_id: chat.currentConversation.id,
         attachment: file,
-        message_type: messageType,
-        forward: forwardMessage?.id
+        message_type: messageType
+        // forward: forwardMessage?.id
       });
     });
     dispatch(setForwardMessage(null));
@@ -226,7 +240,7 @@ const AttachmentInput = () => {
               key: '3',
               label: 'Name card',
               icon: <IoCardOutline size={16} />,
-              onClick: () => handleDropdownItemClick('document')
+              onClick: () => setOpenShareNameCard(true)
               // disabled: true
             }
           ]
@@ -241,7 +255,106 @@ const AttachmentInput = () => {
           className="text-blue-500 hover:bg-blue-700"
         />
       </Dropdown>
+      <ShareNameCard
+        open={isOpenShareNameCard}
+        onCancel={() => setOpenShareNameCard(false)}
+      />
     </>
+  );
+};
+
+const ShareNameCard = ({ open, onCancel }) => {
+  const dispatch = useDispatch();
+  const { emitMessage } = useSocket();
+  const { friends, isLoading } = useSelector((state) => state.relationship);
+  const { chat } = useSelector((state) => state.chat);
+  const [selectedFriends, setSelectedFriends] = useState([]);
+  const [search, setSearch] = useState('');
+  const searchDebauce = useDebounce(search, 500);
+
+  useEffect(() => {
+    dispatch(getAllFriends({ query: searchDebauce, sort: 'asc' }));
+  }, [dispatch, searchDebauce]);
+
+  const sendMessage = () => {
+    selectedFriends.forEach((friend) => {
+      emitMessage({
+        conversation_id: chat.currentConversation.id,
+        namecard: friend,
+        message_type: MessageTypes.NAMECARD
+      });
+      onCancel();
+    });
+  };
+
+  return (
+    <Modal
+      title="Share name card"
+      open={open}
+      onOk={sendMessage}
+      onCancel={onCancel}
+      okText="Share name card"
+      width={400}
+    >
+      <Space direction="vertical" className="w-[100%]">
+        <Input
+          name="input-search"
+          placeholder="Search your friends"
+          variant="filled"
+          prefix={<SearchOutlined />}
+          className="mt-2"
+          autoComplete="nope"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <p className="text-xs text-gray-500 mt-2">Friends List</p>
+        <div className="h-[240px] overflow-y-auto scrollbar relative">
+          {isLoading ? (
+            <Loader />
+          ) : friends.length ? (
+            friends.map((friend) => (
+              <FriendItem
+                key={friend.id}
+                id={friend.id}
+                avatar={friend.avatar}
+                fullName={`${friend.first_name} ${friend.last_name}`}
+                selected={selectedFriends.includes(friend.id) ? true : false}
+                handleSelected={setSelectedFriends}
+              />
+            ))
+          ) : (
+            <Empty description="Friends List is empty" className="py-4" />
+          )}
+        </div>
+      </Space>
+    </Modal>
+  );
+};
+
+const FriendItem = ({ id, avatar, fullName, selected, handleSelected }) => {
+  const handleSelectedFriend = () => {
+    handleSelected((pre) => [...pre, id]);
+  };
+  const handleRemoveFriend = () => {
+    handleSelected((pre) => pre.filter((value) => value != id));
+  };
+  return (
+    <Flex
+      className="p-2 ps-0 cursor-pointer"
+      justify="space-between"
+      align="center"
+      onClick={selected ? handleRemoveFriend : handleSelectedFriend}
+    >
+      <Space>
+        <Avatar src={avatar} />
+        <Space>
+          <p className="text-slate-900 text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
+            {fullName}
+          </p>
+        </Space>
+      </Space>
+      <Checkbox checked={selected} />
+    </Flex>
   );
 };
 
