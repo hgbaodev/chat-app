@@ -28,7 +28,8 @@ function App() {
       theme={{
         token: {
           fontFamily: 'Inter'
-        }
+        },
+        hashed: false
       }}
     >
       <RouterProvider router={routes} />

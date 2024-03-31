@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
 import { getInfoUser, setOpenProfile } from '~/store/slices/contactSlice';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const ProfileModal = () => {
   const { openProfile, info } = useSelector((state) => state.contact);
@@ -72,20 +72,24 @@ const ProfileModal = () => {
           >
             <Avatar
               style={{
-                marginTop: '-20px',
+                marginTop: '-40px',
                 borderStyle: 'solid',
                 borderWidth: '2px',
                 borderColor: 'white'
               }}
               draggable={true}
               alt="Avatar"
-              size={64}
+              size={90}
               src={info.avatar}
             />
-            <Text strong>{info.full_name}</Text>
+            <Title level={5} className="mt-2" strong>
+              {info.full_name}
+            </Title>
           </Space>
           <Space className="px-5 py-4" direction="vertical">
-            <Text strong>Information</Text>
+            <Title level={5} strong>
+              Personal information
+            </Title>
             <ItemInfo label="Bio" value={info.about} />
             <ItemInfo label="Email" value={info.email} />
             <ItemInfo label="Birthday" value={info.birthday} />
@@ -270,7 +274,7 @@ const UpdateProfile = ({ setType }) => {
 
 const ItemInfo = ({ label, value }) => {
   return (
-    <Space>
+    <Space align="start">
       <span className="block w-[100px] text-sm">{label}</span>
       <Text>
         {value || <span className="text-red-300">Chưa điền thông tin</span>}
