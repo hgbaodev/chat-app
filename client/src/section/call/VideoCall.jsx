@@ -8,7 +8,8 @@ import {
   IoMicOutline,
   IoVideocamOffOutline,
   IoVideocamOutline,
-  IoClose
+  IoClose,
+  IoEllipsisVerticalSharp
 } from 'react-icons/io5';
 import { useParams } from 'react-router-dom';
 import { SocketContext } from '~/contexts/socketContext';
@@ -132,12 +133,14 @@ const VideoCall = () => {
       });
     }
   }, [peer, stream, call]);
+
   // set stream to video
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
     }
-  }, [stream, videoRef, call.calling]);
+  }, [stream]);
+
   // set remote video stream
   useEffect(() => {
     remoteStreams.forEach((stream, index) => {
@@ -146,7 +149,8 @@ const VideoCall = () => {
         videoEl.srcObject = stream.stream;
       }
     });
-  }, [remoteStreams]);
+  }, [remoteStreams, videoRefs]);
+
   // handle toggle microphone
   const toggleMicrophone = () => {
     if (stream) {
@@ -220,19 +224,8 @@ const VideoCall = () => {
   }, [call]);
 
   return (
-    <div className="w-[100vw] h-[100vh]  bg-[#4b4b4b] flex flex-col items-center  text-white">
-      <div className="bg-[#3d3d3d] w-full p-2 flex justify-between">
-        <div className="flex items-center">
-          <Avatar size={40} src={call.conversation?.image} />
-          <h2 className="ml-2 my-3 text-[14px] font-semibold">
-            {call.conversation?.title}
-          </h2>
-        </div>
-        <p className="ml-2 my-3 text-[14px]">
-          {remoteStreams.length + 1} members
-        </p>
-      </div>
-      <div className="flex-1 w-full flex items-center justify-center">
+    <div className="w-[100vw] h-[100vh]  bg-[#202124] flex flex-col items-center  text-white">
+      <div className="flex-1 w-full h-[100%] flex items-center justify-center ">
         {call.refused ? (
           <p>{call.conversation?.title} has refused this call.</p>
         ) : call.ended ? (
@@ -240,31 +233,48 @@ const VideoCall = () => {
         ) : (
           <div
             id="video-frame"
-            className={`grid grid-cols-${
-              remoteStreams.length + 1
-            } gap-4 p-4 w-full h-full`}
+            className="w-full h-full gap-4 p-4"
+            style={{
+              height: '100%',
+              display: 'grid',
+              gridTemplateColumns: `${
+                remoteStreams.length === 0 ? '1fr' : '1fr 1fr'
+              }`,
+              gridTemplateRows: `repeat(${remoteStreams.length}, 1fr)`
+            }}
           >
-            <div>
-              <div className="bg-[#3d3d3d] p-2 ">
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  className="w-full max-h-[calc(100vh-192px)]"
-                />
-                <p>You</p>
+            <div
+              className="relative bg-[#3c4043] p-2 flex items-center justify-center"
+              style={{
+                height: `${remoteStreams.length < 2 ? '100%' : '50%'}`
+              }}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className="max-w-full max-h-full"
+              />
+              <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
+                You
               </div>
             </div>
             {remoteStreams.map((stream, index) => (
-              <div key={index}>
-                <div className="bg-[#3d3d3d] p-2">
-                  <video
-                    ref={videoRefs[index]}
-                    autoPlay
-                    playsInline
-                    className="w-full max-h-[calc(100vh-192px)]"
-                  />
-                  <p>{stream.peer_id}</p>
+              <div
+                key={index}
+                className="relative bg-[#3c4043] p-2 flex items-center justify-center"
+                style={{
+                  height: `${remoteStreams.length < 2 ? '100%' : '50%'}`
+                }}
+              >
+                <video
+                  ref={videoRefs[index]}
+                  autoPlay
+                  playsInline
+                  className="w-full max-w-full max-h-full"
+                />
+                <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
+                  {stream.peer_id}
                 </div>
               </div>
             ))}
@@ -272,9 +282,15 @@ const VideoCall = () => {
         )}
       </div>
 
-      <div className="bg-[#3d3d3d] w-full flex justify-center p-3">
+      <div className="bg-[#3c4043] w-full flex justify-between p-3">
+        <div className="flex items-center w-[30%]">
+          <Avatar size={40} src={call.conversation?.image} />
+          <h2 className="ml-2 my-3 text-[14px] font-semibold">
+            {call.conversation?.title}
+          </h2>
+        </div>
         {call.refused || call.ended ? (
-          <Space size={50}>
+          <Space size={50} className="flex-1 justify-center">
             <Button
               type="default"
               shape="circle"
@@ -293,7 +309,7 @@ const VideoCall = () => {
             />
           </Space>
         ) : (
-          <Space size={23}>
+          <Space size={23} className="flex-1 justify-center">
             <Button
               type="default"
               shape="circle"
@@ -330,6 +346,15 @@ const VideoCall = () => {
             />
           </Space>
         )}
+        <div className="w-[30%] flex justify-end">
+          <Button
+            type="default"
+            shape="circle"
+            icon={<IoEllipsisVerticalSharp size={20} />}
+            size={'large'}
+            onClick={null}
+          />
+        </div>
       </div>
     </div>
   );
