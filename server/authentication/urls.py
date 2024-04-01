@@ -1,4 +1,8 @@
 from django.urls import path
+from .views import RegisterUserView, VerifyUserEmail, LoginUserView, LogoutView, PasswordResetRequestView, PasswordResetConfirm, SetNewPasswordView, GetAuthenticatedReqView, GetInforUserView
+from rest_framework_simplejwt.views import (TokenRefreshView)
+
+from django.urls import path
 from .views import RegisterUserView, VerifyUserEmail, LoginUserView, LogoutView, PasswordResetRequestView, PasswordResetConfirm, SetNewPasswordView, GetAuthenticatedReqView, GetInforUserView, UpdateProfileView
 from rest_framework_simplejwt.views import (TokenRefreshView)
 
