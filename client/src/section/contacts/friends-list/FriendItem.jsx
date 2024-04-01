@@ -2,20 +2,7 @@ import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import { useState } from 'react';
 import { IoEllipsisHorizontal } from 'react-icons/io5';
 import useHover from '~/hooks/useHover';
-const ACTIONS = {
-  CHAT: 'Chat now',
-  VIEW_DETAILS: 'View details',
-  DELETE: 'Delete'
-};
 
-const FriendDropdownItem = ({ action, onClick }) => (
-  <p
-    onClick={onClick}
-    className={`m-0 p-1 ${action === ACTIONS.DELETE ? 'text-red-500' : ''}`}
-  >
-    {action}
-  </p>
-);
 
 export const FriendItem = ({ id, avatar, fullName, email }) => {
   const [hoverRef, isHovering] = useHover();
@@ -38,27 +25,19 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
   const dropdownItems = [
     {
       key: '1',
-      label: (
-        <FriendDropdownItem action={ACTIONS.CHAT} onClick={handleChatFriend} />
-      )
+      label: 'Chat now',
+      onClick: handleChatFriend
     },
     {
       key: '2',
-      label: (
-        <FriendDropdownItem
-          action={ACTIONS.VIEW_DETAILS}
-          onClick={handleShowFriendDetail}
-        />
-      )
+      label: 'View profile',
+      onClick: handleShowFriendDetail
     },
     {
       key: '3',
-      label: (
-        <FriendDropdownItem
-          action={ACTIONS.DELETE}
-          onClick={handleDeleteFriend}
-        />
-      )
+      label: 'Delete',
+      onClick: handleDeleteFriend,
+      danger: true
     }
   ];
 
@@ -74,7 +53,7 @@ export const FriendItem = ({ id, avatar, fullName, email }) => {
         <Avatar size={40} src={avatar} />
         <div>
           <Typography className="font-semibold">{fullName}</Typography>
-          <p className="m-0 text-[13px] opacity-70">{email}</p>
+          <p className="m-0 text-[13px] text-gray-500">{email}</p>
         </div>
       </Space>
       <Dropdown

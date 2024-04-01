@@ -5,6 +5,7 @@ import {
   AudioMessage,
   DocMessage,
   MediaMessage,
+  NameCardMessage,
   NewMessage,
   RecallMessage,
   TextMessage
@@ -115,6 +116,14 @@ const MesssageList = () => {
               case MessageTypes.NEWS:
                 return (
                   <NewMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                  />
+                );
+              case MessageTypes.NAMECARD:
+                return (
+                  <NameCardMessage
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}

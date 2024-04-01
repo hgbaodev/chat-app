@@ -5,7 +5,8 @@ export const MessageTypes = {
   AUDIO: 4,
   DOCUMENT: 5,
   RECALL: 6,
-  NEWS: 7
+  NEWS: 7,
+  NAMECARD: 8
 };
 
 export const ConversationTypes = {

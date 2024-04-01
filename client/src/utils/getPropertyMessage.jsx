@@ -19,6 +19,6 @@ export const getContentMessage = (messageObj) => {
     case MessageTypes.IMAGE:
       return '[Image]';
     case MessageTypes.DOCUMENT:
-      return attachments[0].file_name;
+      return attachments.file_name;
   }
 };

@@ -119,3 +119,12 @@ body::-webkit-scrollbar {
 .ant-modal .ant-modal-close {
   top: 20px;
 }
+.form-items-wrapper {
+  margin-bottom: 16px;
+}
+.form-items-wrapper .ant-form-item {
+  margin-bottom: 8px;
+}
+.form-items-wrapper .ant-form-item-label {
+  margin-bottom: 4px;
+}

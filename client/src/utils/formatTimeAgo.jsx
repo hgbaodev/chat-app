@@ -7,8 +7,6 @@ export function formatTimeAgo(timestamp, locale = 'en-US') {
   if (!(timestamp instanceof Date)) {
     timestamp = new Date(timestamp);
   }
-
   const timeAgo = new TimeAgo(locale);
-  return timeAgo.format(timestamp);
+  return timeAgo.format(timestamp, 'mini-minute-now');
 }
-

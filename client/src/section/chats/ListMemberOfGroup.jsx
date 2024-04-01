@@ -1,14 +1,15 @@
-import { Avatar, Button, Flex, Space } from 'antd';
-import { IoArrowBackSharp } from 'react-icons/io5';
+import { Avatar, Button, Dropdown, Flex, Space } from 'antd';
+import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { showContactInfo } from '~/store/slices/appSlice';
 import { LuUserPlus } from 'react-icons/lu';
-import { FiUserPlus } from 'react-icons/fi';
+import { useState } from 'react';
+import AddMember from '~/section/chats/AddMember';
 
 const ListMemberOfGroup = () => {
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
-
+  const [isOpenAddMember, setOpenAddMember] = useState(false);
   // handle
   const handleReturnContactInfo = () => {
     dispatch(showContactInfo());
@@ -37,9 +38,18 @@ const ListMemberOfGroup = () => {
         <p className="m-0 font-semibold">Members</p>
       </Flex>
       <Space className="p-4" direction="vertical">
-        <Button type="primary" className="w-full" icon={<LuUserPlus />}>
+        <Button
+          type="primary"
+          className="w-full"
+          icon={<LuUserPlus />}
+          onClick={() => setOpenAddMember(true)}
+        >
           Add members
         </Button>
+        <AddMember
+          open={isOpenAddMember}
+          onClose={() => setOpenAddMember(false)}
+        />
         <Flex vertical>
           {currentConversation.members.map((member) => (
             <MemberItem key={member.id} {...member} />
@@ -51,6 +61,38 @@ const ListMemberOfGroup = () => {
 };
 
 const MemberItem = ({ avatar, first_name, last_name }) => {
+  const handleDeleteFriend = () => {
+    // logic here
+  };
+
+  const handleShowFriendDetail = () => {
+    // logic here
+    console.log('Show friend detail');
+  };
+
+  const handleChatFriend = () => {
+    // logic here
+    console.log('chat friend');
+  };
+
+  const dropdownItems = [
+    {
+      key: '1',
+      label: 'Chat now',
+      onClick: handleChatFriend
+    },
+    {
+      key: '2',
+      label: 'View profile',
+      onClick: handleShowFriendDetail
+    },
+    {
+      key: '3',
+      label: 'Delete',
+      onClick: handleDeleteFriend,
+      danger: true
+    }
+  ];
   return (
     <Flex
       className="p-2 ps-0 cursor-pointer"
@@ -65,7 +107,14 @@ const MemberItem = ({ avatar, first_name, last_name }) => {
           </p>
         </Space>
       </Space>
-      <Button type="text" icon={<FiUserPlus />} shape="round" />
+      <Dropdown
+        menu={{ items: dropdownItems }}
+        placement="bottomLeft"
+        trigger={['click']}
+        arrow={true}
+      >
+        <Button type="text" icon={<IoEllipsisHorizontal />} size="small" />
+      </Dropdown>
     </Flex>
   );
 };

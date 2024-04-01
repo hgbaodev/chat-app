@@ -16,6 +16,7 @@ from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 from django.utils import timezone
 
+
 def send_message_to_conversation_members(conversation_id, type, data):
     channel_layer = get_channel_layer()
     users = User.objects.filter(participants__conversation_id=conversation_id)
@@ -400,3 +401,4 @@ class DeletePinnedMessage(APIView):
             return SuccessResponse(data={"message_id": message_id}, status=status.HTTP_200_OK)
         else:
             raise Http404
+

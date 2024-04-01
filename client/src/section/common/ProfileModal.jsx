@@ -4,6 +4,7 @@ import {
   DatePicker,
   Divider,
   Flex,
+  Form,
   Image,
   Input,
   Space,
@@ -14,13 +15,19 @@ import { AiOutlineEdit } from 'react-icons/ai';
 import { IoChevronBack } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
-import { getInfoUser, setOpenProfile } from '~/store/slices/contactSlice';
+import { MdEdit } from 'react-icons/md';
+import moment from 'moment';
+import {
+  getInfoUser,
+  setOpenProfile,
+  setType,
+  uploadProfile
+} from '~/store/slices/contactSlice';
 
-const { Text } = Typography;
+const { Text, Title } = Typography;
 
 const ProfileModal = () => {
-  const { openProfile, info } = useSelector((state) => state.contact);
-  const [type, setType] = useState(0);
+  const { openProfile, info, type } = useSelector((state) => state.contact);
   const dispatch = useDispatch();
   useEffect(() => {
     const fetch = () => {
@@ -29,7 +36,7 @@ const ProfileModal = () => {
     fetch();
   }, [dispatch]);
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
   if (!info) return;
@@ -46,7 +53,7 @@ const ProfileModal = () => {
               size="middle"
               icon={<AiOutlineEdit />}
               className="w-full"
-              onClick={() => setType(1)}
+              onClick={() => dispatch(setType(1))}
             >
               Update Profile
             </Button>
@@ -71,20 +78,24 @@ const ProfileModal = () => {
           >
             <Avatar
               style={{
-                marginTop: '-20px',
+                marginTop: '-40px',
                 borderStyle: 'solid',
                 borderWidth: '2px',
                 borderColor: 'white'
               }}
               draggable={true}
               alt="Avatar"
-              size={64}
+              size={90}
               src={info.avatar}
             />
-            <Text strong>{info.full_name}</Text>
+            <Title level={5} className="mt-2" strong>
+              {info.full_name}
+            </Title>
           </Space>
           <Space className="px-5 py-4" direction="vertical">
-            <Text strong>Information</Text>
+            <Title level={5} strong>
+              Personal information
+            </Title>
             <ItemInfo label="Bio" value={info.about} />
             <ItemInfo label="Email" value={info.email} />
             <ItemInfo label="Birthday" value={info.birthday} />
@@ -102,28 +113,39 @@ const ProfileModal = () => {
 
   if (type == 1) return <UpdateProfile setType={setType} />;
 };
-import { MdEdit } from 'react-icons/md';
-
-const UpdateProfile = ({ setType }) => {
+const UpdateProfile = () => {
   const dispatch = useDispatch();
-  const { openProfile, info } = useSelector((state) => state.contact);
+  const { openProfile, info, isLoadingUploadProfile } = useSelector(
+    (state) => state.contact
+  );
   const [imageSrc, setImageSrc] = useState(info.avatar);
+  const [imageFile, setImageFile] = useState(null);
   const [hovered, setHovered] = useState(false);
   const fileInputRef = useRef(null);
+
   const handleClose = () => {
-    setType(0);
+    dispatch(setType(0));
     dispatch(setOpenProfile(false));
   };
+
   const handleFileInputChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
         setImageSrc(reader.result);
+        setImageFile(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
+
+  const handleSubmit = (values) => {
+    values.birthday = values?.birthday.format('YYYY-MM-DD');
+    if (imageFile != null) values['image'] = imageFile;
+    dispatch(uploadProfile(values));
+  };
+
   return (
     <ModalComponent
       open={openProfile}
@@ -133,7 +155,7 @@ const UpdateProfile = ({ setType }) => {
             type="text"
             shape="circle"
             icon={<IoChevronBack size="20px" />}
-            onClick={() => setType(0)}
+            onClick={() => dispatch(setType(0))}
             style={{
               marginLeft: '-10px'
             }}
@@ -143,95 +165,133 @@ const UpdateProfile = ({ setType }) => {
       }
       onCancel={handleClose}
       BorderHeader={true}
-      BorderFooter={true}
       width={450}
-      footer={
-        <Flex className="px-[20px] py-[10px]" justify="flex-end">
-          <Button
-            type="text"
-            style={{
-              marginRight: '10px',
-              backgroundColor: '#ebebeb'
-            }}
-          >
-            Cancel
-          </Button>
-          <Button type="primary">Update</Button>
-        </Flex>
-      }
       centered
+      footer={null}
     >
-      <Space direction="vertical" className="w-full px-[20px] py-[10px]">
-        <Flex justify="center">
-          <input
-            type="file"
-            accept="image/*"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileInputChange}
-          />
-          <div
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            className="relative"
-          >
-            <Avatar
-              size={80}
-              src={imageSrc}
-              className={hovered ? 'filter brightness-75' : ''}
+      <Form
+        onFinish={handleSubmit}
+        initialValues={{
+          first_name: info.first_name,
+          last_name: info.last_name,
+          email: info.email,
+          phone: info.phone,
+          birthday: moment(info.birthday),
+          about: info.about
+        }}
+        layout="vertical"
+        className="w-full"
+        requiredMark="optional"
+      >
+        <Space direction="vertical" className="w-full px-[20px] py-[10px]">
+          <Flex justify="center">
+            <input
+              type="file"
+              accept="image/*"
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleFileInputChange}
             />
-            {hovered && (
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+            <div
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              className="relative"
+            >
+              <Avatar
+                size={80}
+                src={imageSrc}
+                className={hovered ? 'filter brightness-75' : ''}
+              />
+              {hovered && (
+                <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                  <Button
+                    type="text"
+                    shape="circle"
+                    icon={<MdEdit className="text-white" />}
+                    onClick={() => fileInputRef.current.click()}
+                    size={40}
+                  />
+                </div>
+              )}
+            </div>
+          </Flex>
+          <div className="form-items-wrapper">
+            <Space>
+              <Form.Item
+                name="first_name"
+                label="First Name"
+                rules={[
+                  { required: true, message: 'Please input your first name!' }
+                ]}
+              >
+                <Input placeholder="First Name" />
+              </Form.Item>
+              <Form.Item
+                name="last_name"
+                label="Last Name"
+                rules={[
+                  { required: true, message: 'Please input your last name!' }
+                ]}
+              >
+                <Input placeholder="Last Name" />
+              </Form.Item>
+            </Space>
+            <Form.Item
+              name="email"
+              rules={[{ required: true, message: 'Please input your email!' }]}
+              label="Email"
+            >
+              <Input placeholder="Email" />
+            </Form.Item>
+            <Form.Item
+              name="phone"
+              label="Phone"
+              rules={[
+                { required: true, message: 'Please input your phone number!' }
+              ]}
+            >
+              <Input placeholder="Phone" />
+            </Form.Item>
+            <Form.Item
+              name="birthday"
+              label="Birthday"
+              rules={[
+                { required: true, message: 'Please choose your birthday!' }
+              ]}
+            >
+              <DatePicker
+                className="w-full"
+                placeholder="Birthday"
+                format="YYYY-MM-DD"
+              />
+            </Form.Item>
+            <Form.Item name="about" label="About" rules={[{ required: false }]}>
+              <Input.TextArea rows={3} placeholder="About" maxLength={100} />
+            </Form.Item>
+            <Form.Item>
+              <Flex justify="end">
+                <Button onClick={handleClose} style={{ marginRight: 8 }}>
+                  Cancel
+                </Button>
                 <Button
-                  type="text"
-                  shape="circle"
-                  icon={<MdEdit className="text-white" />}
-                  onClick={() => fileInputRef.current.click()}
-                  size={40}
-                />
-              </div>
-            )}
+                  type="primary"
+                  htmlType="submit"
+                  loading={isLoadingUploadProfile}
+                >
+                  Update
+                </Button>
+              </Flex>
+            </Form.Item>
           </div>
-        </Flex>
-        <Space size="middle">
-          <Space direction="vertical">
-            <Text>FirtName</Text>
-            <Input value={info.first_name}></Input>
-          </Space>
-          <Space direction="vertical">
-            <Text>LastName</Text>
-            <Input value={info.last_name}></Input>
-          </Space>
         </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Email</Text>
-          <Input value={info.email}></Input>
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Phone</Text>
-          <Input value={info.phone}></Input>
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>Birthday</Text>
-          <DatePicker className={info.birthday} />
-        </Space>
-        <Space className="w-full" direction="vertical">
-          <Text>About</Text>
-          <Input.TextArea
-            rows={3}
-            value={info.about}
-            placeholder="maxLength is 100"
-            maxLength={100}
-          ></Input.TextArea>
-        </Space>
-      </Space>
+      </Form>
     </ModalComponent>
   );
 };
 
 const ItemInfo = ({ label, value }) => {
   return (
-    <Space>
+    <Space align="start">
       <span className="block w-[100px] text-sm">{label}</span>
       <Text>
         {value || <span className="text-red-300">Chưa điền thông tin</span>}

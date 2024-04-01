@@ -40,13 +40,27 @@ export const getInfoUser = createAsyncThunk(
   }
 );
 
+export const uploadProfile = createAsyncThunk(
+  'auth/upload-profile',
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/upload-profile`, values);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   searchConversation: [],
   openSearch: false,
   isLoading: false,
   isLoadingCreateConversation: false,
   openProfile: false,
-  info: null
+  info: null,
+  isLoadingUploadProfile: false,
+  type: 0
 };
 
 const contactSlice = createSlice({
@@ -58,6 +72,9 @@ const contactSlice = createSlice({
     },
     setOpenProfile(state, action) {
       state.openProfile = action.payload;
+    },
+    setType(state, action) {
+      state.type = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -83,9 +100,19 @@ const contactSlice = createSlice({
       })
       .addCase(getInfoUser.fulfilled, (state, action) => {
         state.info = action.payload.data?.result;
+      })
+      .addCase(uploadProfile.pending, (state) => {
+        state.isLoadingUploadProfile = true;
+      })
+      .addCase(uploadProfile.fulfilled, (state, action) => {
+        state.isLoadingUploadProfile = false;
+        state.info = action.payload.data?.result;
+      })
+      .addCase(uploadProfile.rejected, (state) => {
+        state.isLoadingUploadProfile = false;
       });
   }
 });
 
 export default contactSlice.reducer;
-export const { setOpenSearch, setOpenProfile } = contactSlice.actions;
+export const { setOpenSearch, setOpenProfile, setType } = contactSlice.actions;
