@@ -1,5 +1,5 @@
 from rest_framework.generics import GenericAPIView
-from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer
+from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer, GoogleSignInSerializer, GithubLoginSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import UserVerification
@@ -144,3 +144,22 @@ class UpdateProfileView(GenericAPIView):
         except Exception as e:
             print("Error uploading image:", e)
             return ErrorResponse(error_message=str(e))
+
+#Login with google 
+class GoogleOauthSignInview(GenericAPIView):
+    serializer_class=GoogleSignInSerializer
+    def post(self, request):
+        serializer=self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return SuccessResponse(data=serializer.validated_data['access_token'])
+
+#Login with github
+class GithubOauthSignInView(GenericAPIView):
+    serializer_class=GithubLoginSerializer
+    def post(self, request):
+        serializer=self.serializer_class(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+            dataCode=((serializer.validated_data)['code'])
+            print(serializer.data)
+            return SuccessResponse(data=dataCode, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

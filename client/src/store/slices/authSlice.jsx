@@ -14,6 +14,34 @@ export const login = createAsyncThunk(
   }
 );
 
+export const loginWithGoogle = createAsyncThunk(
+  'auth/google/',
+  async (token, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/google/`, {
+        access_token: token
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const loginWithGithub = createAsyncThunk(
+  'auth/google/',
+  async (code, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/github/`, {
+        code
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 export const logout = createAsyncThunk('auth/logout', async () => {
   const refresh = Cookies.get('refresh_token');
   try {
@@ -67,7 +95,6 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
-
 const initialState = {
   isAuthenticated: false,
   loaded: false,
@@ -79,7 +106,7 @@ const initialState = {
   },
   isLoadingLogin: false,
   isLoadingRegister: false,
-  isLoadingVerifyEmail: false,
+  isLoadingVerifyEmail: false
 };
 
 const authSlice = createSlice({
@@ -92,6 +119,18 @@ const authSlice = createSlice({
         state.isLoadingLogin = true;
       })
       .addCase(login.fulfilled, (state, action) => {
+        const result = action.payload.data.result;
+        state.isLoaded = true;
+        state.isAuthenticated = true;
+        state.user.id = result.id;
+        state.user.email = result.email;
+        state.user.fullName = result.full_name;
+        state.user.avatar = result.avatar;
+        Cookies.set('token', result.access_token);
+        Cookies.set('refresh_token', result.refresh_token);
+        state.isLoadingLogin = false;
+      })
+      .addCase(loginWithGoogle.fulfilled, (state, action) => {
         const result = action.payload.data.result;
         state.isLoaded = true;
         state.isAuthenticated = true;
