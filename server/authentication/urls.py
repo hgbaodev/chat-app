@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import RegisterUserView, VerifyUserEmail, LoginUserView, LogoutView, PasswordResetRequestView, PasswordResetConfirm, SetNewPasswordView, GetAuthenticatedReqView, GetInforUserView
+from .views import RegisterUserView, VerifyUserEmail, LoginUserView, LogoutView, PasswordResetRequestView, PasswordResetConfirm, SetNewPasswordView, GetAuthenticatedReqView, GetInforUserView, GoogleOauthSignInview, GithubOauthSignInView
 from rest_framework_simplejwt.views import (TokenRefreshView)
 
 from django.urls import path
@@ -17,5 +17,7 @@ urlpatterns = [
     path('set-new-password', SetNewPasswordView.as_view(), name='set-new-password'),
     path('get-something', GetAuthenticatedReqView.as_view(), name='get-something'),
     path('get-info-user', GetInforUserView.as_view(), name='get-info-user'),
-    path('upload-profile', UpdateProfileView.as_view(), name='update-profile')
+    path('upload-profile', UpdateProfileView.as_view(), name='update-profile'),
+    path('google/', GoogleOauthSignInview.as_view(), name='google'),
+    path('github/', GithubOauthSignInView.as_view(), name='github')
 ]

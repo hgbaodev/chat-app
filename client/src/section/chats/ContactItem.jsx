@@ -93,6 +93,8 @@ export const ContactItem = ({
       return `${name} unsent a message.`;
     } else if (message_type == MessageTypes.AUDIO) {
       return `${name} sent a voice message.`;
+    } else if (message_type == MessageTypes.NAMECARD) {
+      return `${name} sent a name card message.`;
     } else if (
       message_type == MessageTypes.IMAGE ||
       message_type == MessageTypes.DOCUMENT

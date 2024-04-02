@@ -20,6 +20,7 @@ cloudinary = "*"
 drf-writable-nested = "*"
 daphne = "*"
 channels-auth-token-middlewares = "*"
+google-api-python-client = "*"
 
 [dev-packages]
 

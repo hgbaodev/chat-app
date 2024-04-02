@@ -9,6 +9,9 @@ from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from .utils import send_normal_email
+from .helpers import Google, register_social_user
+from .github import Github
+from django.conf import settings
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -181,3 +184,40 @@ class GetInfoUserSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return obj.get_full_name
+
+class GoogleSignInSerializer(serializers.Serializer):
+    access_token = serializers.CharField(min_length=6)
+    def validate_access_token(self, access_token):
+        user_data = Google.validate(access_token)
+        try:
+            user_data['sub']
+        except:
+            raise serializers.ValidationError("This token has expired or is invalid. Please try again.")
+        if user_data['aud'] != settings.GOOGLE_CLIENT_ID:
+            raise AuthenticationFailed('Could not verify user.')
+        email = user_data['email']
+        name = user_data['name']
+        name_parts = name.split()  # Tách chuỗi thành các phần, mặc định là theo khoảng trắng
+        first_name = ' '.join(name_parts[:-1])  # Ghép lại các phần trừ phần cuối cùng
+        last_name = name_parts[-1]
+        return register_social_user(email, first_name, last_name)
+    def to_representation(self, instance):
+        return instance
+
+class GithubLoginSerializer(serializers.Serializer):
+    code = serializers.CharField()
+
+    def validate_code(self, code):   
+        print("code", code)
+        access_token = Github.exchange_code_for_token(code)
+        if access_token:
+            user_data=Github.get_github_user(access_token)
+            print('user_data', user_data)
+            full_name=user_data['name']
+            email=user_data['login']+"@gmail.com"
+            names=full_name.split(" ")
+            first_name = ' '.join(names[:-1]) 
+            last_name = names[-1]
+            return register_social_user(email, first_name, last_name)
+        else: 
+            return {'error': 'Invalid access token'}

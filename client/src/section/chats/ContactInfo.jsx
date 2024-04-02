@@ -10,6 +10,7 @@ import {
 } from '~/store/slices/appSlice';
 import { GrGroup, GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
+import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useSelector } from '~/store';
 import {
   LuAlertOctagon,
@@ -29,6 +30,7 @@ import {
 import AvatarImage from '~/section/users/AvatarImage';
 import { useMemo, useState } from 'react';
 const { useBreakpoint } = Grid;
+const { confirm } = Modal;
 
 export const ContactInfo = () => {
   const dispatch = useDispatch();
@@ -207,8 +209,21 @@ const HeaderInfoTool = () => {
     dispatch(unPinConversation(currentConversation.id));
   };
 
-  const handleLeaveConversation = () => {
-    dispatch(leaveConversation(currentConversation.id));
+  const showDeleteConfirm = () => {
+    confirm({
+      title: 'Leave converstaion',
+      icon: <ExclamationCircleFilled />,
+      content: 'Are you leave this conversation?',
+      okText: 'Yes',
+      okType: 'danger',
+      cancelText: 'No',
+      onOk() {
+        dispatch(leaveConversation(currentConversation.id));
+      },
+      onCancel() {
+        console.log('Cancel');
+      }
+    });
   };
   return (
     <Flex>
@@ -227,7 +242,7 @@ const HeaderInfoTool = () => {
         <ToolButton
           icon={<LuLogOut />}
           text="Leave group"
-          onClick={handleLeaveConversation}
+          onClick={showDeleteConfirm}
         />
       )}
     </Flex>
