@@ -53,6 +53,8 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_refuse_video_call(data)
         elif data_source == "interrupt_video_call":
             self.receive_interrupt_video_call(data)
+        elif data_source == "get_peer_ids":
+            self.receive_get_peer_ids(data)
         elif data_source == "typing_indicator":
             self.receive_typing_indicator(data)
         
@@ -143,7 +145,7 @@ class ChatConsumer(WebsocketConsumer):
         peer_id = data["peer_id"]
         # init call store
         self.call_store[conversation_id] = [peer_id]
-
+        print('INIT CALL STORE', conversation_id , self.call_store[conversation_id])
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title
@@ -160,7 +162,6 @@ class ChatConsumer(WebsocketConsumer):
         }
         message_dict = {
             'conversation': conversation_dict,
-            'peer_ids': [peer_id],
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
@@ -172,43 +173,8 @@ class ChatConsumer(WebsocketConsumer):
     def receive_accept_video_call(self, data):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
-        # return
-        conversation = Conversation.objects.get(id=conversation_id)
-        conversation_type = conversation.type
-        conversation_title = conversation.title
-        conversation_image = conversation.image
-        if conversation.type == Conversation.ConversationType.FRIEND:
-            participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
-            conversation_title = participant.user.first_name + ' ' + participant.user.last_name
-            conversation_image = participant.user.avatar
-        conversation_dict = {
-            'conversation_id': conversation_id,
-            'title': conversation_title,
-            'image' : conversation_image,
-            'type': conversation_type,
-        }
-        return_data = {
-            'peer_ids' : self.call_store[conversation_id],
-            'peer_id': peer_id,
-            'conversation': conversation_dict,
-        }
-        async_to_sync(self.channel_layer.group_send)(
-            f"user_{self.scope['user'].id}", {"type": "return_accept_video_call", "message": json.dumps(return_data)}
-            )
-        
-        
         # append peer_id into call store
         self.call_store[conversation_id].append(peer_id)
-
-        message_dict = {
-            'peer_ids': [peer_id],
-        }
-        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
-        for participant in participants:
-            room_group_name = f"user_{participant.user.id}"
-            async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "accept_video_call", "message": json.dumps(message_dict)}
-                )
        
     def receive_refuse_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -225,7 +191,31 @@ class ChatConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             room_group_name, {"type": "interrupt_video_call", "message": "empty"}
             )
-       
+    
+    def receive_get_peer_ids(self, data):
+        conversation_id = data["conversation_id"]
+        conversation = Conversation.objects.get(id=conversation_id)
+        conversation_type = conversation.type
+        conversation_title = conversation.title
+        conversation_image = conversation.image
+        if conversation.type == Conversation.ConversationType.FRIEND:
+            participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
+            conversation_title = participant.user.first_name + ' ' + participant.user.last_name
+            conversation_image = participant.user.avatar
+        conversation_dict = {
+            'conversation_id': conversation_id,
+            'title': conversation_title,
+            'image' : conversation_image,
+            'type': conversation_type,
+        }
+        return_data = {
+            'conversation': conversation_dict,
+            'peer_ids' : self.call_store[conversation_id]
+        }
+        async_to_sync(self.channel_layer.group_send)(
+            f"user_{self.scope['user'].id}", {"type": "return_get_peer_ids", "message": json.dumps(return_data)}
+            )
+        print('self.call_store[conversation_id]', self.call_store[conversation_id])
 
     def receive_friend_request(self, event):
         self.send(text_data=json.dumps(event))
@@ -248,13 +238,13 @@ class ChatConsumer(WebsocketConsumer):
     def accept_video_call(self, event):
         self.send(text_data=json.dumps(event))
 
-    def return_accept_video_call(self, event):
-        self.send(text_data=json.dumps(event))
-    
     def refuse_video_call(self, event):
         self.send(text_data=json.dumps(event))
     
     def interrupt_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def return_get_peer_ids(self, event):
         self.send(text_data=json.dumps(event))
         
     def typing_indicator(self, event):
