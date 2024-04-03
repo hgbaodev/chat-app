@@ -16,13 +16,12 @@ import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
 import { setCall } from '~/store/slices/chatSlice';
-import { ConversationTypes } from '~/utils/enum';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitGetPeerIds, emitInterruptVideoCall } = useSocket();
+  const { emitGetPeerIds, emitLeaveVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -125,6 +124,14 @@ const VideoCall = () => {
     }
   }, [peer, stream, call]);
 
+  // on listener peer_ids change
+  useEffect(() => {
+    console.log('peer_ids changed', call.peer_ids);
+    setRemoteStreams((preStream) =>
+      preStream.filter((stream) => call.peer_ids.includes(stream.peer_id))
+    );
+  }, [call.peer_ids]);
+
   // set stream to video
   useEffect(() => {
     if (videoRef.current) {
@@ -173,14 +180,11 @@ const VideoCall = () => {
     peer.destroy();
   };
   // handle interrupt call
-  const handleInteruptCall = () => {
-    console.log('into interrupt call');
-    if (call.conversation.type === ConversationTypes.FRIEND) {
-      console.log('interrupt call');
-      emitInterruptVideoCall({
-        conversation_id: call.conversation.conversation_id
-      });
-    }
+  const handleLeaveCall = () => {
+    emitLeaveVideoCall({
+      conversation_id: call.conversation.conversation_id,
+      peer_id: peer_id
+    });
     dispatch(
       setCall({
         calling: false,
@@ -224,7 +228,7 @@ const VideoCall = () => {
         ) : (
           <div
             id="video-frame"
-            className="w-full h-full gap-4 p-4"
+            className="relative w-full h-full gap-4 p-4"
             style={{
               height: '100%',
               display: 'grid',
@@ -333,7 +337,7 @@ const VideoCall = () => {
               icon={<FaPhoneAlt size={18} />}
               size={'large'}
               className="bg-red-500 text-white border-none "
-              onClick={handleInteruptCall}
+              onClick={handleLeaveCall}
             />
           </Space>
         )}

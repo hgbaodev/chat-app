@@ -51,8 +51,8 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_accept_video_call(data)
         elif data_source == "refuse_video_call":
             self.receive_refuse_video_call(data)
-        elif data_source == "interrupt_video_call":
-            self.receive_interrupt_video_call(data)
+        elif data_source == "leave_video_call":
+            self.receive_leave_video_call(data)
         elif data_source == "get_peer_ids":
             self.receive_get_peer_ids(data)
         elif data_source == "typing_indicator":
@@ -184,13 +184,25 @@ class ChatConsumer(WebsocketConsumer):
             room_group_name, {"type": "refuse_video_call", "message": "empty"}
             )
             
-    def receive_interrupt_video_call(self, data):
+    def receive_leave_video_call(self, data):
         conversation_id = data["conversation_id"]
-        participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
-        room_group_name = f"user_{participant.user.id}"
-        async_to_sync(self.channel_layer.group_send)(
-            room_group_name, {"type": "interrupt_video_call", "message": "empty"}
-            )
+        peer_id = data["peer_id"]
+
+        # remove peer_id from call store
+        self.call_store[conversation_id].remove(peer_id)
+
+        return_data = {
+            'peer_id': peer_id,
+            'peer_ids': self.call_store[conversation_id],
+        }
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "leave_video_call", "message": json.dumps(return_data)}
+                )
+        # 
+       
     
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
@@ -241,7 +253,7 @@ class ChatConsumer(WebsocketConsumer):
     def refuse_video_call(self, event):
         self.send(text_data=json.dumps(event))
     
-    def interrupt_video_call(self, event):
+    def leave_video_call(self, event):
         self.send(text_data=json.dumps(event))
 
     def return_get_peer_ids(self, event):

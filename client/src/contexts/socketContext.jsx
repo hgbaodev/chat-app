@@ -1,4 +1,5 @@
 import Cookies from 'js-cookie';
+import { set } from 'lodash';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
@@ -8,6 +9,7 @@ import {
   recallMessage,
   receiveChangeNameConversation,
   receiverMessage,
+  removePeerId,
   setCall,
   setConversationCall,
   setPeerIds,
@@ -22,7 +24,6 @@ export const SocketContext = createContext({
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const { call } = useSelector((state) => state.chat);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
@@ -97,15 +98,9 @@ export const SocketProvider = ({ children }) => {
                 refused: true
               })
             );
-          } else if (data.type === 'interrupt_video_call') {
-            console.log('receiver here');
-            dispatch(
-              setCall({
-                open: false,
-                calling: false,
-                ended: true
-              })
-            );
+          } else if (data.type === 'leave_video_call') {
+            const { peer_ids } = JSON.parse(data.message);
+            dispatch(setPeerIds({ peer_ids }));
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
           }

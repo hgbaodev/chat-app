@@ -256,6 +256,11 @@ const chatSlice = createSlice({
     setPeerIds(state, action) {
       state.call.peer_ids = action.payload.peer_ids;
     },
+    removePeerId(state, action) {
+      state.call.peer_ids = state.call.peer_ids.filter(
+        (peer_id) => peer_id !== action.payload.peer_id
+      );
+    },
     setConversationCall(state, action) {
       state.call.conversation = action.payload.conversation;
     },
@@ -374,6 +379,7 @@ export const {
   setCall,
   setConversationCall,
   setPeerIds,
+  removePeerId,
   setTypingIndicator,
   changeStatePinMessage,
   receiveChangeNameConversation

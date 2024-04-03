@@ -22,6 +22,7 @@ const MessageWrapper = memo(
     children,
     isPinned,
     sender,
+    showAvatar,
     ...props
   }) => {
     const { user } = useSelector((state) => state.auth);
@@ -32,9 +33,11 @@ const MessageWrapper = memo(
       <Flex vertical>
         {created && <TimeLine text={formatDateTime(created)} />}
         <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
-          {from !== user.id && (
-            <Avatar className="mr-2 cursor-pointer" src={sender?.avatar} />
-          )}
+          <Flex className="w-[40px]" style={{ display: 'block' }}>
+            {from !== user.id && showAvatar && (
+              <Avatar className="mr-2 cursor-pointer" src={sender?.avatar} />
+            )}
+          </Flex>
           <Flex
             align="center"
             gap={20}

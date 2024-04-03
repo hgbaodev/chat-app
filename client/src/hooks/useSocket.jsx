@@ -65,12 +65,13 @@ export const useSocket = () => {
       );
     }
   };
-  const emitInterruptVideoCall = ({ conversation_id }) => {
+  const emitLeaveVideoCall = ({ conversation_id, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
-          source: 'interrupt_video_call',
-          conversation_id
+          source: 'leave_video_call',
+          conversation_id,
+          peer_id
         })
       );
     }
@@ -102,7 +103,7 @@ export const useSocket = () => {
     emitMessage,
     emitVideoCall,
     emitAcceptVideoCall,
-    emitInterruptVideoCall,
+    emitLeaveVideoCall,
     emitRefuseVideoCall,
     emitTypingIndicator,
     emitGetPeerIds
