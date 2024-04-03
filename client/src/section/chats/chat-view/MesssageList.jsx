@@ -62,6 +62,7 @@ const MesssageList = () => {
         <Space direction="vertical">
           {messages.data.map((message, index) => {
             let check = false;
+            let showAvatar = true;
             if (index > 0) {
               const currentMessageTime = new Date(message.created_at);
               const prevMessageTime = new Date(
@@ -70,6 +71,12 @@ const MesssageList = () => {
               const timeDiff = Math.abs(currentMessageTime - prevMessageTime);
               const hoursDiff = Math.floor(timeDiff / (1000 * 60 * 30));
               if (hoursDiff >= 1) check = true;
+
+              if (
+                messages.data[index - 1].sender.id === message.sender.id &&
+                messages.data[index - 1].message_type !== MessageTypes.NEWS
+              )
+                showAvatar = false;
             }
 
             switch (message.message_type) {
@@ -79,6 +86,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.AUDIO:
