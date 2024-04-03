@@ -21,7 +21,8 @@ const VideoCall = () => {
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitGetPeerIds, emitLeaveVideoCall } = useSocket();
+  const { emitGetPeerIds, emitLeaveVideoCall, emitCancelVideoCall } =
+    useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -181,10 +182,19 @@ const VideoCall = () => {
   };
   // handle interrupt call
   const handleLeaveCall = () => {
-    emitLeaveVideoCall({
-      conversation_id: call.conversation.conversation_id,
-      peer_id: peer_id
-    });
+    if (call.calling) {
+      console.log('Leave call');
+      emitLeaveVideoCall({
+        conversation_id: call.conversation.conversation_id,
+        peer_id: peer_id
+      });
+    } else {
+      console.log('Cancel call');
+      emitCancelVideoCall({
+        conversation_id: call.conversation.conversation_id
+      });
+    }
+
     dispatch(
       setCall({
         calling: false,
@@ -201,6 +211,11 @@ const VideoCall = () => {
     // destrop peer
     stopStreamAndDestroyPeer();
     window.close();
+  };
+
+  // handle recall
+  const handleRecall = () => {
+    console.log('Recall');
   };
 
   useEffect(() => {
@@ -300,7 +315,7 @@ const VideoCall = () => {
               icon={<FaPhoneAlt size={18} />}
               size={'large'}
               className="bg-green-500 text-white border-none "
-              onClick={null}
+              onClick={handleRecall}
             />
           </Space>
         ) : (

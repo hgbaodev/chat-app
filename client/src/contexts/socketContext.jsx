@@ -74,10 +74,7 @@ export const SocketProvider = ({ children }) => {
             const { conversation, peer_ids } = JSON.parse(data.message);
             dispatch(setConversationCall({ conversation }));
             dispatch(setPeerIds({ peer_ids }));
-            if (
-              peer_ids.length === 1 &&
-              conversation.type === ConversationTypes.FRIEND
-            ) {
+            if (peer_ids.length === 1) {
               dispatch(
                 setCall({
                   calling: false,
@@ -117,6 +114,16 @@ export const SocketProvider = ({ children }) => {
                 })
               );
             }
+          } else if (data.type === 'cancel_video_call') {
+            console.log('cancel_video_call');
+            dispatch(
+              setCall({
+                open: false,
+                calling: false,
+                refused: false,
+                ended: true
+              })
+            );
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
           }
