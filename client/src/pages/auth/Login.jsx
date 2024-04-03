@@ -15,7 +15,6 @@ import { loginWithGithub, loginWithGoogle } from '~/store/slices/authSlice';
 const { Text } = Typography;
 
 const Login = () => {
-  console.log('REACT_APP_GITHUB_CLIENT_ID', REACT_APP_GITHUB_CLIENT_ID);
   const dispatch = useDispatch();
   const [searchparams] = useSearchParams();
   const handleLoginWithGoogle = (response) => {
@@ -30,10 +29,11 @@ const Login = () => {
     );
   };
 
-  const send_github__code_to_server = async () => {
-    if (searchparams) {
+  let code = searchparams.get('code');
+  useEffect(() => {
+    if (code) {
       try {
-        const urlparam = searchparams.get('code');
+        const urlparam = code;
         dispatch(loginWithGithub(urlparam));
       } catch (error) {
         if (error.response) {
@@ -41,13 +41,7 @@ const Login = () => {
         }
       }
     }
-  };
-  let code = searchparams.get('code');
-  useEffect(() => {
-    if (code) {
-      send_github__code_to_server();
-    }
-  }, [code]);
+  }, [code, dispatch]);
 
   useEffect(() => {
     /* global google */

@@ -29,7 +29,7 @@ export const createConversation = createAsyncThunk(
 );
 
 export const getInfoUser = createAsyncThunk(
-  'auth/getInforUser',
+  'contact/getInforUser',
   async (_, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.get(`auth/get-info-user`);
@@ -41,10 +41,25 @@ export const getInfoUser = createAsyncThunk(
 );
 
 export const uploadProfile = createAsyncThunk(
-  'auth/upload-profile',
+  'contact/upload-profile',
   async (values, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.post(`auth/upload-profile`, values);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const changeNameConversation = createAsyncThunk(
+  'contact/change-name-conversation/',
+  async (values, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(
+        `chat/change-name-conversation/`,
+        values
+      );
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);
@@ -60,7 +75,9 @@ const initialState = {
   openProfile: false,
   info: null,
   isLoadingUploadProfile: false,
-  type: 0
+  type: 0,
+  isLoadingChangeNameConversation: false,
+  openChangeNameConversation: false
 };
 
 const contactSlice = createSlice({
@@ -75,6 +92,9 @@ const contactSlice = createSlice({
     },
     setType(state, action) {
       state.type = action.payload;
+    },
+    setOpenChangeNameConversation(state, action) {
+      state.openChangeNameConversation = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -110,9 +130,24 @@ const contactSlice = createSlice({
       })
       .addCase(uploadProfile.rejected, (state) => {
         state.isLoadingUploadProfile = false;
+      })
+      .addCase(changeNameConversation.pending, (state) => {
+        state.isLoadingChangeNameConversation = true;
+      })
+      .addCase(changeNameConversation.fulfilled, (state) => {
+        state.isLoadingChangeNameConversation = false;
+        state.openChangeNameConversation = false;
+      })
+      .addCase(changeNameConversation.rejected, (state) => {
+        state.isLoadingChangeNameConversation = false;
       });
   }
 });
 
 export default contactSlice.reducer;
-export const { setOpenSearch, setOpenProfile, setType } = contactSlice.actions;
+export const {
+  setOpenSearch,
+  setOpenProfile,
+  setType,
+  setOpenChangeNameConversation
+} = contactSlice.actions;

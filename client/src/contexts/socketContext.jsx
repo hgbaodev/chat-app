@@ -6,6 +6,7 @@ import {
   changeStatePinMessage,
   createGroup,
   recallMessage,
+  receiveChangeNameConversation,
   receiverMessage,
   setCall,
   setConversationCall,
@@ -114,6 +115,8 @@ export const SocketProvider = ({ children }) => {
                 ended: true
               })
             );
+          } else if (data.type === 'change_name_conversation') {
+            dispatch(receiveChangeNameConversation(data.message));
           }
         } catch (error) {
           console.error('Error parsing message:', error);

@@ -198,3 +198,14 @@ class PinnedMessagesSerializer(serializers.Serializer):
     conversation_id = serializers.IntegerField()
     message_id = serializers.IntegerField()
     is_pinned = serializers.BooleanField()
+    
+class ChangeNameConversationSerializer(serializers.Serializer):
+    title = serializers.CharField()
+    id = serializers.IntegerField()
+
+    def update(self, instance, validated_data):
+        instance.title = validated_data.get('title', instance.title)
+        instance.save()
+        return instance
+
+

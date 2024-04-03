@@ -293,9 +293,7 @@ const ItemInfo = ({ label, value }) => {
   return (
     <Space align="start">
       <span className="block w-[100px] text-sm">{label}</span>
-      <Text>
-        {value || <span className="text-red-300">Chưa điền thông tin</span>}
-      </Text>
+      <Text>{value}</Text>
     </Space>
   );
 };

@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import PinnedMessagesSerializer,PinnedMessagesCreateSerializer, AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
+from .serializers import ChangeNameConversationSerializer, PinnedMessagesSerializer,PinnedMessagesCreateSerializer, AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message, DeleteMessage, PinConversation, Attachments, PinnedMessages
 from django.http import Http404
@@ -414,4 +414,47 @@ class DeletePinnedMessage(APIView):
             return SuccessResponse(data={"message_id": message_id}, status=status.HTTP_200_OK)
         else:
             raise Http404
+
+class ChangeNameConversation(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        serializer = ChangeNameConversationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user = request.user
+        conversation_id = serializer.validated_data['id']
+        title = serializer.validated_data['title']
+
+        try:
+            conversation = Conversation.objects.get(id=conversation_id)
+        except Conversation.DoesNotExist:
+            return ErrorResponse(error_message="Conversation does not exist", status=status.HTTP_400_BAD_REQUEST)
+
+        # Check if the user is a participant in the conversation
+        if not Participants.objects.filter(conversation=conversation, user=user).exists():
+            return ErrorResponse(error_message="User is not a participant in this conversation", status=status.HTTP_400_BAD_REQUEST)
+
+        # Update the conversation's title
+        conversation.title = title
+        conversation.save()
+
+        message = Message.objects.create(
+                    conversation=conversation,
+                    sender=user,
+                    message=f'{user.first_name} {user.last_name} rename to {conversation.title}',
+                    message_type=Message.MessageType.NEWS
+                )
+        message_serializer = MessageSerializer(instance=message)
+        send_message_to_conversation_members(message.conversation_id, 'change_name_conversation', {
+            "message": message_serializer.data,
+            "title": title,
+            "id": conversation_id
+        })
+
+        return SuccessResponse(data={
+            "message": message_serializer.data,
+            "title": title,
+            "id": conversation_id
+        }, status=status.HTTP_200_OK)
 
