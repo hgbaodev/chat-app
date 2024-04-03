@@ -17,6 +17,7 @@ import {
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
+import { ConversationTypes } from '~/utils/enum';
 export const SocketContext = createContext({
   socketInstance: null
 });
@@ -73,7 +74,10 @@ export const SocketProvider = ({ children }) => {
             const { conversation, peer_ids } = JSON.parse(data.message);
             dispatch(setConversationCall({ conversation }));
             dispatch(setPeerIds({ peer_ids }));
-            if (peer_ids.length === 0) {
+            if (
+              peer_ids.length === 1 &&
+              conversation.type === ConversationTypes.FRIEND
+            ) {
               dispatch(
                 setCall({
                   calling: false,
@@ -99,8 +103,20 @@ export const SocketProvider = ({ children }) => {
               })
             );
           } else if (data.type === 'leave_video_call') {
-            const { peer_ids } = JSON.parse(data.message);
+            const { peer_ids, conversation_type } = JSON.parse(data.message);
             dispatch(setPeerIds({ peer_ids }));
+            if (
+              peer_ids.length === 1 &&
+              conversation_type === ConversationTypes.FRIEND
+            ) {
+              dispatch(
+                setCall({
+                  calling: false,
+                  refused: false,
+                  ended: true
+                })
+              );
+            }
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
           }

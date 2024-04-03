@@ -191,9 +191,11 @@ class ChatConsumer(WebsocketConsumer):
         # remove peer_id from call store
         self.call_store[conversation_id].remove(peer_id)
 
+        conversation = Conversation.objects.get(id=conversation_id)
         return_data = {
             'peer_id': peer_id,
             'peer_ids': self.call_store[conversation_id],
+            'conversation_type': conversation.type
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
