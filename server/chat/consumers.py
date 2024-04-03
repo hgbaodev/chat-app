@@ -259,3 +259,6 @@ class ChatConsumer(WebsocketConsumer):
         
     def typing_indicator(self, event):
         self.send(text_data=json.dumps(event))
+    
+    def change_name_conversation(self, event):
+        self.send(text_data=json.dumps(event))

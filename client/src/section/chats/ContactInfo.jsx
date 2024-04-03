@@ -29,6 +29,8 @@ import {
 } from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
 import { useMemo, useState } from 'react';
+import ChangeNameConversationModal from '~/section/common/ChangeNameConversationModal';
+import { setOpenChangeNameConversation } from '~/store/slices/contactSlice';
 const { useBreakpoint } = Grid;
 const { confirm } = Modal;
 
@@ -40,100 +42,106 @@ export const ContactInfo = () => {
 
   const handleClose = () => dispatch(toggleContactInfo());
   const handleOpenSharedMessages = () => dispatch(showSharedMessage());
+  const handleOpenChangeNameCOnversation = () =>
+    dispatch(setOpenChangeNameConversation(true));
 
   return (
-    <Flex
-      vertical
-      className={`w-[350px] ${
-        !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
-      }`}
-      style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
-    >
+    <>
       <Flex
-        justify="space-between"
-        align="center"
-        className="w-full h-[60px] px-4"
+        vertical
+        className={`w-[350px] ${
+          !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
+        }`}
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
       >
-        <p className="m-0 font-semibold">Contact Information</p>
-        <Button
-          type="text"
-          shape="circle"
-          icon={<CloseOutlined />}
-          size={20}
-          onClick={handleClose}
-        />
-      </Flex>
-      <Space
-        className="p-4 w-full overflow-y-auto h-[calc(100vh-60px)] scrollbar"
-        direction="vertical"
-      >
-        <Space className="w-full" direction="vertical" align="center">
-          <AvatarImage size={64} sizeGroup={45} />
-          <Space align="center" className="mb-4">
-            <Title level={5} className="!m-0">
-              {currentConversation.title}
-            </Title>
+        <Flex
+          justify="space-between"
+          align="center"
+          className="w-full h-[60px] px-4"
+          style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
+        >
+          <p className="m-0 font-semibold">Contact Information</p>
+          <Button
+            type="text"
+            shape="circle"
+            icon={<CloseOutlined />}
+            size={20}
+            onClick={handleClose}
+          />
+        </Flex>
+        <Space
+          className="p-4 w-full overflow-y-auto h-[calc(100vh-60px)] scrollbar"
+          direction="vertical"
+        >
+          <Space className="w-full" direction="vertical" align="center">
+            <AvatarImage size={64} sizeGroup={45} />
+            <Space align="center" className="mb-4">
+              <Title level={5} className="!m-0">
+                {currentConversation.title}
+              </Title>
+              <Button
+                type="text"
+                size="small"
+                shape="circle"
+                icon={<AiOutlineEdit />}
+                className="bg-neutral-100"
+                onClick={handleOpenChangeNameCOnversation}
+              />
+            </Space>
+            <HeaderInfoTool />
+          </Space>
+
+          <Divider className="my-2" />
+
+          {currentConversation.type === ConversationTypes.FRIEND ? (
+            <AboutSection />
+          ) : (
+            <MembersSection />
+          )}
+
+          <Divider className="mb-2 mt-0" />
+
+          <Flex
+            justify="space-between"
+            align="center"
+            className="cursor-pointer"
+            onClick={() => setIsPinnedModalOpen(true)}
+          >
+            <Typography className="font-semibold m-0">
+              View pinned messages
+            </Typography>
             <Button
               type="text"
-              size="small"
               shape="circle"
-              icon={<AiOutlineEdit />}
-              className="bg-neutral-100"
+              icon={<IoChevronForward size={20} />}
             />
-          </Space>
-          <HeaderInfoTool />
+          </Flex>
+          <PinnedMessagesModal
+            isModalOpen={isPinnedModalOpen}
+            handleCancel={() => setIsPinnedModalOpen(false)}
+          />
+          <Divider className="my-2" />
+          <Flex
+            justify="space-between"
+            align="center"
+            className="cursor-pointer"
+            onClick={handleOpenSharedMessages}
+          >
+            <Typography className="font-semibold m-0">
+              Media, files and links
+            </Typography>
+            <Button
+              type="text"
+              shape="circle"
+              icon={<IoChevronForward size={20} />}
+            />
+          </Flex>
+          <Divider className="my-2" />
+          <PrivacySection />
         </Space>
-
-        <Divider className="my-2" />
-
-        {currentConversation.type === ConversationTypes.FRIEND ? (
-          <AboutSection />
-        ) : (
-          <MembersSection />
-        )}
-
-        <Divider className="mb-2 mt-0" />
-
-        <Flex
-          justify="space-between"
-          align="center"
-          className="cursor-pointer"
-          onClick={() => setIsPinnedModalOpen(true)}
-        >
-          <Typography className="font-semibold m-0">
-            View pinned messages
-          </Typography>
-          <Button
-            type="text"
-            shape="circle"
-            icon={<IoChevronForward size={20} />}
-          />
-        </Flex>
-        <PinnedMessagesModal
-          isModalOpen={isPinnedModalOpen}
-          handleCancel={() => setIsPinnedModalOpen(false)}
-        />
-        <Divider className="my-2" />
-        <Flex
-          justify="space-between"
-          align="center"
-          className="cursor-pointer"
-          onClick={handleOpenSharedMessages}
-        >
-          <Typography className="font-semibold m-0">
-            Media, files and links
-          </Typography>
-          <Button
-            type="text"
-            shape="circle"
-            icon={<IoChevronForward size={20} />}
-          />
-        </Flex>
-        <Divider className="my-2" />
-        <PrivacySection />
-      </Space>
-    </Flex>
+      </Flex>
+      <ChangeNameConversationModal />
+    </>
   );
 };
 

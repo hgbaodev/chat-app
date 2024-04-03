@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import DeletePinnedMessage, PinnedMessagesList, GetAttachmentConversation, ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, MesssageDetail, GetMemberConversation, GetMessagesConversation, ConversationListFind, PinConversationUser, UnpinConversationUser, LeaveConversation
+from .views import DeletePinnedMessage, PinnedMessagesList, GetAttachmentConversation, ConversationList, ConversationDetail, PaticipantsList, ParicipantsDetail, MesssageDetail, GetMemberConversation, GetMessagesConversation, ConversationListFind, PinConversationUser, UnpinConversationUser, LeaveConversation, ChangeNameConversation
 
 urlpatterns = [
     path('conversations/', ConversationList.as_view(), name='conversations'),
@@ -16,4 +16,5 @@ urlpatterns = [
     path('pin-conversation/', PinConversationUser.as_view(), name='pin-conversation'),
     path('unpin-conversation/', UnpinConversationUser.as_view(), name='unpin-conversation'),
     path('leave-conversation/', LeaveConversation.as_view(), name='leave-conversation'),
+    path('change-name-conversation/', ChangeNameConversation.as_view(), name='change-name-conversation'),
 ]
