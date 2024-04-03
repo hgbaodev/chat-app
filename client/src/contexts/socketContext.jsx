@@ -1,15 +1,13 @@
 import Cookies from 'js-cookie';
-import { set } from 'lodash';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
 import {
-  changeStatePinMessage,
+  changeStatusUser,
   createGroup,
   recallMessage,
   receiveChangeNameConversation,
   receiverMessage,
-  removePeerId,
   setCall,
   setConversationCall,
   setPeerIds,
@@ -25,6 +23,7 @@ export const SocketContext = createContext({
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { call } = useSelector((state) => state.chat);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
@@ -45,8 +44,6 @@ export const SocketProvider = ({ children }) => {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
             dispatch(receiverMessage(data));
-          } else if (data.type === 'pin_message') {
-            dispatch(changeStatePinMessage(data.message));
           } else if (data.type === 'typing_indicator') {
             console.log(JSON.parse(data.message));
             dispatch(setTypingIndicator(JSON.parse(data.message)));
@@ -126,6 +123,8 @@ export const SocketProvider = ({ children }) => {
             );
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
+          } else if (data.type === 'online_notification') {
+            dispatch(changeStatusUser(data.message));
           }
         } catch (error) {
           console.error('Error parsing message:', error);
@@ -143,6 +142,7 @@ export const SocketProvider = ({ children }) => {
         socket.close();
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isAuthenticated]);
   return (
     <SocketContext.Provider value={{ socketInstance }}>

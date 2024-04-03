@@ -18,6 +18,7 @@ export const ChatHeader = () => {
   const { emitVideoCall } = useSocket();
   const { contactInfo } = useSelector((state) => state.app);
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { user } = useSelector((state) => state.auth);
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
   };
@@ -49,15 +50,19 @@ export const ChatHeader = () => {
           {currentConversation.members.length} members
         </span>
       );
-    } else return <span>Online</span>;
+    }
+    if (currentConversation.type == ConversationTypes.FRIEND) {
+      const check = currentConversation.members
+        .filter((member) => member.id != user.id)
+        .some((mem) => mem['status'] === true);
+      return <span>{check ? 'Online' : 'Offline'}</span>;
+    }
   };
 
   return (
     <Flex className="h-[60px] px-4" justify="space-between">
       <Space size="middle">
-        <Badge size="default" dot={true} color="green" offset={[0, 28]}>
-          <AvatarImage />
-        </Badge>
+        <AvatarImage />
         <Flex vertical justify="center">
           <Typography className="font-bold">
             {currentConversation.title}

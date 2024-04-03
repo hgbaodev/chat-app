@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import generics
 from .serializers import ChangeNameConversationSerializer, PinnedMessagesSerializer,PinnedMessagesCreateSerializer, AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
 from rest_framework.permissions import IsAuthenticated
-from .models import Conversation, Participants, Message, DeleteMessage, PinConversation, Attachments, PinnedMessages
+from .models import Conversation, Participants, Message, DeleteMessage, PinConversation, Attachments, PinnedMessages, OnlineUser
 from django.http import Http404
 from django.db.models import Max
 from config.paginations import CustomPagination
@@ -47,6 +47,19 @@ class ConversationList(APIView):
         for conversation in result_page:
             is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
             users = User.objects.filter(participants__conversation=conversation)
+            members = []
+            for user in users:
+                check = OnlineUser.objects.filter(user=user.id).exists()
+                if user.id == request.user.id:
+                    check=True
+                members.append({
+                        'id': user.id,
+                        'first_name': user.first_name,
+                        'last_name': user.last_name,
+                        'avatar': user.avatar,
+                        'about': user.about,
+                        'status': check
+                    })
             latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
             if latest_message is not None:
                 conversation_data.append({
@@ -55,7 +68,7 @@ class ConversationList(APIView):
                     'image': conversation.image,
                     'latest_message': latest_message,
                     'type': conversation.type,
-                    'members': users,
+                    'members': members,
                     'is_pinned': is_pinned,
                     'admin': conversation.admin,
                 })
@@ -82,7 +95,8 @@ class ConversationList(APIView):
                     'id': member['id'],
                     'first_name': member['first_name'],
                     'last_name': member['last_name'],
-                    'avatar': member['avatar']
+                    'avatar': member['avatar'],
+                    'status': OnlineUser.objects.filter(user=member['id']).exists()
                 }
                 for member in users.values('id', 'first_name', 'last_name', 'avatar')
             ]
@@ -442,4 +456,8 @@ class ChangeNameConversation(APIView):
             "title": title,
             "id": conversation_id
         }, status=status.HTTP_200_OK)
+
+
+
+
 

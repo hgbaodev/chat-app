@@ -1,4 +1,4 @@
-import { Avatar, Button, Dropdown, Flex, Grid, Space } from 'antd';
+import { Avatar, Badge, Button, Dropdown, Flex, Grid, Space } from 'antd';
 import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { showContactInfo } from '~/store/slices/appSlice';
@@ -64,7 +64,7 @@ const ListMemberOfGroup = () => {
   );
 };
 
-const MemberItem = ({ id, avatar, first_name, last_name }) => {
+const MemberItem = ({ id, avatar, first_name, last_name, status }) => {
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const handleDeleteFriend = () => {
     // logic here
@@ -95,7 +95,9 @@ const MemberItem = ({ id, avatar, first_name, last_name }) => {
       align="center"
     >
       <Space>
-        <Avatar src={avatar} size="large" />
+        <Badge size="default" dot={status} color="green" offset={[0, 30]}>
+          <Avatar src={avatar} size="large" />
+        </Badge>
         <Space direction="vertical" size={2}>
           <p className="text-slate-900 font-semibold text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {first_name + ' ' + last_name}
