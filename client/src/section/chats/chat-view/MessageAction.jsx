@@ -1,10 +1,5 @@
-import { Button, Dropdown, Flex, Popover, Space } from 'antd';
-import { FcDislike, FcLike, FcLinux, FcRating } from 'react-icons/fc';
-import {
-  IoArrowUndo,
-  IoEllipsisVerticalSharp,
-  IoHappyOutline
-} from 'react-icons/io5';
+import { Button, Dropdown, Flex } from 'antd';
+import { IoArrowUndo, IoEllipsisVerticalSharp } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import {
   deleteMessage,
@@ -24,7 +19,9 @@ import { RiUnpinLine } from 'react-icons/ri';
 const MessageAction = ({ messageId, from, setOpen, isPinned, ...props }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { currentConversation, pinned_messages } = useSelector(
+    (state) => state.chat.chat
+  );
 
   const items = [
     {
@@ -71,26 +68,14 @@ const MessageAction = ({ messageId, from, setOpen, isPinned, ...props }) => {
     }
   ];
 
-  const filteredItems =
+  let filteredItems =
     from !== user.id ? items.filter((item) => item.key != 3) : items;
+
+  if (pinned_messages.isOpen == true)
+    filteredItems = items.filter((item) => item.key == 1 || item.key == 2);
 
   return (
     <Flex gap={6} {...props}>
-      <Popover
-        content={PopoverReaction}
-        trigger="click"
-        arrow={false}
-        overlayClassName="popover-reaction"
-        onOpenChange={(e) => setOpen(e)}
-      >
-        <Button
-          type="text"
-          size="small"
-          shape="circle"
-          icon={<IoHappyOutline size={18} />}
-          className="text-gray-600 block"
-        />
-      </Popover>
       <Button
         type="text"
         size="small"
@@ -120,48 +105,6 @@ const MessageAction = ({ messageId, from, setOpen, isPinned, ...props }) => {
         />
       </Dropdown>
     </Flex>
-  );
-};
-
-const PopoverReaction = () => {
-  return (
-    <Space>
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<FcLike size={18} />}
-        className="text-gray-600"
-      />
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<FcRating size={18} />}
-        className="text-gray-600"
-      />
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<FcLinux size={18} />}
-        className="text-gray-600"
-      />
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<FcDislike size={18} />}
-        className="text-gray-600"
-      />
-      <Button
-        type="text"
-        size="small"
-        shape="circle"
-        icon={<IoArrowUndo size={18} />}
-        className="text-gray-600"
-      />
-    </Space>
   );
 };
 

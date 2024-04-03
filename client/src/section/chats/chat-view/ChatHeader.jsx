@@ -1,4 +1,4 @@
-import { Badge, Button, Flex, Space, Typography } from 'antd';
+import { Button, Flex, Space, Typography } from 'antd';
 import {
   SearchOutlined,
   ExclamationCircleOutlined,

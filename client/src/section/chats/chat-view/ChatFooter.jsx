@@ -459,7 +459,6 @@ const RecordButton = () => {
 const ForwardMessage = ({ message, sender, attachments, message_type }) => {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.auth);
-  console.log(attachments, message_type);
 
   return (
     <Flex

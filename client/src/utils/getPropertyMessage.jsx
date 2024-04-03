@@ -22,5 +22,7 @@ export const getContentMessage = (messageObj) => {
       return '[Name Card]';
     case MessageTypes.DOCUMENT:
       return attachments.file_name;
+    case MessageTypes.RECALL:
+      return 'Message recalled';
   }
 };

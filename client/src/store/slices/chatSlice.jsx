@@ -142,6 +142,20 @@ export const unpinMessage = createAsyncThunk(
   }
 );
 
+export const getPinnedMessages = createAsyncThunk(
+  'chat/getPinnedMessages',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `/chat/conversations/${conversation_id}/pinned`
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -166,6 +180,10 @@ const initialState = {
     attachments: {
       images: [],
       documents: []
+    },
+    pinned_messages: {
+      isOpen: false,
+      data: []
     }
   },
   call: {
@@ -190,6 +208,8 @@ const chatSlice = createSlice({
       state.chat.messages.lastPage = 0;
       state.chat.messages.currentPage = 1;
       state.chat.messages.data = [];
+      state.chat.pinned_messages.isOpen = false;
+      state.chat.pinned_messages.data = [];
     },
     setCurrentPage(state, action) {
       state.currentPage = action.payload;
@@ -218,6 +238,12 @@ const chatSlice = createSlice({
           (message) => message.id === message_id
         );
         if (message) message.is_pinned = is_pinned;
+        if (!is_pinned) {
+          state.chat.pinned_messages.data =
+            state.chat.pinned_messages.data.filter(
+              (message) => message.id !== message_id
+            );
+        }
       }
     },
     createGroup(state, action) {
@@ -230,6 +256,7 @@ const chatSlice = createSlice({
       state.forwardMessage = state.chat.messages.data.find(
         (message) => message.id === action.payload
       );
+      state.chat.pinned_messages.isOpen = false;
     },
     recallMessage(state, action) {
       const { currentConversation, messages } = state.chat;
@@ -300,6 +327,9 @@ const chatSlice = createSlice({
         currentConversation.members[memberIndexInCurrentConversation].status =
           status;
       }
+    },
+    setOpenPinnedMessage(state, action) {
+      state.chat.pinned_messages.isOpen = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -333,7 +363,7 @@ const chatSlice = createSlice({
         }
       })
       .addCase(deleteMessage.fulfilled, (state, action) => {
-        state.chat.messages = state.chat.messages.filter(
+        state.chat.messages.data = state.chat.messages.data.filter(
           (message) => message.id !== action.payload.data.result.message
         );
       })
@@ -382,6 +412,9 @@ const chatSlice = createSlice({
         } else if (action.payload.type === MessageTypes.DOCUMENT) {
           state.chat.attachments.documents = action.payload.data;
         }
+      })
+      .addCase(getPinnedMessages.fulfilled, (state, action) => {
+        state.chat.pinned_messages.data = action.payload.data;
       });
   }
 });
@@ -403,5 +436,6 @@ export const {
   setTypingIndicator,
   changeStatePinMessage,
   receiveChangeNameConversation,
-  changeStatusUser
+  changeStatusUser,
+  setOpenPinnedMessage
 } = chatSlice.actions;

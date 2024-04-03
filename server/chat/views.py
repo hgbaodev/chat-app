@@ -347,19 +347,20 @@ class PinnedMessagesList(generics.ListAPIView):
         pk = self.kwargs.get('pk')
         participant = Participants.objects.filter(conversation_id=pk, user_id=self.request.user.id).first()
         if participant:
-            messages = Message.objects.filter(pinnedmessages__conversation_id=pk).exclude(deletemessage__user=request.user).order_by('-created_at')
+            messages = Message.objects.filter(pinnedmessages__conversation_id=pk).exclude(deletemessage__user=request.user).exclude(message_type=Message.MessageType.RECALL).order_by('-created_at')
             return messages
         else:
             return Message.objects.none()  # Return an empty queryset if the user doesn't have access
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset(request)
-        page = self.paginate_queryset(queryset)[::-1]
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-
-        serializer = self.get_serializer(queryset, many=True)
+        
+        # page = self.paginate_queryset(queryset)[::-1]
+        # if page is not None:
+        #     serializer = self.get_serializer(page, many=True)
+        #     return self.get_paginated_response(serializer.data)
+        
+        serializer = self.get_serializer(queryset[::-1], many=True)
         return Response(serializer.data)
     
     def post(self, request, *args, **kwargs):

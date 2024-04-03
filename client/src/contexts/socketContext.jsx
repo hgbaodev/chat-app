@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
 import {
+  changeStatePinMessage,
   changeStatusUser,
   createGroup,
   recallMessage,
@@ -125,6 +126,8 @@ export const SocketProvider = ({ children }) => {
             dispatch(receiveChangeNameConversation(data.message));
           } else if (data.type === 'online_notification') {
             dispatch(changeStatusUser(data.message));
+          } else if (data.type === 'pin_message') {
+            dispatch(changeStatePinMessage(data.message));
           }
         } catch (error) {
           console.error('Error parsing message:', error);

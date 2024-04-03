@@ -25,10 +25,11 @@ import { RiUnpinLine } from 'react-icons/ri';
 import {
   leaveConversation,
   pinConversation,
+  setOpenPinnedMessage,
   unPinConversation
 } from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { setOpenChangeNameConversation } from '~/store/slices/contactSlice';
 const { useBreakpoint } = Grid;
 const { confirm } = Modal;
@@ -37,7 +38,6 @@ export const ContactInfo = () => {
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const screens = useBreakpoint();
-  const [isPinnedModalOpen, setIsPinnedModalOpen] = useState(false);
 
   const handleClose = () => dispatch(toggleContactInfo());
   const handleOpenSharedMessages = () => dispatch(showSharedMessage());
@@ -104,7 +104,7 @@ export const ContactInfo = () => {
             justify="space-between"
             align="center"
             className="cursor-pointer"
-            onClick={() => setIsPinnedModalOpen(true)}
+            onClick={() => dispatch(setOpenPinnedMessage(true))}
           >
             <Typography className="font-semibold m-0">
               View pinned messages
@@ -115,10 +115,6 @@ export const ContactInfo = () => {
               icon={<IoChevronForward size={20} />}
             />
           </Flex>
-          <PinnedMessagesModal
-            isModalOpen={isPinnedModalOpen}
-            handleCancel={() => setIsPinnedModalOpen(false)}
-          />
           <Divider className="my-2" />
           <Flex
             justify="space-between"
@@ -140,21 +136,6 @@ export const ContactInfo = () => {
         </Space>
       </Flex>
     </>
-  );
-};
-
-const PinnedMessagesModal = ({ isModalOpen, handleCancel }) => {
-  return (
-    <Modal
-      title="Pinned messages"
-      open={isModalOpen}
-      onCancel={handleCancel}
-      footer={null}
-    >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-    </Modal>
   );
 };
 
