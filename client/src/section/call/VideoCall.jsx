@@ -15,18 +15,14 @@ import { useParams } from 'react-router-dom';
 import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
-import {
-  setCall,
-  setConversationCall,
-  setPeerIds
-} from '~/store/slices/chatSlice';
+import { setCall } from '~/store/slices/chatSlice';
 import { ConversationTypes } from '~/utils/enum';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitInterruptVideoCall } = useSocket();
+  const { emitGetPeerIds, emitInterruptVideoCall } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -37,24 +33,10 @@ const VideoCall = () => {
 
   useEffect(() => {
     let params = new URLSearchParams(window.location.search);
-    let calling = params.get('calling') === 'true';
-    let refused = params.get('refused') === 'true';
-    let ended = params.get('ended') === 'true';
     let conversation_id = params.get('conversation_id');
-    let type = parseInt(params.get('type'));
-    let image = params.get('image');
-    let title = params.get('title');
-    let peer_ids = JSON.parse(params.get('peer_ids'));
-
     if (socketInstance) {
       const peerInstance = new Peer(peer_id);
-      dispatch(setCall({ calling, refused, ended }));
-      dispatch(
-        setConversationCall({
-          conversation: { conversation_id, type, image, title }
-        })
-      );
-      dispatch(setPeerIds({ peer_ids }));
+      emitGetPeerIds({ conversation_id });
       if (peer) peer.destroy();
       peerInstance.on('open', (peer_id) => {
         console.log('My peer id' + peer_id);
@@ -68,19 +50,23 @@ const VideoCall = () => {
           peerInstance.on('call', (call) => {
             console.log('Call received', call);
             call.answer(localStream);
-
             call.on('stream', (remoteStream) => {
               console.log('Received peer_id on stream:', call.peer);
               setRemoteStreams((prevStreams) => {
-                if (
-                  !prevStreams.some((stream) => stream.peer_id === call.peer)
-                ) {
+                const streamExists = prevStreams.some(
+                  (stream) => stream.peer_id === call.peer
+                );
+                if (streamExists) {
+                  return prevStreams.map((stream) =>
+                    stream.peer_id === call.peer
+                      ? { peer_id: call.peer, stream: remoteStream }
+                      : stream
+                  );
+                } else {
                   return [
                     ...prevStreams,
                     { peer_id: call.peer, stream: remoteStream }
                   ];
-                } else {
-                  return prevStreams;
                 }
               });
             });
@@ -102,30 +88,35 @@ const VideoCall = () => {
 
   useEffect(() => {
     if (peer && call.calling && stream) {
-      peer.on('open', (peer_id) => {
+      peer.on('open', (my_peer_id) => {
         try {
           call.peer_ids.forEach((peer_id) => {
-            console.log('send a call to:', peer_id);
-            const myCall = peer.call(peer_id, stream);
-
-            myCall.on('stream', (remoteStream) => {
-              console.log('Received peer_id on stream:', myCall.peer);
-              setRemoteStreams((prevStreams) => {
-                if (
-                  !prevStreams.some((stream) => stream.peer_id === myCall.peer)
-                ) {
-                  return [
-                    ...prevStreams,
-                    { peer_id: myCall.peer, stream: remoteStream }
-                  ];
-                } else {
-                  return prevStreams;
-                }
+            if (peer_id !== my_peer_id) {
+              const myCall = peer.call(peer_id, stream);
+              myCall.on('stream', (remoteStream) => {
+                console.log('Received peer_id on stream:', myCall.peer);
+                setRemoteStreams((prevStreams) => {
+                  const streamExists = prevStreams.some(
+                    (stream) => stream.peer_id === myCall.peer
+                  );
+                  if (streamExists) {
+                    return prevStreams.map((stream) =>
+                      stream.peer_id === myCall.peer
+                        ? { peer_id: myCall.peer, stream: remoteStream }
+                        : stream
+                    );
+                  } else {
+                    return [
+                      ...prevStreams,
+                      { peer_id: myCall.peer, stream: remoteStream }
+                    ];
+                  }
+                });
               });
-            });
-            return () => {
-              myCall.close();
-            };
+              return () => {
+                myCall.close();
+              };
+            }
           });
         } catch (error) {
           console.log('Error occurred:', error);
@@ -211,7 +202,7 @@ const VideoCall = () => {
   useEffect(() => {
     const handleBeforeUnload = (event) => {
       if (call.calling) {
-        handleInteruptCall();
+        // handleInteruptCall();
       } else {
         handleCloseCall();
       }

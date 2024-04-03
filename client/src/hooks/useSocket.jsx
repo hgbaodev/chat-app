@@ -86,6 +86,17 @@ export const useSocket = () => {
     }
   };
 
+  const emitGetPeerIds = ({ conversation_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'get_peer_ids',
+          conversation_id: parseInt(conversation_id)
+        })
+      );
+    }
+  };
+
   // return
   return {
     emitMessage,
@@ -93,6 +104,7 @@ export const useSocket = () => {
     emitAcceptVideoCall,
     emitInterruptVideoCall,
     emitRefuseVideoCall,
-    emitTypingIndicator
+    emitTypingIndicator,
+    emitGetPeerIds
   };
 };

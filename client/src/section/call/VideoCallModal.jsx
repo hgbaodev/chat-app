@@ -18,6 +18,16 @@ const VideoCallModal = () => {
       conversation_id: call.conversation.conversation_id,
       peer_id
     });
+    const width = 1000;
+    const height = 600;
+    const leftPos = (window.innerWidth - width) / 2;
+    const topPos = (window.innerHeight - height) / 2;
+    dispatch(setCall({ open: false }));
+    window.open(
+      `/video-call/${peer_id}?conversation_id=${call.conversation.conversation_id}`,
+      '_blank',
+      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+    );
   };
 
   // handle refuse
