@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import AxiosInstance from '~/api/AxiosInstance';
 import Cookies from 'js-cookie';
+import { message } from 'antd';
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -29,7 +30,7 @@ export const loginWithGoogle = createAsyncThunk(
 );
 
 export const loginWithGithub = createAsyncThunk(
-  'auth/google/',
+  'auth/github/',
   async (code, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.post(`auth/github/`, {
@@ -129,6 +130,11 @@ const authSlice = createSlice({
         Cookies.set('token', result.access_token);
         Cookies.set('refresh_token', result.refresh_token);
         state.isLoadingLogin = false;
+        message.open({
+          type: 'success',
+          content: 'Login Successfully!',
+          duration: 2
+        });
       })
       .addCase(loginWithGoogle.fulfilled, (state, action) => {
         const result = action.payload.data.result;
@@ -141,6 +147,28 @@ const authSlice = createSlice({
         Cookies.set('token', result.access_token);
         Cookies.set('refresh_token', result.refresh_token);
         state.isLoadingLogin = false;
+        message.open({
+          type: 'success',
+          content: 'Login Successfully!',
+          duration: 2
+        });
+      })
+      .addCase(loginWithGithub.fulfilled, (state, action) => {
+        const result = action.payload.data.result;
+        state.isLoaded = true;
+        state.isAuthenticated = true;
+        state.user.id = result.id;
+        state.user.email = result.email;
+        state.user.fullName = result.full_name;
+        state.user.avatar = result.avatar;
+        Cookies.set('token', result.access_token);
+        Cookies.set('refresh_token', result.refresh_token);
+        state.isLoadingLogin = false;
+        message.open({
+          type: 'success',
+          content: 'Login Successfully!',
+          duration: 2
+        });
       })
       .addCase(login.rejected, (state) => {
         state.isLoadingLogin = false;

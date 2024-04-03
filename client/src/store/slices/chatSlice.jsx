@@ -250,6 +250,20 @@ const chatSlice = createSlice({
     },
     setTypingIndicator(state, action) {
       state.chat.typingIndicator = action.payload;
+    },
+    receiveChangeNameConversation(state, action) {
+      const result = action.payload;
+      const checkIndex = state.conversations.findIndex(
+        (con) => con.id === result.id
+      );
+      if (checkIndex !== -1) {
+        state.conversations[checkIndex].title = result.title;
+        state.conversations[checkIndex].latest_message = result.message;
+        if (state.chat.currentConversation.id === result.id) {
+          state.chat.currentConversation.title = result.title;
+          state.chat.messages.data.push(result.message);
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -349,5 +363,6 @@ export const {
   setCall,
   setConversationCall,
   setPeerIds,
-  setTypingIndicator
+  setTypingIndicator,
+  receiveChangeNameConversation
 } = chatSlice.actions;

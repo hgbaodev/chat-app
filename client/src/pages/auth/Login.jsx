@@ -15,7 +15,6 @@ import { loginWithGithub, loginWithGoogle } from '~/store/slices/authSlice';
 const { Text } = Typography;
 
 const Login = () => {
-  console.log('REACT_APP_GITHUB_CLIENT_ID', REACT_APP_GITHUB_CLIENT_ID);
   const dispatch = useDispatch();
   const [searchparams] = useSearchParams();
   const handleLoginWithGoogle = (response) => {
