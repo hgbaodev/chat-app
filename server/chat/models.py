@@ -15,7 +15,7 @@ class Conversation(models.Model):
 
     title = models.CharField(max_length=255, blank=True)
     image = models.CharField(max_length=255, null=True, default=None, blank=True)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    admin = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
     type = models.IntegerField(choices=[(tag.value, tag.name) for tag in ConversationType], default=ConversationType.GROUP)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

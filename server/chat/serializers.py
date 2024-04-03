@@ -34,7 +34,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         participants_data = validated_data.pop('participants')
         conversation = Conversation.objects.create(
             title=validated_data.get('title', ''),
-            creator=self.context['request'].user
+            admin=self.context['request'].user
         )
 
         participants_to_create = []
