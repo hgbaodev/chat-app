@@ -1,4 +1,4 @@
-import { Button, Col, Empty, Flex, Image, Row, Tabs } from 'antd';
+import { Button, Col, Empty, Flex, Grid, Image, Row, Tabs } from 'antd';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showContactInfo } from '~/store/slices/appSlice';
@@ -9,10 +9,11 @@ import { getAttachments } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
 import { getIconDocument } from '~/utils/getPropertyMessage';
 import { formatFileSize } from '~/utils/formatFileSize';
+const { useBreakpoint } = Grid;
 
 export const SharedMessages = () => {
   const dispatch = useDispatch();
-
+  const screens = useBreakpoint();
   // handle
   const handleReturnContactInfo = () => {
     dispatch(showContactInfo());
@@ -34,7 +35,9 @@ export const SharedMessages = () => {
   return (
     <Flex
       vertical
-      className="w-[350px]"
+      className={`w-[350px] ${
+        !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
+      }`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
     >
       <Flex
@@ -89,7 +92,9 @@ export const Media = () => {
           </Col>
         ))
       ) : (
-        <Empty />
+        <Col span={24}>
+          <Empty />
+        </Col>
       )}
     </Row>
   );

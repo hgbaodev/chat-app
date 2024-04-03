@@ -130,43 +130,17 @@ class ConversationDetail(APIView):
         conversation = self.get_object(pk)
         conversation.delete()
         return Response({"message": "Conversation deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-
-class PaticipantsList(generics.ListCreateAPIView):
-    serializer_class = CreateParticipantsSerializer
-    permission_classes = [IsAuthenticated]
     
-    # Add members to the conversation
-    def post(self, request):
-        serializer = self.serializer_class(data=request.data, context={'request': request})
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
-    
-class ParicipantsDetail(APIView):
-    def get_object(self, pk):
-        try:
-            return Participants.objects.get(pk=pk)
-        except Participants.DoesNotExist:
-            raise Http404
-
-    # Change title conversation
-    def put(self, request, pk, format=None):
-        participant = self.get_object(pk)
-        serializer = ParticipantDetailSerializer(participant, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
+class DeleteMember(APIView):
     # Delete member from conversation
-    def delete(self, request, pk, format=None):
-        participant = self.get_object(pk)
+    def delete(self, request, conversation_id, user_id, format=None):
+        participant = Participants.objects.filter(conversation__id=conversation_id, user__id=user_id)
         participant.delete()
-        return Response({"message": "Member deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
+        return SuccessResponse(data={"message": 'Member deleted successfully.'}, status=status.HTTP_200_OK)
     
 class GetMemberConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CreateParticipantsSerializer
     def get(self, request, pk, format=None):
         conversation = Conversation.objects.get(pk=pk)
         participants = Participants.objects.filter(conversation=conversation)
@@ -174,6 +148,15 @@ class GetMemberConversation(generics.ListAPIView):
         serializer = MemberConversationSerializer(users, many=True)
         return Response(serializer.data)
     
+    def post(self, request, pk, format=None):
+        serializer = self.serializer_class(data={
+            'conversation_id': pk,
+            'users': request.data.get('users'),
+        })
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return SuccessResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
 
 class GetMessagesConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

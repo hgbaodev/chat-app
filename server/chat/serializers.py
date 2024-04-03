@@ -49,33 +49,29 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     
 class CreateParticipantsSerializer(serializers.ModelSerializer):
-    conversation = serializers.PrimaryKeyRelatedField(queryset=Conversation.objects.all())
+    conversation_id = serializers.IntegerField() 
     users = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all(), write_only=True)
     members = MemberConversationSerializer(many=True, read_only=True)
     
     class Meta:
         model = Participants
-        fields = ['conversation', 'users', 'members']
+        fields = ['conversation_id', 'users', 'members']
     
     def validate(self, attrs):
-        conversation = attrs.get('conversation')
+        conversation_id = attrs.get('conversation_id')
         users = attrs.get('users')
-        
-        if not users:
-            raise serializers.ValidationError({"user": 'Users cannot be empty.'})
-        
-        invalid_users = [user for user in users if Participants.objects.filter(conversation=conversation, user=user).exists()]
-
+        if not users: raise serializers.ValidationError({"user": 'Users cannot be empty.'})
+        invalid_users = [user for user in users if Participants.objects.filter(conversation__id=conversation_id, user=user).exists()]
         if invalid_users:
             raise serializers.ValidationError({'user': 'One or more users already exist in the conversation.'})
-        
         return attrs
         
     
     def create(self, validated_data):
-        conversation = validated_data['conversation']
+        conversation_id = validated_data['conversation_id']
         users_data = validated_data['users']
         participants_list = []
+        conversation = Conversation.objects.get(id=conversation_id)
 
         for user in users_data:
             participant = Participants.objects.create(conversation=conversation, user=user)
@@ -84,7 +80,7 @@ class CreateParticipantsSerializer(serializers.ModelSerializer):
         members = User.objects.filter(participants__in=participants_list)
         
         return {
-            'conversation': conversation,
+            'conversation_id': conversation_id,
             'members': members.values()
         }
 
