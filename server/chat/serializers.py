@@ -28,7 +28,7 @@ class ConversationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Conversation
-        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants', 'members', 'is_pinned']
+        fields = ['id', 'title', 'image', 'type', 'latest_message', 'participants', 'members', 'is_pinned', 'admin']
 
     def create(self, validated_data):
         participants_data = validated_data.pop('participants')

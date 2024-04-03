@@ -3,9 +3,9 @@ import { ContactItem } from './ContactItem';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from '~/store';
 import { getConversations, setCurrentPage } from '~/store/slices/chatSlice';
-import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
-import ContactsHeaderFind from '~/section/chats/ContactsHeaderFind';
-import ContactsHeader from '~/section/chats/ContactsHeader';
+import ContactItemSkeleton from '~/section/chats/conversations/ContactItemSkeleton';
+import ContactsHeaderFind from '~/section/chats/conversations/ContactsHeaderFind';
+import ContactsHeader from '~/section/chats/conversations/ContactsHeader';
 import InfiniteScroll from 'react-infinite-scroll-component';
 
 export const Contacts = ({ ...props }) => {
@@ -94,6 +94,7 @@ export const Contacts = ({ ...props }) => {
                               conversation.id == chat.currentConversation.id
                             }
                             is_pinned={conversation.is_pinned}
+                            admin={conversation.admin}
                           />
                         );
                       })

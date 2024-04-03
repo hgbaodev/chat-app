@@ -154,7 +154,8 @@ const initialState = {
       type: null,
       latest_message: null,
       members: [],
-      is_pinned: null
+      is_pinned: null,
+      admin: null
     },
     typingIndicator: null,
     messages: {

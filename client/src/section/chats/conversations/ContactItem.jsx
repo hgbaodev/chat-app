@@ -30,7 +30,8 @@ export const ContactItem = ({
   type,
   members,
   active,
-  is_pinned
+  is_pinned,
+  admin
 }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
@@ -81,7 +82,15 @@ export const ContactItem = ({
   const getAllMessages = () => {
     if (currentConversation.id != id) {
       dispatch(
-        setCurrentConversation({ id, title, image, members, type, is_pinned })
+        setCurrentConversation({
+          id,
+          title,
+          image,
+          members,
+          type,
+          is_pinned,
+          admin
+        })
       );
       dispatch(showContactInfo());
     }
@@ -100,9 +109,7 @@ export const ContactItem = ({
       message_type == MessageTypes.DOCUMENT
     ) {
       return `${name} sent an attachment.`;
-    } else if (user.id == sender.id) return 'You: ' + message;
-    else if (type == ConversationTypes.GROUP)
-      return sender.last_name + ': ' + message;
+    }
     return message;
   };
 

@@ -1,21 +1,21 @@
-import {
-  Avatar,
-  Button,
-  Dropdown,
-  Flex,
-  Space,
-  Typography,
-} from 'antd';
+import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
 import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
 
-export const ContactItemSearch = ({ id, title, image, members, type, active }) => {
+export const ContactItemSearch = ({
+  id,
+  title,
+  image,
+  members,
+  type,
+  active,
+  admin
+}) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
-
 
   const items = [
     {
@@ -31,7 +31,9 @@ export const ContactItemSearch = ({ id, title, image, members, type, active }) =
   // handle get all messages
   const getAllMessages = () => {
     if (currentConversation.id != id) {
-      dispatch(setCurrentConversation({ id, title, image, members, type }));
+      dispatch(
+        setCurrentConversation({ id, title, image, members, type, admin })
+      );
     }
   };
   return (

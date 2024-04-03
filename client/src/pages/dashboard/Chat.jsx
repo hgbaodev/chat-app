@@ -1,12 +1,12 @@
 import { Flex, Grid } from 'antd';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { ChatContainer } from '~/section/chats/ChatContainer';
-import { ContactInfo } from '~/section/chats/ContactInfo';
-import { Contacts } from '~/section/chats/Contacts';
-import { EmptyChat } from '~/section/chats/EmptyChat';
-import ListMemberOfGroup from '~/section/chats/ListMemberOfGroup';
-import { SharedMessages } from '~/section/chats/SharedMessages';
+import { ChatContainer } from '~/section/chats/chat-view/ChatContainer';
+import { ContactInfo } from '~/section/chats/chat-info/ContactInfo';
+import { Contacts } from '~/section/chats/conversations/Contacts';
+import { EmptyChat } from '~/section/chats/chat-view/EmptyChat';
+import ListMemberOfGroup from '~/section/chats/chat-info/ListMemberOfGroup';
+import { SharedMessages } from '~/section/chats/chat-info/SharedMessages';
 import { setOpenContactInfo } from '~/store/slices/appSlice';
 const { useBreakpoint } = Grid;
 

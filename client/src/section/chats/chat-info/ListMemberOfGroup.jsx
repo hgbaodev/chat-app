@@ -1,15 +1,17 @@
-import { Avatar, Button, Dropdown, Flex, Space } from 'antd';
+import { Avatar, Button, Dropdown, Flex, Grid, Space } from 'antd';
 import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { showContactInfo } from '~/store/slices/appSlice';
 import { LuUserPlus } from 'react-icons/lu';
 import { useState } from 'react';
-import AddMember from '~/section/chats/AddMember';
+import AddMember from '~/section/chats/chat-info/AddMember';
+const { useBreakpoint } = Grid;
 
 const ListMemberOfGroup = () => {
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const [isOpenAddMember, setOpenAddMember] = useState(false);
+  const screens = useBreakpoint();
   // handle
   const handleReturnContactInfo = () => {
     dispatch(showContactInfo());
@@ -19,7 +21,9 @@ const ListMemberOfGroup = () => {
   return (
     <Flex
       vertical
-      className="w-[350px]"
+      className={`w-[350px] ${
+        !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
+      }`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
     >
       <Flex
@@ -60,7 +64,8 @@ const ListMemberOfGroup = () => {
   );
 };
 
-const MemberItem = ({ avatar, first_name, last_name }) => {
+const MemberItem = ({ id, avatar, first_name, last_name }) => {
+  const { currentConversation } = useSelector((state) => state.chat.chat);
   const handleDeleteFriend = () => {
     // logic here
   };
@@ -92,10 +97,10 @@ const MemberItem = ({ avatar, first_name, last_name }) => {
       <Space>
         <Avatar src={avatar} size="large" />
         <Space direction="vertical" size={2}>
-          <p className="text-slate-900  font-semibold text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
+          <p className="text-slate-900 font-semibold text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {first_name + ' ' + last_name}
           </p>
-          <p className="text-xs">Owner</p>
+          {currentConversation.admin === id && <p className="text-xs">Admin</p>}
         </Space>
       </Space>
       <Dropdown

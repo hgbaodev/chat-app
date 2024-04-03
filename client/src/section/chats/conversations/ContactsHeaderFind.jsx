@@ -2,11 +2,11 @@ import { Button, Flex, Input, Typography } from 'antd';
 import { CiSearch } from 'react-icons/ci';
 import { useDispatch } from 'react-redux';
 import { findConversations, setOpenSearch } from '~/store/slices/contactSlice';
-import { ContactItemSearch } from '~/section/chats/ContactItemSearch';
+import { ContactItemSearch } from '~/section/chats/conversations/ContactItemSearch';
 import { useEffect, useState } from 'react';
 import useDebounce from '~/hooks/useDebounce';
 import { useSelector } from '~/store';
-import ContactItemSkeleton from '~/section/chats/ContactItemSkeleton';
+import ContactItemSkeleton from '~/section/chats/conversations/ContactItemSkeleton';
 import { ConversationTypes } from '~/utils/enum';
 
 const ContactsHeaderFind = () => {
@@ -50,6 +50,7 @@ const ContactsHeaderFind = () => {
             image={conversation.type === 1 ? conversation.image : us?.avatar}
             members={conversation.members}
             type={conversation.type}
+            admin={conversation.admin}
             active={conversation.id === chat.currentConversation.id}
           />
         );

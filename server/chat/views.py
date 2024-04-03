@@ -56,7 +56,8 @@ class ConversationList(APIView):
                     'latest_message': latest_message,
                     'type': conversation.type,
                     'members': users,
-                    'is_pinned': is_pinned
+                    'is_pinned': is_pinned,
+                    'admin': conversation.admin,
                 })
         
         serializer = self.serializer_class(conversation_data, many=True)
@@ -74,7 +75,7 @@ class ConversationList(APIView):
                 conversation=conversation,
                 sender=sender,
                 message="Tôi đã tạo ra group này!",
-                message_type=Message.MessageType.INIT_CONVERSATION
+                message_type=Message.MessageType.NEWS
             )
             members_info = [
                 {
@@ -97,7 +98,8 @@ class ConversationList(APIView):
                     'created_at': current_time.isoformat()
                 },
                 'type': conversation.type,
-                'members': members_info
+                'members': members_info,
+                'admin': conversation.admin,
             }
             send_message_to_conversation_members(conversation.id, 'add_group', data)
             return SuccessResponse(data=data, status=status.HTTP_201_CREATED)  

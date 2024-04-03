@@ -9,7 +9,7 @@ import {
   NewMessage,
   RecallMessage,
   TextMessage
-} from '~/section/chats/MessageTypes';
+} from '~/section/chats/chat-view/MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';

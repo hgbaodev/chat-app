@@ -2,7 +2,7 @@ import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
 
 import useHover from '~/hooks/useHover';
-import MessageAction from '~/section/chats/MessageAction';
+import MessageAction from '~/section/chats/chat-view/MessageAction';
 import { useSelector } from '~/store';
 import { memo, useState } from 'react';
 import { formatDateTime } from '~/utils/formatDayTime';
