@@ -280,6 +280,26 @@ const chatSlice = createSlice({
           state.chat.messages.data.push(result.message);
         }
       }
+    },
+    changeStatusUser(state, action) {
+      const { user_id, status } = action.payload;
+      state.conversations.forEach((conversation) => {
+        const memberIndex = conversation.members.findIndex(
+          (member) => member.id === user_id
+        );
+        if (memberIndex !== -1) {
+          conversation.members[memberIndex].status = status;
+        }
+      });
+      const currentConversation = state.chat.currentConversation;
+      const memberIndexInCurrentConversation =
+        currentConversation.members.findIndex(
+          (member) => member.id === user_id
+        );
+      if (memberIndexInCurrentConversation !== -1) {
+        currentConversation.members[memberIndexInCurrentConversation].status =
+          status;
+      }
     }
   },
   extraReducers: (builder) => {
@@ -382,5 +402,6 @@ export const {
   removePeerId,
   setTypingIndicator,
   changeStatePinMessage,
-  receiveChangeNameConversation
+  receiveChangeNameConversation,
+  changeStatusUser
 } = chatSlice.actions;

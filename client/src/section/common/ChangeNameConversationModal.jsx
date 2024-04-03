@@ -4,7 +4,6 @@ import {
   Form,
   Input,
   Modal,
-  Space,
   Typography,
   notification
 } from 'antd';
@@ -72,8 +71,8 @@ const ChangeNameConversationModal = () => {
         autoComplete="off"
         className="mt-2"
       >
-        <Space direction="vertical">
-          <Typography.Text className="text-center">
+        <Flex vertical gap="middle">
+          <Typography.Text style={{ textAlign: 'center' }}>
             Are you sure you want to rename this group, a new group name will be
             visible with all members
           </Typography.Text>
@@ -104,7 +103,7 @@ const ChangeNameConversationModal = () => {
               Update
             </Button>
           </Flex>
-        </Space>
+        </Flex>
       </Form>
     </Modal>
   );

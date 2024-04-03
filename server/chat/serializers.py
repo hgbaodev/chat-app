@@ -5,9 +5,10 @@ from .models import NameCard, Conversation, Message, Participants, DeleteMessage
 from django.shortcuts import get_object_or_404
 
 class MemberConversationSerializer(serializers.ModelSerializer):
+    status = serializers.BooleanField(read_only=True)
     class Meta:
         model = User
-        fields = ['id','first_name', 'last_name', 'avatar', 'about'] 
+        fields = ['id','first_name', 'last_name', 'avatar', 'about', 'status'] 
 
 class SenderSerializer(serializers.ModelSerializer):
     class Meta:
