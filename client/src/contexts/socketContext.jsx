@@ -1,15 +1,13 @@
 import Cookies from 'js-cookie';
-import { set } from 'lodash';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
 import {
-  changeStatePinMessage,
+  changeStatusUser,
   createGroup,
   recallMessage,
   receiveChangeNameConversation,
   receiverMessage,
-  removePeerId,
   setCall,
   setConversationCall,
   setPeerIds,
@@ -17,7 +15,6 @@ import {
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
-import { ConversationTypes } from '~/utils/enum';
 export const SocketContext = createContext({
   socketInstance: null
 });
@@ -25,6 +22,7 @@ export const SocketContext = createContext({
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
+  const { call } = useSelector((state) => state.chat);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
@@ -45,8 +43,6 @@ export const SocketProvider = ({ children }) => {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
             dispatch(receiverMessage(data));
-          } else if (data.type === 'pin_message') {
-            dispatch(changeStatePinMessage(data.message));
           } else if (data.type === 'typing_indicator') {
             console.log(JSON.parse(data.message));
             dispatch(setTypingIndicator(JSON.parse(data.message)));
@@ -59,7 +55,7 @@ export const SocketProvider = ({ children }) => {
           } else if (data.type === 'recall_message') {
             dispatch(recallMessage(data.message));
           } else if (data.type === 'video_call') {
-            const { conversation } = JSON.parse(data.message);
+            const { conversation, peer_ids } = JSON.parse(data.message);
             dispatch(
               setCall({
                 open: true,
@@ -69,23 +65,11 @@ export const SocketProvider = ({ children }) => {
               })
             );
             dispatch(setConversationCall({ conversation }));
-          } else if (data.type === 'return_get_peer_ids') {
-            console.log(data);
-            const { conversation, peer_ids } = JSON.parse(data.message);
-            dispatch(setConversationCall({ conversation }));
             dispatch(setPeerIds({ peer_ids }));
-            if (
-              peer_ids.length === 1 &&
-              conversation.type === ConversationTypes.FRIEND
-            ) {
-              dispatch(
-                setCall({
-                  calling: false,
-                  refused: false,
-                  ended: false
-                })
-              );
-            } else {
+          } else if (data.type === 'accept_video_call') {
+            if (!call.open) {
+              const { peer_ids } = JSON.parse(data.message);
+              console.log(`accept_video_call from `, peer_ids);
               dispatch(
                 setCall({
                   calling: true,
@@ -94,6 +78,24 @@ export const SocketProvider = ({ children }) => {
                 })
               );
             }
+          } else if (data.type === 'return_accept_video_call') {
+            const { peer_id, peer_ids, conversation } = JSON.parse(
+              data.message
+            );
+            const width = 1000;
+            const height = 600;
+            const leftPos = (window.innerWidth - width) / 2;
+            const topPos = (window.innerHeight - height) / 2;
+            window.open(
+              `/video-call/${peer_id}?calling=true&refused=false&ended=false&conversation_id=${
+                conversation.conversation_id
+              }&peer_ids=${JSON.stringify(peer_ids)}&type=${
+                conversation.type
+              }&title=${conversation.title}&image=${conversation.image}`,
+              '_blank',
+              `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+            );
+            dispatch(setCall({ open: false }));
           } else if (data.type === 'refuse_video_call') {
             dispatch(
               setCall({
@@ -102,23 +104,19 @@ export const SocketProvider = ({ children }) => {
                 refused: true
               })
             );
-          } else if (data.type === 'leave_video_call') {
-            const { peer_ids, conversation_type } = JSON.parse(data.message);
-            dispatch(setPeerIds({ peer_ids }));
-            if (
-              peer_ids.length === 1 &&
-              conversation_type === ConversationTypes.FRIEND
-            ) {
-              dispatch(
-                setCall({
-                  calling: false,
-                  refused: false,
-                  ended: true
-                })
-              );
-            }
+          } else if (data.type === 'interrupt_video_call') {
+            console.log('receiver here');
+            dispatch(
+              setCall({
+                open: false,
+                calling: false,
+                ended: true
+              })
+            );
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
+          } else if (data.type === 'online_notification') {
+            dispatch(changeStatusUser(data.message));
           }
         } catch (error) {
           console.error('Error parsing message:', error);
@@ -136,6 +134,7 @@ export const SocketProvider = ({ children }) => {
         socket.close();
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isAuthenticated]);
   return (
     <SocketContext.Provider value={{ socketInstance }}>

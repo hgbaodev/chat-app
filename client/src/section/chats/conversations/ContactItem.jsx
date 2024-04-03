@@ -1,5 +1,6 @@
 import {
   Avatar,
+  Badge,
   Button,
   Dropdown,
   Flex,
@@ -124,11 +125,21 @@ export const ContactItem = ({
       onClick={getAllMessages}
     >
       <Space className="flex-1">
-        {image == null && type === ConversationTypes.GROUP ? (
-          <AvatarGroup users={members} />
-        ) : (
-          <Avatar size={50} src={image} />
-        )}
+        <Badge
+          size="default"
+          dot={members
+            .filter((member) => member.id != user.id)
+            .some((mem) => mem['status'] === true)}
+          color="green"
+          offset={[0, 40]}
+        >
+          {image == null && type === ConversationTypes.GROUP ? (
+            <AvatarGroup users={members} />
+          ) : (
+            <Avatar size={50} src={image} />
+          )}
+        </Badge>
+
         <Flex vertical justify="center">
           <Typography className="text-slate-900 overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {title}

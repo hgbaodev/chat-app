@@ -29,7 +29,6 @@ import {
 } from '~/store/slices/chatSlice';
 import AvatarImage from '~/section/users/AvatarImage';
 import { useMemo, useState } from 'react';
-import ChangeNameConversationModal from '~/section/common/ChangeNameConversationModal';
 import { setOpenChangeNameConversation } from '~/store/slices/contactSlice';
 const { useBreakpoint } = Grid;
 const { confirm } = Modal;
@@ -140,7 +139,6 @@ export const ContactInfo = () => {
           <PrivacySection />
         </Space>
       </Flex>
-      <ChangeNameConversationModal />
     </>
   );
 };

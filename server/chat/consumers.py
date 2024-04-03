@@ -27,13 +27,52 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_add)(
                 self.room_group_name, self.channel_name
             )
-            OnlineUser.objects.create(user=user)
+            check = OnlineUser.objects.filter(user=self.scope["user"])
             self.accept()
+            if not check:
+                OnlineUser.objects.create(user=user)
+                conversations = Conversation.objects.filter(participants__user=user)
+                related_users = set()
+                for conversation in conversations:
+                    users = User.objects.filter(participants__conversation=conversation).exclude(id=user.id)
+                    related_users.update(users)
+                related_users_online = [user for user in related_users if OnlineUser.objects.filter(user=user.id).exists()]
+                for online_user in related_users_online:
+                    async_to_sync(self.channel_layer.group_send)(
+                        f"user_{online_user.id}", 
+                        {
+                            "type": "online_notification",
+                            "message": {
+                                "user_id": user.id,
+                                "status": True
+                            } 
+                        }
+                    )
+            
         else:
             self.close()
 
     def disconnect(self, close_code):
+        user = self.scope["user"]
         OnlineUser.objects.filter(user=self.scope["user"]).delete()
+        conversations = Conversation.objects.filter(participants__user=user)
+        related_users = set()
+        for conversation in conversations:
+            users = User.objects.filter(participants__conversation=conversation).exclude(id=user.id)
+            related_users.update(users)
+        related_users_online = [user for user in related_users if OnlineUser.objects.filter(user=user.id).exists()]
+        print(related_users_online)
+        for online_user in related_users_online:
+            async_to_sync(self.channel_layer.group_send)(
+                f"user_{online_user.id}", 
+                {
+                    "type": "online_notification",
+                    "message": {
+                        "user_id": user.id,
+                        "status": False,
+                    } 
+                }
+            )
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
         )
@@ -268,4 +307,7 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
     
     def change_name_conversation(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def online_notification(self, event):
         self.send(text_data=json.dumps(event))
