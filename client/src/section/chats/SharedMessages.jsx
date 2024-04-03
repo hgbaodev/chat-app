@@ -1,4 +1,4 @@
-import { Button, Col, Flex, Image, Row, Tabs } from 'antd';
+import { Button, Col, Empty, Flex, Image, Row, Tabs } from 'antd';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import { showContactInfo } from '~/store/slices/appSlice';
@@ -66,8 +66,6 @@ export const Media = () => {
     (state) => state.chat.chat
   );
 
-  console.log(attachments);
-
   useEffect(() => {
     dispatch(
       getAttachments({
@@ -79,16 +77,20 @@ export const Media = () => {
 
   return (
     <Row gutter={[8, 8]}>
-      {attachments.images.map((image) => (
-        <Col span={8} key={image.id}>
-          <Image
-            src={image.file_url}
-            className="rounded-md overflow-hidden cursor-pointer object-cover"
-            preview={{ mask: false }}
-            height={100}
-          />
-        </Col>
-      ))}
+      {attachments.images.length > 0 ? (
+        attachments.images.map((image) => (
+          <Col span={8} key={image.id}>
+            <Image
+              src={image.file_url}
+              className="rounded-md overflow-hidden cursor-pointer object-cover"
+              preview={{ mask: false }}
+              height={100}
+            />
+          </Col>
+        ))
+      ) : (
+        <Empty />
+      )}
     </Row>
   );
 };
@@ -110,9 +112,13 @@ export const Docs = () => {
 
   return (
     <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
-      {attachments.documents.map((document) => (
-        <DocItem key={document.id} {...document} />
-      ))}
+      {attachments.documents.length > 0 ? (
+        attachments.documents.map((document) => (
+          <DocItem key={document.id} {...document} />
+        ))
+      ) : (
+        <Empty />
+      )}
     </Flex>
   );
 };

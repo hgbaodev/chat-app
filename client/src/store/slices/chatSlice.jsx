@@ -209,6 +209,16 @@ const chatSlice = createSlice({
       if (state.chat.currentConversation.id === result.message.conversation_id)
         state.chat.messages.data.push(result.message);
     },
+    changeStatePinMessage(state, action) {
+      const { currentConversation, messages } = state.chat;
+      const { conversation_id, message_id, is_pinned } = action.payload;
+      if (currentConversation.id === conversation_id) {
+        let message = messages.data.find(
+          (message) => message.id === message_id
+        );
+        if (message) message.is_pinned = is_pinned;
+      }
+    },
     createGroup(state, action) {
       state.conversations.push(action.payload);
     },
@@ -349,5 +359,6 @@ export const {
   setCall,
   setConversationCall,
   setPeerIds,
-  setTypingIndicator
+  setTypingIndicator,
+  changeStatePinMessage
 } = chatSlice.actions;

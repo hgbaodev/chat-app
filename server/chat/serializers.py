@@ -193,3 +193,8 @@ class PinnedMessagesCreateSerializer(serializers.Serializer):
             pinned_by=user,
             conversation=conversation
         )
+
+class PinnedMessagesSerializer(serializers.Serializer):
+    conversation_id = serializers.IntegerField()
+    message_id = serializers.IntegerField()
+    is_pinned = serializers.BooleanField()

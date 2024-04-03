@@ -259,3 +259,6 @@ class ChatConsumer(WebsocketConsumer):
         
     def typing_indicator(self, event):
         self.send(text_data=json.dumps(event))
+        
+    def pin_message(self, event):
+        self.send(text_data=json.dumps(event))

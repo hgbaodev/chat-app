@@ -3,6 +3,7 @@ import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
 import { useDispatch, useSelector } from '~/store';
 import {
+  changeStatePinMessage,
   createGroup,
   recallMessage,
   receiverMessage,
@@ -41,6 +42,8 @@ export const SocketProvider = ({ children }) => {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
             dispatch(receiverMessage(data));
+          } else if (data.type === 'pin_message') {
+            dispatch(changeStatePinMessage(data.message));
           } else if (data.type === 'typing_indicator') {
             console.log(JSON.parse(data.message));
             dispatch(setTypingIndicator(JSON.parse(data.message)));

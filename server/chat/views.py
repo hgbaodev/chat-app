@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import generics
-from .serializers import PinnedMessagesCreateSerializer, AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
+from .serializers import PinnedMessagesSerializer,PinnedMessagesCreateSerializer, AttachmentSerializer,MemberConversationSerializer, ParticipantDetailSerializer,DeleteMessageSerializer, ConversationSerializer, CreateParticipantsSerializer,MessageSerializer, PinConversationSerializer, CloseConversationSerializer
 from rest_framework.permissions import IsAuthenticated
 from .models import Conversation, Participants, Message, DeleteMessage, PinConversation, Attachments, PinnedMessages
 from django.http import Http404
@@ -365,7 +365,8 @@ class PinnedMessagesList(generics.ListAPIView):
     
     def post(self, request, *args, **kwargs):
         conversation_id = kwargs.get('pk')
-        serializer = PinnedMessagesCreateSerializer(data={'message_id': request.data.get('message_id')}, context={'request': request, 'pk': conversation_id})
+        message_id = request.data.get('message_id')
+        serializer = PinnedMessagesCreateSerializer(data={'message_id': message_id}, context={'request': request, 'pk': conversation_id})
         if serializer.is_valid():
             pinned_message = serializer.save()
             message = Message.objects.create(
@@ -375,7 +376,13 @@ class PinnedMessagesList(generics.ListAPIView):
                     message_type=Message.MessageType.NEWS
             )
             message_serializer = MessageSerializer(instance=message)
+            message_pinned = PinnedMessagesSerializer(instance={
+                'conversation_id': conversation_id, 
+                'message_id': message_id,
+                'is_pinned': True
+            })
             send_message_to_conversation_members(message.conversation.id, 'chat_message', message_serializer.data)
+            send_message_to_conversation_members(message.conversation.id, 'pin_message', message_pinned.data)
             return SuccessResponse(data={"message_id": pinned_message.message.id}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
@@ -397,7 +404,13 @@ class DeletePinnedMessage(APIView):
                     message_type=Message.MessageType.NEWS
             )
             message_serializer = MessageSerializer(instance=message)
+            message_pinned = PinnedMessagesSerializer(instance={
+                'conversation_id': pk, 
+                'message_id': message_id,
+                'is_pinned': False
+            })
             send_message_to_conversation_members(message.conversation.id, 'chat_message', message_serializer.data)
+            send_message_to_conversation_members(message.conversation.id, 'pin_message', message_pinned.data)
             return SuccessResponse(data={"message_id": message_id}, status=status.HTTP_200_OK)
         else:
             raise Http404

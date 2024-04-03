@@ -18,6 +18,8 @@ export const getContentMessage = (messageObj) => {
       return '[Voice]';
     case MessageTypes.IMAGE:
       return '[Image]';
+    case MessageTypes.NAMECARD:
+      return '[Name Card]';
     case MessageTypes.DOCUMENT:
       return attachments.file_name;
   }

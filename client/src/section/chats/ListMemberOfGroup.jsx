@@ -70,24 +70,14 @@ const MemberItem = ({ avatar, first_name, last_name }) => {
     console.log('Show friend detail');
   };
 
-  const handleChatFriend = () => {
-    // logic here
-    console.log('chat friend');
-  };
-
   const dropdownItems = [
     {
       key: '1',
-      label: 'Chat now',
-      onClick: handleChatFriend
-    },
-    {
-      key: '2',
       label: 'View profile',
       onClick: handleShowFriendDetail
     },
     {
-      key: '3',
+      key: '2',
       label: 'Delete',
       onClick: handleDeleteFriend,
       danger: true
@@ -100,11 +90,12 @@ const MemberItem = ({ avatar, first_name, last_name }) => {
       align="center"
     >
       <Space>
-        <Avatar src={avatar} />
-        <Space>
-          <p className="text-slate-900 text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
+        <Avatar src={avatar} size="large" />
+        <Space direction="vertical" size={2}>
+          <p className="text-slate-900  font-semibold text-[13px] overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
             {first_name + ' ' + last_name}
           </p>
+          <p className="text-xs">Owner</p>
         </Space>
       </Space>
       <Dropdown
