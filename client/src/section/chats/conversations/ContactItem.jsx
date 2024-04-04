@@ -110,6 +110,8 @@ export const ContactItem = ({
       message_type == MessageTypes.DOCUMENT
     ) {
       return `${name} sent an attachment.`;
+    } else if (message_type == MessageTypes.VIDEOCALL) {
+      return `Video call.`;
     }
     return message;
   };

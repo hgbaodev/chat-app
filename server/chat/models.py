@@ -40,6 +40,7 @@ class Message(models.Model):
         RECALL = 6
         NEWS = 7
         NAMECARD = 8
+        VIDEOCALL = 9
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -61,6 +62,12 @@ class Attachments(models.Model):
     file_type = models.CharField(max_length=10, blank=True)
     file_url = models.CharField(max_length=255)
     file_size = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+class CallMessage(models.Model):
+    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    duration = models.IntegerField(default=0)
+    ended = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     
 class NameCard(models.Model):

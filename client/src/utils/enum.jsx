@@ -6,7 +6,8 @@ export const MessageTypes = {
   DOCUMENT: 5,
   RECALL: 6,
   NEWS: 7,
-  NAMECARD: 8
+  NAMECARD: 8,
+  VIDEOCALL: 9
 };
 
 export const ConversationTypes = {

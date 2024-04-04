@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
-from .models import NameCard, Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation, PinnedMessages, OnlineUser
+from .models import NameCard, Conversation, Message, Participants, DeleteMessage, Attachments, PinConversation, PinnedMessages, CallMessage ,OnlineUser
 from django.shortcuts import get_object_or_404
 
 class MemberConversationSerializer(serializers.ModelSerializer):
@@ -109,15 +109,21 @@ class NameCardSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'first_name', 'last_name', 'avatar', 'email']
 
+class CallMessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CallMessage
+        fields = '__all__'
+
 class MessageSerializer(serializers.ModelSerializer):
     sender = SenderSerializer()
     forward = serializers.SerializerMethodField()
     attachments = serializers.SerializerMethodField()
     namecard = serializers.SerializerMethodField()
+    videocall = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'namecard', 'is_pinned']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'namecard', 'is_pinned', 'videocall']
 
     def get_forward(self, obj):
         if obj.forward:
@@ -136,6 +142,13 @@ class MessageSerializer(serializers.ModelSerializer):
             namecard = NameCard.objects.get(message=obj)
             return NameCardSerializer(namecard.user).data
         except NameCard.DoesNotExist:
+            return None
+        
+    def get_videocall(self, obj):
+        try:
+            videocall = CallMessage.objects.get(message=obj)
+            return CallMessageSerializer(videocall).data
+        except CallMessage.DoesNotExist:
             return None
     
 class DeleteMessageSerializer(serializers.ModelSerializer):
