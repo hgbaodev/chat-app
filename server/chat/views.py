@@ -47,20 +47,7 @@ class ConversationList(APIView):
         for conversation in result_page:
             is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
             users = User.objects.filter(participants__conversation=conversation)
-            members = []
-            for user in users:
-                check = OnlineUser.objects.filter(user=user.id).exists()
-                if user.id == request.user.id:
-                    check=True
-                members.append({
-                        'id': user.id,
-                        'first_name': user.first_name,
-                        'last_name': user.last_name,
-                        'avatar': user.avatar,
-                        'about': user.about,
-                        'status': check
-                    })
-            latest_message = Message.objects.filter(conversation=conversation).order_by('-created_at').first()
+            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
             if latest_message is not None:
                 conversation_data.append({
                     'id': conversation.id,
@@ -68,12 +55,12 @@ class ConversationList(APIView):
                     'image': conversation.image,
                     'latest_message': latest_message,
                     'type': conversation.type,
-                    'members': members,
+                    'members': users,
                     'is_pinned': is_pinned,
                     'admin': conversation.admin,
                 })
         
-        serializer = self.serializer_class(conversation_data, many=True)
+        serializer = self.serializer_class(conversation_data, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
     # Tạo cuộc hội thoại
@@ -87,7 +74,7 @@ class ConversationList(APIView):
             message = Message.objects.create(
                 conversation=conversation,
                 sender=sender,
-                message="Tôi đã tạo ra group này!",
+                message=f"{sender.first_name} {sender.last_name} đã tạo ra group này!",
                 message_type=Message.MessageType.NEWS
             )
             members_info = [
@@ -109,7 +96,8 @@ class ConversationList(APIView):
                     'id': message.id,
                     'message': message.message,
                     'sender': sender.id,
-                    'created_at': current_time.isoformat()
+                    'created_at': current_time.isoformat(),
+                    'avatar': sender.avatar,
                 },
                 'type': conversation.type,
                 'members': members_info,

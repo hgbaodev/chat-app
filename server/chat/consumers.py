@@ -1,7 +1,7 @@
 import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
-from .serializers import MessageSerializer, AttachmentSerializer
+from .serializers import MessageSerializer
 from .models import Message, Conversation, Participants, OnlineUser, Attachments, NameCard
 from authentication.models import User
 from rest_framework_simplejwt.tokens import AccessToken
