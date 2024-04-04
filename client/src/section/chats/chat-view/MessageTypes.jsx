@@ -112,9 +112,6 @@ export const VideoCallMessage = ({
   is_pinned = false,
   ...props
 }) => {
-  console.log('====================================');
-  console.log(videocall);
-  console.log('====================================');
   return (
     <MessageWrapper
       messageId={id}
@@ -125,10 +122,10 @@ export const VideoCallMessage = ({
       isPinned={is_pinned}
       {...props}
     >
-      <Flex vertical gap={4}>
+      <Flex vertical gap={10}>
         <Space>
           <Flex className="bg-slate-300 p-3 rounded-full">
-            <IoVideocamOutline />
+            <IoVideocamOutline size={20} />
           </Flex>
           <Space direction="vertical" className="gap-0">
             <Typography className="font-semibold">Cuội gọi video</Typography>

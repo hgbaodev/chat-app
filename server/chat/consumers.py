@@ -249,7 +249,6 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "cancel_video_call", "message": "empty"}
                 )
     
-            
     def receive_leave_video_call(self, data):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
@@ -274,8 +273,6 @@ class ChatConsumer(WebsocketConsumer):
         if(len(self.call_store[conversation_id]) == 0 ):
             del self.call_store[conversation_id]
             
-       
-    
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
 
