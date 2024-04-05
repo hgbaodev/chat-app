@@ -8,7 +8,8 @@ import {
   NameCardMessage,
   NewMessage,
   RecallMessage,
-  TextMessage
+  TextMessage,
+  VideoCallMessage
 } from '~/section/chats/chat-view/MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
@@ -74,7 +75,8 @@ const MesssageList = () => {
 
               if (
                 messages.data[index - 1].sender.id === message.sender.id &&
-                messages.data[index - 1].message_type !== MessageTypes.NEWS
+                messages.data[index - 1].message_type !== MessageTypes.NEWS &&
+                !check
               )
                 showAvatar = false;
             }
@@ -135,6 +137,15 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                  />
+                );
+              case MessageTypes.VIDEOCALL:
+                return (
+                  <VideoCallMessage
+                    key={message.id}
+                    {...message}
+                    created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               default:

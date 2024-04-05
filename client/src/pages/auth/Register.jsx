@@ -1,14 +1,5 @@
-import {
-  Button,
-  Flex,
-  Row,
-  Typography,
-  Col,
-  Divider,
-  Space
-} from 'antd';
+import { Button, Flex, Row, Typography, Col, Divider, Space } from 'antd';
 import { FcGoogle } from 'react-icons/fc';
-import { FaGithub } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import FormRegister from '~/section/auth/FormRegister';
 
@@ -60,6 +51,5 @@ const RegisterPage = () => {
     </Row>
   );
 };
-
 
 export default RegisterPage;

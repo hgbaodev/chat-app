@@ -1,6 +1,6 @@
 import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-
+import { IoVideocamOutline } from 'react-icons/io5';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
 import { useSelector } from '~/store';
@@ -99,6 +99,47 @@ export const TextMessage = ({
         className="text-inherit"
         dangerouslySetInnerHTML={{ __html: convertLinksToAnchorTags(message) }}
       />
+    </MessageWrapper>
+  );
+};
+
+export const VideoCallMessage = ({
+  id,
+  sender,
+  forward,
+  created,
+  videocall,
+  is_pinned = false,
+  ...props
+}) => {
+  return (
+    <MessageWrapper
+      messageId={id}
+      from={sender.id}
+      created={created}
+      forward={forward}
+      sender={sender}
+      isPinned={is_pinned}
+      {...props}
+    >
+      <Flex vertical gap={10}>
+        <Space>
+          <Flex className="bg-slate-300 p-3 rounded-full">
+            <IoVideocamOutline size={20} />
+          </Flex>
+          <Space direction="vertical" className="gap-0">
+            <Typography className="font-semibold">Cuội gọi video</Typography>
+            <Typography className="text-[12px]">
+              {videocall.ended ? videocall.duration : 'Cuộc gọi đang diễn ra'}
+            </Typography>
+          </Space>
+        </Space>
+        {videocall.ended ? (
+          <Button type="primary">Gọi lại</Button>
+        ) : (
+          <Button type="primary">Tham gia</Button>
+        )}
+      </Flex>
     </MessageWrapper>
   );
 };

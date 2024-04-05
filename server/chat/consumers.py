@@ -2,7 +2,7 @@ import json
 from channels.generic.websocket import WebsocketConsumer
 from asgiref.sync import async_to_sync
 from .serializers import MessageSerializer, AttachmentSerializer
-from .models import Message, Conversation, Participants, OnlineUser, Attachments, NameCard
+from .models import Message, Conversation, Participants, OnlineUser, Attachments, NameCard, CallMessage
 from authentication.models import User
 from rest_framework_simplejwt.tokens import AccessToken
 import base64
@@ -204,10 +204,25 @@ class ChatConsumer(WebsocketConsumer):
         message_dict = {
             'conversation': conversation_dict,
         }
-        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        # create call message
+        message = Message.objects.create(
+            conversation=conversation,
+            sender=self.scope["user"],
+            message="",
+            message_type=Message.MessageType.VIDEOCALL
+        )
+        CallMessage.objects.create(
+            message=message,
+        )
+        message_serializer = MessageSerializer(instance=message)
+        participants = Participants.objects.filter(conversation_id=conversation_id)
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "chat_message", "message": message_serializer.data}
+                )    
+            if participant.user.id != self.scope["user"].id:
+                async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "video_call", "message": json.dumps(message_dict)}
                 )
             
@@ -234,16 +249,12 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "cancel_video_call", "message": "empty"}
                 )
     
-            
     def receive_leave_video_call(self, data):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
 
         # remove peer_id from call store
         self.call_store[conversation_id].remove(peer_id)
-
-        if(self.call_store[conversation_id] == []):
-            del self.call_store[conversation_id]
 
         conversation = Conversation.objects.get(id=conversation_id)
         return_data = {
@@ -258,10 +269,16 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "leave_video_call", "message": json.dumps(return_data)}
                 )
         # 
-       
-    
+
+        if(len(self.call_store[conversation_id]) == 0 ):
+            del self.call_store[conversation_id]
+            
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
+
+        # check user is in this conversation
+        if not Participants.objects.filter(conversation_id=conversation_id, user=self.scope["user"]).exists():
+            return
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title

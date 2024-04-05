@@ -11,13 +11,13 @@ const container = document.getElementById('root');
 const root = createRoot(container);
 
 root.render(
-  <ReduxProvider store={store}>
-    <SocketProvider>
-      <GoogleOAuthProvider clientId={REACT_APP_GITHUB_CLIENT_ID}>
+  <GoogleOAuthProvider clientId={REACT_APP_GITHUB_CLIENT_ID}>
+    <ReduxProvider store={store}>
+      <SocketProvider>
         <App />
-      </GoogleOAuthProvider>
-    </SocketProvider>
-  </ReduxProvider>
+      </SocketProvider>
+    </ReduxProvider>
+  </GoogleOAuthProvider>
 );
 
 reportWebVitals();
