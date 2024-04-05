@@ -24,7 +24,6 @@ export const SocketContext = createContext({
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const { call } = useSelector((state) => state.chat);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect

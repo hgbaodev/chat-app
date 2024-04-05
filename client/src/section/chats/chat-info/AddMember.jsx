@@ -15,11 +15,13 @@ import useDebounce from '~/hooks/useDebounce';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 import { SearchOutlined } from '@ant-design/icons';
+import { addMembersInConversation } from '~/store/slices/contactSlice';
 
 const AddMember = ({ open, onClose }) => {
   const dispatch = useDispatch();
   const { friends, isLoading } = useSelector((state) => state.relationship);
   const { isLoadingCreateConversation } = useSelector((state) => state.contact);
+  const { currentConversation } = useSelector((state) => state.chat.chat);
   const { members } = useSelector(
     (state) => state.chat.chat.currentConversation
   );
@@ -49,7 +51,12 @@ const AddMember = ({ open, onClose }) => {
     if (selectedFriends.length === 0)
       message.error('Please selected friend add group!');
     else {
-      console.log({ participants: selectedFriends });
+      dispatch(
+        addMembersInConversation({
+          users: selectedFriends,
+          id: currentConversation.id
+        })
+      );
       onClose();
     }
   };

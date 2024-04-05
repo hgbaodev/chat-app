@@ -55,11 +55,16 @@ class ConversationSerializer(serializers.ModelSerializer):
         return conversation
     
 
+class AddMemberSerializer(serializers.ModelSerializer):
+    status = serializers.SerializerMethodField(read_only=True)
+    class Meta:
+        model = User
+        fields = ['id','first_name', 'last_name', 'avatar', 'about'] 
     
 class CreateParticipantsSerializer(serializers.ModelSerializer):
     conversation_id = serializers.IntegerField() 
     users = serializers.PrimaryKeyRelatedField(many=True,queryset=User.objects.all(), write_only=True)
-    members = MemberConversationSerializer(many=True, read_only=True)
+    members = AddMemberSerializer(many=True, read_only=True)
     
     class Meta:
         model = Participants

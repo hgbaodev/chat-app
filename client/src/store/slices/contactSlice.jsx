@@ -67,6 +67,22 @@ export const changeNameConversation = createAsyncThunk(
   }
 );
 
+export const addMembersInConversation = createAsyncThunk(
+  'contact/add-members-conversation/',
+  async (values, { rejectWithValue }) => {
+    console.log('Values', values);
+    try {
+      const response = await AxiosInstance.post(
+        `chat/conversations/${values.id}/participants/`,
+        values
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   searchConversation: [],
   openSearch: false,
