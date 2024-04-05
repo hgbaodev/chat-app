@@ -69,41 +69,28 @@ class ConversationList(APIView):
             serializer.save()
             conversation = Conversation.objects.get(id=serializer.data['id'])
             sender = self.request.user
-            users = User.objects.filter(participants__conversation=conversation)
-            message = Message.objects.create(
+            Message.objects.create(
                 conversation=conversation,
                 sender=sender,
                 message=f"{sender.first_name} {sender.last_name} đã tạo ra group này!",
                 message_type=Message.MessageType.NEWS
             )
-            members_info = [
-                {
-                    'id': member['id'],
-                    'first_name': member['first_name'],
-                    'last_name': member['last_name'],
-                    'avatar': member['avatar'],
-                    'status': OnlineUser.objects.filter(user=member['id']).exists()
-                }
-                for member in users.values('id', 'first_name', 'last_name', 'avatar')
-            ]
-            current_time = timezone.now()
-            data = {
-                'id': conversation.id, 
-                'title': conversation.title, 
-                'image': conversation.image,
-                'latest_message': {
-                    'id': message.id,
-                    'message': message.message,
-                    'sender': sender.id,
-                    'created_at': current_time.isoformat(),
-                    'avatar': sender.avatar,
-                },
-                'type': conversation.type,
-                'members': members_info,
-                'admin': conversation.admin,
+            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
+            users = User.objects.filter(participants__conversation=conversation)
+            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
+            conversation_data = {
+                    'id': conversation.id,
+                    'title': conversation.title,
+                    'image': conversation.image,
+                    'latest_message': latest_message,
+                    'type': conversation.type,
+                    'members': users,
+                    'is_pinned': is_pinned,
+                    'admin': conversation.admin,
             }
-            send_message_to_conversation_members(conversation.id, 'add_group', data)
-            return SuccessResponse(data=data, status=status.HTTP_201_CREATED)  
+            serializer = self.serializer_class(conversation_data, many=False, context={'request': request})
+            send_message_to_conversation_members(conversation.id, 'add_group', serializer.data)
+            return SuccessResponse(data=serializer.data, status=status.HTTP_201_CREATED)  
         return ErrorResponse(error_message=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
@@ -156,8 +143,39 @@ class GetMemberConversation(generics.ListAPIView):
         })
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            return SuccessResponse(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
+            conversation = Conversation.objects.get(id=pk)
+
+            for userId in request.data.get('users'):
+                findUser = User.objects.get(id=userId)
+                message = Message.objects.create(
+                    conversation=conversation,
+                    sender=request.user,
+                    message=f"{request.user.last_name} đã thêm {findUser.first_name} {findUser.last_name} vào nhóm!",
+                    message_type=Message.MessageType.NEWS
+                )
+                message_serializer = MessageSerializer(instance=message)
+                send_message_to_conversation_members(conversation.id, 'chat_message', message_serializer.data)
+
+            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
+            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
+            users = User.objects.filter(participants__conversation=conversation)
+            conversation_data = {
+                'id': conversation.id,
+                'title': conversation.title,
+                'image': conversation.image,
+                'latest_message': latest_message,
+                'type': conversation.type,
+                'members': users,
+                'is_pinned': is_pinned,
+                'admin': conversation.admin,
+            }
+
+            sendGroup = ConversationSerializer(conversation_data, context={'request': request})
+            send_message_to_conversation_members(conversation.id, 'add_group', sendGroup.data)
+            return SuccessResponse("Add successfully!", status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+  
 
 class GetMessagesConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

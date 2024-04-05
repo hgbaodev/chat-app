@@ -247,7 +247,34 @@ const chatSlice = createSlice({
       }
     },
     createGroup(state, action) {
-      state.conversations.push(action.payload);
+      const result = action.payload;
+      const conversationExists = state.conversations.some(
+        (conversation) => conversation.id === result.id
+      );
+      const currentConversation = state.chat.currentConversation;
+      const addNewMembers = (conversation, newMembers) => {
+        const existingMembersIds = conversation.members.map(
+          (member) => member.id
+        );
+        newMembers.forEach((member) => {
+          if (!existingMembersIds.includes(member.id)) {
+            conversation.members.push(member);
+          }
+        });
+      };
+      if (!conversationExists) {
+        state.conversations.push(result);
+      } else {
+        const index = state.conversations.findIndex(
+          (conversation) => conversation.id === result.id
+        );
+        if (index !== -1) {
+          addNewMembers(state.conversations[index], result.members);
+        }
+      }
+      if (currentConversation.id === result.id) {
+        addNewMembers(currentConversation, result.members);
+      }
     },
     setPage(state, action) {
       state.chat.messages.currentPage = action.payload;
