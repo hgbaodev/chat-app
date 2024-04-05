@@ -8,7 +8,7 @@ import {
   Space,
   message
 } from 'antd';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { IoAdd, IoCloseOutline } from 'react-icons/io5';
 import Loader from '~/components/Loader';
 import useDebounce from '~/hooks/useDebounce';
@@ -23,10 +23,17 @@ const AddMember = ({ open, onClose }) => {
   const { members } = useSelector(
     (state) => state.chat.chat.currentConversation
   );
-  console.log(members);
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [search, setSearch] = useState('');
   const searchDebauce = useDebounce(search, 500);
+
+  const friendsFilter = useMemo(
+    () =>
+      friends.filter(
+        (f) => members.findIndex((member) => member.id === f.id) === -1
+      ),
+    [friends, members]
+  );
 
   // effect
   useEffect(() => {
@@ -83,22 +90,18 @@ const AddMember = ({ open, onClose }) => {
         <div className="h-[240px] overflow-y-auto scrollbar relative">
           {isLoading ? (
             <Loader />
-          ) : friends.length ? (
-            friends
-              .filter(
-                (f) => members.findIndex((member) => member.id === f.id) === -1
-              )
-              .map((friend) => (
-                <FriendItem
-                  key={friend.id}
-                  id={friend.id}
-                  avatar={friend.avatar}
-                  fullName={`${friend.first_name} ${friend.last_name}`}
-                  email={friend.email}
-                  selected={selectedFriends.includes(friend.id) ? true : false}
-                  handleSelected={setSelectedFriends}
-                />
-              ))
+          ) : friendsFilter.length ? (
+            friendsFilter.map((friend) => (
+              <FriendItem
+                key={friend.id}
+                id={friend.id}
+                avatar={friend.avatar}
+                fullName={`${friend.first_name} ${friend.last_name}`}
+                email={friend.email}
+                selected={selectedFriends.includes(friend.id) ? true : false}
+                handleSelected={setSelectedFriends}
+              />
+            ))
           ) : (
             <Empty description="Friends List is empty" className="py-4" />
           )}
