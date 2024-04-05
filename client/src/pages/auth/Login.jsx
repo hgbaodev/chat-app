@@ -1,63 +1,14 @@
 import logo_light from '~/assets/icon_app.svg';
-import { Flex, Row, Typography, Col, Divider, Space, Button } from 'antd';
+import { Flex, Row, Typography, Col, Divider, Space } from 'antd';
 
-import { Link, useSearchParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import FormLogin from '~/section/auth/FormLogin';
-import { FaGithub } from 'react-icons/fa';
-import { useEffect } from 'react';
-import {
-  REACT_APP_GITHUB_CLIENT_ID,
-  REACT_APP_GOOGLE_CLIENT_ID
-} from '~/config';
-import { useDispatch } from 'react-redux';
-import { loginWithGithub, loginWithGoogle } from '~/store/slices/authSlice';
+import GoogleComponent from '~/components/GoogleComponent';
+import GithubComponent from '~/components/GithubComponent';
 
 const { Text } = Typography;
 
 const Login = () => {
-  const dispatch = useDispatch();
-  const [searchparams] = useSearchParams();
-  const handleLoginWithGoogle = (response) => {
-    const payload = response.credential;
-    setTimeout(() => {
-      dispatch(loginWithGoogle(payload));
-    }, 1000);
-  };
-  const handleLoginWithGithub = () => {
-    window.location.assign(
-      `https://github.com/login/oauth/authorize/?client_id=${REACT_APP_GITHUB_CLIENT_ID}`
-    );
-  };
-
-  let code = searchparams.get('code');
-  useEffect(() => {
-    if (code) {
-      try {
-        const urlparam = code;
-        dispatch(loginWithGithub(urlparam));
-      } catch (error) {
-        if (error.response) {
-          console.log(error.response.data);
-        }
-      }
-    }
-  }, [code, dispatch]);
-
-  useEffect(() => {
-    /* global google */
-    google.accounts.id.initialize({
-      client_id: REACT_APP_GOOGLE_CLIENT_ID,
-      callback: handleLoginWithGoogle
-    });
-    google.accounts.id.renderButton(document.getElementById('signInDiv'), {
-      theme: 'outline',
-      size: 'large',
-      text: 'continue_with',
-      shape: 'circle',
-      width: '280'
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
   return (
     <Row justify="center" className="h-[100vh] bg-neutral-100">
       <Col
@@ -77,18 +28,8 @@ const Login = () => {
             <img src={logo_light} className="object-fill w-[100px] h-[100px]" />
           </Link>
           <Space direction="vertical">
-            <div className="googleContainer">
-              <div id="signInDiv" className="gsignIn"></div>
-            </div>
-            <Button
-              shape="round"
-              icon={<FaGithub />}
-              size="large"
-              className="w-full"
-              onClick={handleLoginWithGithub}
-            >
-              Github
-            </Button>
+            <GoogleComponent />
+            <GithubComponent />
           </Space>
           <Divider>Or</Divider>
           <Text className="text-2xl font-medium mb-5">

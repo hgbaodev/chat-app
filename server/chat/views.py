@@ -10,7 +10,6 @@ from django.db.models import Max
 from config.paginations import CustomPagination
 from django.db.models import Max
 from utils.responses import SuccessResponse, ErrorResponse
-from django.db.models import Q
 from authentication.models import User
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
