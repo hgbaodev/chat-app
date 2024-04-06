@@ -6,7 +6,6 @@ import {
 } from '@ant-design/icons';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
-import { openCall } from '~/store/slices/chatSlice';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
 import { ConversationTypes } from '~/utils/enum';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +24,6 @@ export const ChatHeader = () => {
 
   // handle video call
   const handleVideoCall = () => {
-    dispatch(openCall());
     const peer_id = uuidv4();
     const width = 1000;
     const height = 600;

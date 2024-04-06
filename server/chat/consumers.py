@@ -258,15 +258,23 @@ class ChatConsumer(WebsocketConsumer):
             room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
             )
         
-
-    
     def receive_cancel_video_call(self, data):
         conversation_id = data["conversation_id"]
+        video_call_message = CallMessage.objects.filter(message__conversation_id=conversation_id).latest('message__created_at')
+        if(video_call_message):
+            video_call_message.ended = True
+            video_call_message.duration = 0  
+            video_call_message.save()
+
+        return_data = {
+            'conversation_id': conversation_id,
+            'message_id': video_call_message.id,
+        }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "cancel_video_call", "message": "empty"}
+                room_group_name, {"type": "cancel_video_call", "message": json.dumps(return_data)}
                 )
     
     def receive_leave_video_call(self, data):

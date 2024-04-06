@@ -111,7 +111,7 @@ export const ContactItem = ({
     ) {
       return `${name} sent an attachment.`;
     } else if (message_type == MessageTypes.VIDEOCALL) {
-      return `Video call.`;
+      return `${name} made a video call.`;
     }
     return message;
   };

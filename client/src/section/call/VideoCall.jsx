@@ -1,6 +1,7 @@
 import { Avatar, Button, Space } from 'antd';
 import Peer from 'peerjs';
 import React, { useContext, useEffect, useRef } from 'react';
+import { useCallback } from 'react';
 import { useState } from 'react';
 import { FaPhoneAlt } from 'react-icons/fa';
 import {
@@ -27,7 +28,8 @@ const VideoCall = () => {
     emitGetPeerIds,
     emitLeaveVideoCall,
     emitCancelVideoCall,
-    emitEndVideoCall
+    emitEndVideoCall,
+    emitVideoCall
   } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
@@ -38,16 +40,13 @@ const VideoCall = () => {
   const videoRefs = remoteStreams.map(() => React.createRef());
   const [duration, setDuration] = useState(0);
 
-  useEffect(() => {
+  const initPeer = useCallback(() => {
     let params = new URLSearchParams(window.location.search);
     let conversation_id = params.get('conversation_id');
     if (socketInstance) {
       const peerInstance = new Peer(peer_id);
       emitGetPeerIds({ conversation_id });
       if (peer) peer.destroy();
-      peerInstance.on('open', (peer_id) => {
-        console.log('My peer id' + peer_id);
-      });
       setPeer(peerInstance);
       navigator.mediaDevices
         .getUserMedia({ video: true, audio: true })
@@ -55,10 +54,8 @@ const VideoCall = () => {
           setStream(localStream);
           // on call
           peerInstance.on('call', (call) => {
-            console.log('Call received', call);
             call.answer(localStream);
             call.on('stream', (remoteStream) => {
-              console.log('Received peer_id on stream:', call.peer);
               setRemoteStreams((prevStreams) => {
                 const streamExists = prevStreams.some(
                   (stream) => stream.peer_id === call.peer
@@ -78,9 +75,6 @@ const VideoCall = () => {
               });
             });
           });
-          peerInstance.on('error', function (err) {
-            console.log('PeerJS error:', err);
-          });
         })
         .catch((err) => {
           console.error('Failed to get local stream', err);
@@ -92,6 +86,9 @@ const VideoCall = () => {
       };
     }
   }, [socketInstance]);
+  useEffect(() => {
+    initPeer();
+  }, [socketInstance]);
 
   useEffect(() => {
     if (peer && call.calling && stream) {
@@ -101,7 +98,6 @@ const VideoCall = () => {
             if (peer_id !== my_peer_id) {
               const myCall = peer.call(peer_id, stream);
               myCall.on('stream', (remoteStream) => {
-                console.log('Received peer_id on stream:', myCall.peer);
                 setRemoteStreams((prevStreams) => {
                   const streamExists = prevStreams.some(
                     (stream) => stream.peer_id === myCall.peer
@@ -147,7 +143,6 @@ const VideoCall = () => {
 
   // on listener peer_ids change
   useEffect(() => {
-    console.log('peer_ids changed', call.peer_ids);
     setRemoteStreams((preStream) =>
       preStream.filter((stream) => call.peer_ids.includes(stream.peer_id))
     );
@@ -202,8 +197,10 @@ const VideoCall = () => {
   };
   // handle interrupt call
   const handleLeaveCall = () => {
+    const confirm = window.confirm('Are you sure you want to leave this call?');
+    if (!confirm) return;
     if (call.calling) {
-      console.log('Leave call');
+      // emit leave call
       emitLeaveVideoCall({
         conversation_id: call.conversation.conversation_id,
         peer_id: peer_id
@@ -212,11 +209,14 @@ const VideoCall = () => {
         remoteStreams.length === 0 ||
         call.conversation.type == ConversationTypes.FRIEND
       ) {
-        console.log('END CALL');
+        // end call if no remote stream or friend call
         emitEndVideoCall({
           conversation_id: call.conversation.conversation_id,
           duration: duration
         });
+      } else {
+        // close window if group call
+        window.close();
       }
     } else {
       console.log('Cancel call');
@@ -244,16 +244,17 @@ const VideoCall = () => {
 
   // handle recall
   const handleRecall = () => {
-    console.log('Recall');
+    emitVideoCall({
+      conversation_id: call.conversation.conversation_id,
+      peer_id: peer_id
+    });
+    initPeer();
+    setDuration(0);
   };
 
   useEffect(() => {
-    const handleBeforeUnload = (event) => {
-      if (call.calling) {
-        // handleInteruptCall();
-      } else {
-        handleCloseCall();
-      }
+    const handleBeforeUnload = () => {
+      handleCloseCall();
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     // Clean up

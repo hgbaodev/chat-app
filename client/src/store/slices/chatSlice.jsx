@@ -319,18 +319,11 @@ const chatSlice = createSlice({
       state.call.conversation = action.payload.conversation;
     },
     resetVideoCall(state, action) {
-      if (state.call.calling) {
-        state.call.calling = false;
-        state.call.refused = false;
-        state.call.ended = true;
-      } else {
-        state.call.open = false;
-        state.call.calling = false;
-        state.call.refused = false;
-        state.call.ended = true;
-        state.call.peer_ids = [];
-        state.call.conversation = {};
-      }
+      state.call.open = false;
+      state.call.calling = false;
+      state.call.refused = false;
+      state.call.ended = true;
+      state.call.peer_ids = [];
 
       // update video-call message
       if (

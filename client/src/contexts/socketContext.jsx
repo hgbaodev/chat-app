@@ -18,7 +18,6 @@ import {
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
-import { ConversationTypes } from '~/utils/enum';
 export const SocketContext = createContext({
   socketInstance: null
 });
@@ -118,7 +117,14 @@ export const SocketProvider = ({ children }) => {
             const { peer_ids } = JSON.parse(data.message);
             dispatch(setPeerIds({ peer_ids }));
           } else if (data.type === 'cancel_video_call') {
-            console.log('cancel_video_call');
+            const { conversation_id, message_id } = JSON.parse(data.message);
+            dispatch(
+              updateVideoCallMessage({
+                conversation_id,
+                message_id,
+                duration: 0
+              })
+            );
             dispatch(
               setCall({
                 open: false,
@@ -128,7 +134,6 @@ export const SocketProvider = ({ children }) => {
               })
             );
           } else if (data.type === 'end_video_call') {
-            console.log('END VIDEO CALL SOCKET');
             const { conversation_id, message_id, duration } = JSON.parse(
               data.message
             );
