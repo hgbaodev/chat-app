@@ -5,12 +5,13 @@ import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
 import { useSelector } from '~/store';
 import { memo, useState } from 'react';
-import { formatDateTime } from '~/utils/formatDayTime';
+import { formatDateTime, formatSeconds } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
 import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
 import { MessageTypes } from '~/utils/enum';
 import { convertLinksToAnchorTags } from '~/utils/textProcessing';
-
+import { v4 as uuidv4 } from 'uuid';
+import { useSocket } from '~/hooks/useSocket';
 const MessageWrapper = memo(
   ({
     messageId,
@@ -112,6 +113,44 @@ export const VideoCallMessage = ({
   is_pinned = false,
   ...props
 }) => {
+  const { emitVideoCall, emitAcceptVideoCall } = useSocket();
+  const { chat } = useSelector((state) => state.chat);
+  // handle for recall
+  const handleRecall = () => {
+    const peer_id = uuidv4();
+    const width = 1000;
+    const height = 600;
+    const leftPos = (window.innerWidth - width) / 2;
+    const topPos = (window.innerHeight - height) / 2;
+    window.open(
+      `/video-call/${peer_id}?conversation_id=${chat.currentConversation.id}`,
+      '_blank',
+      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+    );
+    emitVideoCall({
+      conversation_id: chat.currentConversation.id,
+      peer_id
+    });
+  };
+
+  const handleJoinCall = () => {
+    const peer_id = uuidv4();
+    emitAcceptVideoCall({
+      conversation_id: chat.currentConversation.id,
+      peer_id
+    });
+    const width = 1000;
+    const height = 600;
+    const leftPos = (window.innerWidth - width) / 2;
+    const topPos = (window.innerHeight - height) / 2;
+    window.open(
+      `/video-call/${peer_id}?conversation_id=${chat.currentConversation.id}`,
+      '_blank',
+      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+    );
+  };
+
+  // render
   return (
     <MessageWrapper
       messageId={id}
@@ -122,22 +161,36 @@ export const VideoCallMessage = ({
       isPinned={is_pinned}
       {...props}
     >
-      <Flex vertical gap={10}>
+      <Flex vertical gap={10} className="min-w-[180px]">
         <Space>
           <Flex className="bg-slate-300 p-3 rounded-full">
             <IoVideocamOutline size={20} />
           </Flex>
           <Space direction="vertical" className="gap-0">
-            <Typography className="font-semibold">Cuội gọi video</Typography>
+            <Typography className="font-semibold">Cuộc gọi video</Typography>
             <Typography className="text-[12px]">
-              {videocall.ended ? videocall.duration : 'Cuộc gọi đang diễn ra'}
+              {videocall.ended ? (
+                videocall.duration === 0 ? (
+                  <Typography className="text-red-500">
+                    Cuộc gọi đã hủy
+                  </Typography>
+                ) : (
+                  formatSeconds(videocall.duration)
+                )
+              ) : (
+                'Cuộc gọi đang diễn ra'
+              )}
             </Typography>
           </Space>
         </Space>
         {videocall.ended ? (
-          <Button type="primary">Gọi lại</Button>
+          <Button type="primary" onClick={handleRecall}>
+            Gọi lại
+          </Button>
         ) : (
-          <Button type="primary">Tham gia</Button>
+          <Button type="primary" onClick={handleJoinCall}>
+            Tham gia
+          </Button>
         )}
       </Flex>
     </MessageWrapper>
