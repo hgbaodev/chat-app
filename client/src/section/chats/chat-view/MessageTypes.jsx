@@ -5,7 +5,7 @@ import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
 import { useSelector } from '~/store';
 import { memo, useState } from 'react';
-import { formatDateTime } from '~/utils/formatDayTime';
+import { formatDateTime, formatSeconds } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
 import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
 import { MessageTypes } from '~/utils/enum';
@@ -122,15 +122,25 @@ export const VideoCallMessage = ({
       isPinned={is_pinned}
       {...props}
     >
-      <Flex vertical gap={10}>
+      <Flex vertical gap={10} className="min-w-[180px]">
         <Space>
           <Flex className="bg-slate-300 p-3 rounded-full">
             <IoVideocamOutline size={20} />
           </Flex>
           <Space direction="vertical" className="gap-0">
-            <Typography className="font-semibold">Cuội gọi video</Typography>
+            <Typography className="font-semibold">Cuộc gọi video</Typography>
             <Typography className="text-[12px]">
-              {videocall.ended ? videocall.duration : 'Cuộc gọi đang diễn ra'}
+              {videocall.ended ? (
+                videocall.duration === 0 ? (
+                  <Typography className="text-red-500">
+                    Cuộc gọi đã hủy
+                  </Typography>
+                ) : (
+                  formatSeconds(videocall.duration)
+                )
+              ) : (
+                'Cuộc gọi đang diễn ra'
+              )}
             </Typography>
           </Space>
         </Space>

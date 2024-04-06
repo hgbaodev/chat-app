@@ -9,10 +9,12 @@ import {
   recallMessage,
   receiveChangeNameConversation,
   receiverMessage,
+  resetVideoCall,
   setCall,
   setConversationCall,
   setPeerIds,
-  setTypingIndicator
+  setTypingIndicator,
+  updateVideoCallMessage
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
@@ -89,6 +91,7 @@ export const SocketProvider = ({ children }) => {
               );
             }
           } else if (data.type === 'refuse_video_call') {
+            const { conversation_id, message_id } = JSON.parse(data.message);
             dispatch(
               setCall({
                 calling: false,
@@ -96,21 +99,24 @@ export const SocketProvider = ({ children }) => {
                 refused: true
               })
             );
+            dispatch(
+              updateVideoCallMessage({
+                conversation_id,
+                message_id,
+                duration: 0
+              })
+            );
+          } else if (data.type === 'accept_video_call') {
+            dispatch(
+              setCall({
+                calling: true,
+                ended: false,
+                refused: false
+              })
+            );
           } else if (data.type === 'leave_video_call') {
-            const { peer_ids, conversation_type } = JSON.parse(data.message);
+            const { peer_ids } = JSON.parse(data.message);
             dispatch(setPeerIds({ peer_ids }));
-            if (
-              peer_ids.length === 1 &&
-              conversation_type === ConversationTypes.FRIEND
-            ) {
-              dispatch(
-                setCall({
-                  calling: false,
-                  refused: false,
-                  ended: true
-                })
-              );
-            }
           } else if (data.type === 'cancel_video_call') {
             console.log('cancel_video_call');
             dispatch(
@@ -121,6 +127,12 @@ export const SocketProvider = ({ children }) => {
                 ended: true
               })
             );
+          } else if (data.type === 'end_video_call') {
+            console.log('END VIDEO CALL SOCKET');
+            const { conversation_id, message_id, duration } = JSON.parse(
+              data.message
+            );
+            dispatch(resetVideoCall({ conversation_id, message_id, duration }));
           } else if (data.type === 'change_name_conversation') {
             dispatch(receiveChangeNameConversation(data.message));
           } else if (data.type === 'online_notification') {

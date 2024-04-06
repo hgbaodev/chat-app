@@ -61,7 +61,6 @@ class ChatConsumer(WebsocketConsumer):
             users = User.objects.filter(participants__conversation=conversation).exclude(id=user.id)
             related_users.update(users)
         related_users_online = [user for user in related_users if OnlineUser.objects.filter(user=user.id).exists()]
-        print(related_users_online)
         for online_user in related_users_online:
             async_to_sync(self.channel_layer.group_send)(
                 f"user_{online_user.id}", 
@@ -94,6 +93,8 @@ class ChatConsumer(WebsocketConsumer):
             self.receive_leave_video_call(data)
         elif data_source == "cancel_video_call":
             self.receive_cancel_video_call(data)
+        elif data_source == "end_video_call":
+            self.receive_end_video_call(data)
         elif data_source == "get_peer_ids":
             self.receive_get_peer_ids(data)
         elif data_source == "typing_indicator":
@@ -114,7 +115,6 @@ class ChatConsumer(WebsocketConsumer):
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
-            print(room_group_name)
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "typing_indicator", "message": json.dumps(user_dict)}
                 )
@@ -186,7 +186,6 @@ class ChatConsumer(WebsocketConsumer):
         peer_id = data["peer_id"]
         # init call store
         self.call_store[conversation_id] = [peer_id]
-        print('INIT CALL STORE', conversation_id , self.call_store[conversation_id])
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title
@@ -231,14 +230,35 @@ class ChatConsumer(WebsocketConsumer):
         peer_id = data["peer_id"]
         # append peer_id into call store
         self.call_store[conversation_id].append(peer_id)
+
+        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "accept_video_call", "message": "empty"}
+                )
        
     def receive_refuse_video_call(self, data):
         conversation_id = data["conversation_id"]
+
+        video_call_message = CallMessage.objects.filter(message__conversation_id=conversation_id).latest('message__created_at')
+        if(video_call_message):
+            video_call_message.ended = True
+            video_call_message.duration = 0  
+            video_call_message.save()
+        
+        return_data = {
+            'conversation_id': conversation_id,
+            'message_id': video_call_message.id,
+        }
+
         participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
         room_group_name = f"user_{participant.user.id}"
         async_to_sync(self.channel_layer.group_send)(
-            room_group_name, {"type": "refuse_video_call", "message": "empty"}
+            room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
             )
+        
+
     
     def receive_cancel_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -256,11 +276,8 @@ class ChatConsumer(WebsocketConsumer):
         # remove peer_id from call store
         self.call_store[conversation_id].remove(peer_id)
 
-        conversation = Conversation.objects.get(id=conversation_id)
         return_data = {
-            'peer_id': peer_id,
             'peer_ids': self.call_store[conversation_id],
-            'conversation_type': conversation.type
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
@@ -270,9 +287,32 @@ class ChatConsumer(WebsocketConsumer):
                 )
         # 
 
-        if(len(self.call_store[conversation_id]) == 0 ):
+        if(len(self.call_store[conversation_id]) == 0):
             del self.call_store[conversation_id]
+
+
+    def receive_end_video_call(self, data):
+        conversation_id = data["conversation_id"]
+        duration = data["duration"]
+        participants = Participants.objects.filter(conversation_id=conversation_id)
+        video_call_message = CallMessage.objects.filter(message__conversation_id=conversation_id).latest('message__created_at')
+        if(video_call_message):
+            video_call_message.ended = True
+            video_call_message.duration = duration  
+            video_call_message.save()
+
+        return_data = {
+            'conversation_id': conversation_id,
+            'message_id': video_call_message.id,
+            'duration': duration,
+        }
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "end_video_call", "message": json.dumps(return_data)}
+                )
             
+
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
 
@@ -300,7 +340,6 @@ class ChatConsumer(WebsocketConsumer):
         async_to_sync(self.channel_layer.group_send)(
             f"user_{self.scope['user'].id}", {"type": "return_get_peer_ids", "message": json.dumps(return_data)}
             )
-        print('self.call_store[conversation_id]', self.call_store[conversation_id])
 
     def receive_friend_request(self, event):
         self.send(text_data=json.dumps(event))
@@ -330,6 +369,9 @@ class ChatConsumer(WebsocketConsumer):
         self.send(text_data=json.dumps(event))
 
     def cancel_video_call(self, event):
+        self.send(text_data=json.dumps(event))
+
+    def end_video_call(self, event):
         self.send(text_data=json.dumps(event))
 
     def return_get_peer_ids(self, event):

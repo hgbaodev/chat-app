@@ -108,6 +108,17 @@ export const useSocket = () => {
     }
   };
 
+  const emitEndVideoCall = ({ conversation_id, duration }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'end_video_call',
+          conversation_id,
+          duration
+        })
+      );
+    }
+  };
   // return
   return {
     emitMessage,
@@ -117,6 +128,7 @@ export const useSocket = () => {
     emitCancelVideoCall,
     emitRefuseVideoCall,
     emitTypingIndicator,
-    emitGetPeerIds
+    emitGetPeerIds,
+    emitEndVideoCall
   };
 };

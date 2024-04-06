@@ -318,6 +318,50 @@ const chatSlice = createSlice({
     setConversationCall(state, action) {
       state.call.conversation = action.payload.conversation;
     },
+    resetVideoCall(state, action) {
+      if (state.call.calling) {
+        state.call.calling = false;
+        state.call.refused = false;
+        state.call.ended = true;
+      } else {
+        state.call.open = false;
+        state.call.calling = false;
+        state.call.refused = false;
+        state.call.ended = true;
+        state.call.peer_ids = [];
+        state.call.conversation = {};
+      }
+
+      // update video-call message
+      if (
+        state.chat.currentConversation.id === action.payload.conversation_id
+      ) {
+        state.chat.messages.data = state.chat.messages.data.map((message) => {
+          if (message.message_type === MessageTypes.VIDEOCALL) {
+            if (message.videocall.id === action.payload.message_id) {
+              message.videocall.ended = true;
+              message.videocall.duration = action.payload.duration;
+            }
+          }
+          return message;
+        });
+      }
+    },
+    updateVideoCallMessage(state, action) {
+      if (
+        state.chat.currentConversation.id === action.payload.conversation_id
+      ) {
+        state.chat.messages.data = state.chat.messages.data.map((message) => {
+          if (message.message_type === MessageTypes.VIDEOCALL) {
+            if (message.videocall.id === action.payload.message_id) {
+              message.videocall.ended = true;
+              message.videocall.duration = action.payload.duration;
+            }
+          }
+          return message;
+        });
+      }
+    },
     setTypingIndicator(state, action) {
       state.chat.typingIndicator = action.payload;
     },
@@ -460,6 +504,8 @@ export const {
   setConversationCall,
   setPeerIds,
   removePeerId,
+  resetVideoCall,
+  updateVideoCallMessage,
   setTypingIndicator,
   changeStatePinMessage,
   receiveChangeNameConversation,

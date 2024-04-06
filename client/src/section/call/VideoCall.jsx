@@ -16,13 +16,19 @@ import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
 import { setCall } from '~/store/slices/chatSlice';
+import { ConversationTypes } from '~/utils/enum';
+import { formatSeconds } from '~/utils/formatDayTime';
 const VideoCall = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
   const { peer_id } = useParams();
   const { call } = useSelector((state) => state.chat);
-  const { emitGetPeerIds, emitLeaveVideoCall, emitCancelVideoCall } =
-    useSocket();
+  const {
+    emitGetPeerIds,
+    emitLeaveVideoCall,
+    emitCancelVideoCall,
+    emitEndVideoCall
+  } = useSocket();
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
   const [isCameraOn, setIsCameraOn] = useState(true);
   const videoRef = useRef(null);
@@ -30,6 +36,7 @@ const VideoCall = () => {
   const [stream, setStream] = useState(null);
   const [remoteStreams, setRemoteStreams] = useState([]);
   const videoRefs = remoteStreams.map(() => React.createRef());
+  const [duration, setDuration] = useState(0);
 
   useEffect(() => {
     let params = new URLSearchParams(window.location.search);
@@ -125,6 +132,19 @@ const VideoCall = () => {
     }
   }, [peer, stream, call]);
 
+  // on call time running
+  useEffect(() => {
+    let timer;
+    if (call.calling) {
+      timer = setInterval(() => {
+        setDuration((pre) => pre + 1);
+      }, 1000);
+    }
+    return () => {
+      clearInterval(timer);
+    };
+  }, [call.calling]);
+
   // on listener peer_ids change
   useEffect(() => {
     console.log('peer_ids changed', call.peer_ids);
@@ -188,13 +208,22 @@ const VideoCall = () => {
         conversation_id: call.conversation.conversation_id,
         peer_id: peer_id
       });
+      if (
+        remoteStreams.length === 0 ||
+        call.conversation.type == ConversationTypes.FRIEND
+      ) {
+        console.log('END CALL');
+        emitEndVideoCall({
+          conversation_id: call.conversation.conversation_id,
+          duration: duration
+        });
+      }
     } else {
       console.log('Cancel call');
       emitCancelVideoCall({
         conversation_id: call.conversation.conversation_id
       });
     }
-
     dispatch(
       setCall({
         calling: false,
@@ -356,7 +385,8 @@ const VideoCall = () => {
             />
           </Space>
         )}
-        <div className="w-[30%] flex justify-end">
+        <div className="w-[30%] flex justify-end items-center">
+          <p className="me-4">{formatSeconds(duration)}</p>
           <Button
             type="default"
             shape="circle"
