@@ -156,6 +156,20 @@ export const getPinnedMessages = createAsyncThunk(
   }
 );
 
+export const getInfoConversation = createAsyncThunk(
+  'chat/getInfoConversation',
+  async (conversation_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(
+        `/chat/conversations/${conversation_id}/`
+      );
+      return response;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -479,6 +493,14 @@ const chatSlice = createSlice({
       })
       .addCase(getPinnedMessages.fulfilled, (state, action) => {
         state.chat.pinned_messages.data = action.payload.data;
+      })
+      .addCase(getInfoConversation.fulfilled, (state, action) => {
+        state.chat.currentConversation = action.payload.data;
+        state.chat.messages.lastPage = 0;
+        state.chat.messages.currentPage = 1;
+        state.chat.messages.data = [];
+        state.chat.pinned_messages.isOpen = false;
+        state.chat.pinned_messages.data = [];
       });
   }
 });

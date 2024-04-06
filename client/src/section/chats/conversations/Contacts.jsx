@@ -77,11 +77,7 @@ export const Contacts = ({ ...props }) => {
                           <ContactItem
                             key={conversation.id}
                             id={conversation.id}
-                            title={
-                              conversation.type == 1
-                                ? conversation.title
-                                : `${us.first_name} ${us.last_name}`
-                            }
+                            title={conversation.title}
                             image={
                               conversation.type == 1
                                 ? conversation.image

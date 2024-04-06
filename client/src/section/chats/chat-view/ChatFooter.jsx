@@ -255,10 +255,12 @@ const AttachmentInput = () => {
           className="text-blue-500 hover:bg-blue-700"
         />
       </Dropdown>
-      <ShareNameCard
-        open={isOpenShareNameCard}
-        onCancel={() => setOpenShareNameCard(false)}
-      />
+      {isOpenShareNameCard && (
+        <ShareNameCard
+          open={isOpenShareNameCard}
+          onCancel={() => setOpenShareNameCard(false)}
+        />
+      )}
     </>
   );
 };
@@ -285,6 +287,7 @@ const ShareNameCard = ({ open, onCancel }) => {
       });
       onCancel();
     });
+    setSelectedFriends([]);
   };
 
   return (

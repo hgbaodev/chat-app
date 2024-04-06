@@ -73,6 +73,7 @@ const TabFriendsList = () => {
                   avatar={friend.avatar}
                   fullName={`${friend.first_name} ${friend.last_name}`}
                   email={friend.email}
+                  conversation={friend.conversation}
                 />
               ))
             ) : (

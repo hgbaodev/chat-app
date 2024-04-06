@@ -35,31 +35,13 @@ class ConversationList(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        conversations = Conversation.objects.filter(participants__user=request.user).annotate(
+        conversations = Conversation.objects.filter(participants__user=request.user, message__isnull=False).annotate(
             latest_message_time=Max('message__created_at')
         ).order_by('-latest_message_time')
 
         paginator = self.pagination_class()
         result_page = paginator.paginate_queryset(conversations, request)
-        
-        conversation_data = []
-        for conversation in result_page:
-            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
-            users = User.objects.filter(participants__conversation=conversation)
-            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
-            if latest_message is not None:
-                conversation_data.append({
-                    'id': conversation.id,
-                    'title': conversation.title,
-                    'image': conversation.image,
-                    'latest_message': latest_message,
-                    'type': conversation.type,
-                    'members': users,
-                    'is_pinned': is_pinned,
-                    'admin': conversation.admin,
-                })
-        
-        serializer = self.serializer_class(conversation_data, many=True, context={'request': request})
+        serializer = self.serializer_class(result_page, many=True, context={'request': request})
         return paginator.get_paginated_response(serializer.data)
 
     # Tạo cuộc hội thoại
@@ -75,20 +57,7 @@ class ConversationList(APIView):
                 message=f"{sender.first_name} {sender.last_name} đã tạo ra group này!",
                 message_type=Message.MessageType.NEWS
             )
-            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
-            users = User.objects.filter(participants__conversation=conversation)
-            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
-            conversation_data = {
-                    'id': conversation.id,
-                    'title': conversation.title,
-                    'image': conversation.image,
-                    'latest_message': latest_message,
-                    'type': conversation.type,
-                    'members': users,
-                    'is_pinned': is_pinned,
-                    'admin': conversation.admin,
-            }
-            serializer = self.serializer_class(conversation_data, many=False, context={'request': request})
+            serializer = self.serializer_class(conversation, many=False, context={'request': request})
             send_message_to_conversation_members(conversation.id, 'add_group', serializer.data)
             return SuccessResponse(data=serializer.data, status=status.HTTP_201_CREATED)  
         return ErrorResponse(error_message=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -103,12 +72,12 @@ class ConversationDetail(APIView):
 
     def get(self, request, pk, format=None):
         conversation = self.get_object(pk)
-        serializer = ConversationSerializer(conversation)
+        serializer = ConversationSerializer(conversation, context={'request': request})
         return Response(serializer.data)
 
     def put(self, request, pk, format=None):
         conversation = self.get_object(pk)
-        serializer = ConversationSerializer(conversation, data=request.data)
+        serializer = ConversationSerializer(conversation, data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -156,21 +125,7 @@ class GetMemberConversation(generics.ListAPIView):
                 message_serializer = MessageSerializer(instance=message)
                 send_message_to_conversation_members(conversation.id, 'chat_message', message_serializer.data)
 
-            latest_message = Message.objects.filter(conversation=conversation).exclude(deletemessage__user=request.user).order_by('-created_at').first()
-            is_pinned = PinConversation.objects.filter(user=request.user, conversation=conversation).exists()
-            users = User.objects.filter(participants__conversation=conversation)
-            conversation_data = {
-                'id': conversation.id,
-                'title': conversation.title,
-                'image': conversation.image,
-                'latest_message': latest_message,
-                'type': conversation.type,
-                'members': users,
-                'is_pinned': is_pinned,
-                'admin': conversation.admin,
-            }
-
-            sendGroup = ConversationSerializer(conversation_data, context={'request': request})
+            sendGroup = ConversationSerializer(conversation, context={'request': request})
             send_message_to_conversation_members(conversation.id, 'add_group', sendGroup.data)
             return SuccessResponse("Add successfully!", status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -245,16 +200,16 @@ class ConversationListFind(APIView):
             conversation_info = {
                 'id': conversation.id, 
                 'title': conversation.title, 
-                'image': conversation.image,
-                'type': conversation.type,
                 'members': users
             }
             def check_query(x):
                 search_query_lower = search_query.lower()
                 v = filter(lambda x: search_query_lower in x, map(lambda x: f'{x.first_name} {x.last_name}'.lower(), x.get('members')))
                 return search_query_lower in x.get('title') or len(list(v)) > 0
+            
             if not search_query or check_query(conversation_info):
-                conversation_data.append(conversation_info)
+                conversation_data.append(conversation)
+                
         serializer = self.serializer_class(conversation_data, many=True, context={'request': request})
         return SuccessResponse(data=serializer.data)
 

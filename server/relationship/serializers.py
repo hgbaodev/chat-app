@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from authentication.models import User
 from django.db.models import Q
+
+from chat.serializers import ConversationSerializer
 from .models import FriendRequest, FriendRelationship, BlockList
 import cloudinary.api
 from chat.models import Conversation, Message, Participants
@@ -165,13 +167,14 @@ class DeleteFriendSerializer(serializers.Serializer):
         return value
 
 class GetAllFriendsSerializer(serializers.ModelSerializer):
+    conversation = serializers.SerializerMethodField()
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about']
+        fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about', 'conversation']
 
     @staticmethod
     def get_all_friends(user_id, query_string=None, sort='asc'):
-
+        
         friend_relationships = FriendRelationship.objects.filter(
             Q(user_1=user_id) | Q(user_2=user_id)
         )
@@ -198,8 +201,19 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
             friends = friends.order_by('-last_name')
 
         unique_friends = list(friends.distinct())
-
-        return unique_friends 
+        return unique_friends
+    
+    def get_conversation(self, obj):
+        user_id = self.context['request'].user.id
+        conversation = Conversation.objects.filter(
+            participants__user=obj.id,
+            participants__conversation__type=Conversation.ConversationType.FRIEND,
+            participants__conversation__participants__user=user_id).first()
+        if conversation:
+            serializer = ConversationSerializer(conversation, context={'request': self.context['request']})
+            return serializer.data
+        return None
+    
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
@@ -241,11 +255,7 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
             excluded_ids.append(request['receiver'])
             excluded_ids.append(request['sender'])
 
-        recommended_users = User.objects.filter(
-            is_verified=True
-        ).exclude(
-            id__in=excluded_ids,
-        )
+        recommended_users = User.objects.filter(is_verified=True).exclude(id__in=excluded_ids,)
 
         # limit users 
 

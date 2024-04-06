@@ -30,7 +30,7 @@ const MesssageList = () => {
         })
       );
     }
-  }, [dispatch, currentConversation, messages.currentPage]);
+  }, [currentConversation, dispatch, messages.currentPage]);
 
   const fetchMoreData = () => {
     setTimeout(() => {

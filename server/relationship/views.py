@@ -125,7 +125,7 @@ class GetAllFriendsView(GenericAPIView):
         query = request.GET.get('query')
         sort = request.GET.get('sort')
         friends = self.serializer_class.get_all_friends(user_id, query, sort)
-        serializer = self.serializer_class(friends, many=True)
+        serializer = self.serializer_class(friends, many=True, context={'request': request})
 
         return Response({'friends': serializer.data}, status=status.HTTP_200_OK)
     
