@@ -240,10 +240,8 @@ class ConversationListFind(APIView):
         ).order_by('-latest_message_time')
 
         conversation_data = []
-        
         for conversation in conversations:
             users = User.objects.filter(participants__conversation=conversation)
-            
             conversation_info = {
                 'id': conversation.id, 
                 'title': conversation.title, 
@@ -251,18 +249,14 @@ class ConversationListFind(APIView):
                 'type': conversation.type,
                 'members': users
             }
-
             def check_query(x):
                 search_query_lower = search_query.lower()
                 v = filter(lambda x: search_query_lower in x, map(lambda x: f'{x.first_name} {x.last_name}'.lower(), x.get('members')))
                 return search_query_lower in x.get('title') or len(list(v)) > 0
-            
             if not search_query or check_query(conversation_info):
                 conversation_data.append(conversation_info)
-        
-        serializer = self.serializer_class(conversation_data, many=True)
+        serializer = self.serializer_class(conversation_data, many=True, context={'request': request})
         return SuccessResponse(data=serializer.data)
-
 
 class PinConversationUser(APIView):
     permission_classes = [IsAuthenticated]
