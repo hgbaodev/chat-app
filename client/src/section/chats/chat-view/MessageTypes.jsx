@@ -3,7 +3,7 @@ import { GoDownload } from 'react-icons/go';
 import { IoVideocamOutline } from 'react-icons/io5';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
-import { useSelector } from '~/store';
+import { useDispatch, useSelector } from '~/store';
 import { memo, useState } from 'react';
 import { formatDateTime, formatSeconds } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
@@ -12,6 +12,7 @@ import { MessageTypes } from '~/utils/enum';
 import { convertLinksToAnchorTags } from '~/utils/textProcessing';
 import { v4 as uuidv4 } from 'uuid';
 import { useSocket } from '~/hooks/useSocket';
+import { setOpenProfile } from '~/store/slices/appSlice';
 const MessageWrapper = memo(
   ({
     messageId,
@@ -29,6 +30,7 @@ const MessageWrapper = memo(
     const { user } = useSelector((state) => state.auth);
     const [hoverRef, isHovering] = useHover();
     const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
 
     return (
       <Flex vertical>
@@ -36,7 +38,11 @@ const MessageWrapper = memo(
         <Flex ref={hoverRef} justify={from === user.id ? 'end' : 'start'}>
           <Flex className="w-[40px]" style={{ display: 'block' }}>
             {from !== user.id && showAvatar && (
-              <Avatar className="mr-2 cursor-pointer" src={sender?.avatar} />
+              <Avatar
+                className="mr-2 cursor-pointer"
+                src={sender?.avatar}
+                onClick={() => dispatch(setOpenProfile(sender.id))}
+              />
             )}
           </Flex>
           <Flex
@@ -372,6 +378,7 @@ export const NameCardMessage = ({
   is_pinned = false,
   ...props
 }) => {
+  const dispatch = useDispatch();
   return (
     <MessageWrapper
       messageId={id}
@@ -380,6 +387,7 @@ export const NameCardMessage = ({
       forward={forward}
       sender={sender}
       isPinned={is_pinned}
+      onClick={() => dispatch(setOpenProfile(namecard.id))}
       {...props}
     >
       <Flex

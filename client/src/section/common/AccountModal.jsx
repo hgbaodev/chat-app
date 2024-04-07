@@ -26,7 +26,7 @@ import {
 
 const { Text, Title } = Typography;
 
-const ProfileModal = () => {
+const AccountModal = () => {
   const { openProfile, info, type } = useSelector((state) => state.contact);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -113,6 +113,7 @@ const ProfileModal = () => {
 
   if (type == 1) return <UpdateProfile setType={setType} />;
 };
+
 const UpdateProfile = () => {
   const dispatch = useDispatch();
   const { openProfile, info, isLoadingUploadProfile } = useSelector(
@@ -298,4 +299,4 @@ const ItemInfo = ({ label, value }) => {
   );
 };
 
-export default ProfileModal;
+export default AccountModal;

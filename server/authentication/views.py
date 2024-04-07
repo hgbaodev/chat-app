@@ -4,7 +4,6 @@ from rest_framework.response import Response
 from rest_framework import status
 from .models import UserVerification
 from .utils import send_generated_otp_to_email
-from rest_framework.permissions import IsAuthenticated
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
@@ -14,6 +13,8 @@ from utils.responses import SuccessResponse, ErrorResponse
 import base64
 import secrets
 import cloudinary.uploader
+from django.http import Http404
+from rest_framework.views import APIView
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer

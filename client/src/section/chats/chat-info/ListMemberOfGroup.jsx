@@ -1,7 +1,7 @@
 import { Avatar, Badge, Button, Dropdown, Flex, Grid, Space } from 'antd';
 import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
-import { showContactInfo } from '~/store/slices/appSlice';
+import { setOpenProfile, showContactInfo } from '~/store/slices/appSlice';
 import { LuUserPlus } from 'react-icons/lu';
 import { useState } from 'react';
 import AddMember from '~/section/chats/chat-info/AddMember';
@@ -66,13 +66,13 @@ const ListMemberOfGroup = () => {
 
 const MemberItem = ({ id, avatar, first_name, last_name, status }) => {
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const dispatch = useDispatch();
   const handleDeleteFriend = () => {
     // logic here
   };
 
   const handleShowFriendDetail = () => {
-    // logic here
-    console.log('Show friend detail');
+    dispatch(setOpenProfile(id));
   };
 
   const dropdownItems = [

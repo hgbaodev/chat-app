@@ -91,7 +91,7 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
                 icon={<IoChevronBack size={18} />}
                 onClick={handleResetSelectedUser}
               />
-              Account Information
+              Add friend
             </Flex>
           ) : (
             'Add friend'

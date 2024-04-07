@@ -11,7 +11,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     first_name = models.CharField(max_length=255, verbose_name=_("First name"))
     last_name = models.CharField(max_length=255, verbose_name=_("Last name"))
     avatar = models.CharField(max_length=255, blank=True, default='https://res.cloudinary.com/dw3oj3iju/image/upload/v1709749732/chat_app/b1rj7epnhdqo6t7mcu5w.jpg')
-    birthday = models.DateField(null=True, blank=True)
+    birthday = models.DateField(null=True, blank=True, default='1990-01-01')
     about = models.CharField(blank=True, max_length=255)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)

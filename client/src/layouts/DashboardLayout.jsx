@@ -11,12 +11,13 @@ import { useSelector } from 'react-redux';
 import { useDispatch } from '~/store';
 import { logout } from '~/store/slices/authSlice';
 import { useEffect, useState } from 'react';
-import ProfileModal from '~/section/common/AccountModal';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
 import VideoCallModal from '~/section/call/VideoCallModal';
 import { setOpenProfile } from '~/store/slices/contactSlice';
+import AccountModal from '~/section/common/AccountModal';
+import ProfileModal from '~/section/common/ProfileModal';
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
@@ -96,15 +97,15 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </Flex>
-      {openProfile && <ProfileModal />}
+      {openProfile && <AccountModal />}
       <Notification
         open={openNotification}
         handleClose={() => {
           setOpenNotification(false);
         }}
       />
-
       <VideoCallModal />
+      <ProfileModal />
     </>
   );
 };

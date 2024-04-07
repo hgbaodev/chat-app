@@ -53,6 +53,7 @@ export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
       justify="space-between"
       className="w-full py-3 px-4 hover:bg-blue-50 cursor-pointer rounded"
       ref={hoverRef}
+      onClick={handleChatFriend}
     >
       <Space align="center">
         <Avatar size={40} src={avatar} />
@@ -65,9 +66,10 @@ export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
         menu={{ items: dropdownItems }}
         placement="bottomLeft"
         className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
-        onOpenChange={(o) => setOpenOptions(o)}
         trigger={['click']}
         arrow={true}
+        onOpenChange={(o) => setOpenOptions(o)}
+        onClick={(e) => e.stopPropagation()}
       >
         <Button
           type="text"

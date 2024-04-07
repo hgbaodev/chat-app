@@ -19,5 +19,5 @@ urlpatterns = [
     path('get-info-user', GetInforUserView.as_view(), name='get-info-user'),
     path('upload-profile', UpdateProfileView.as_view(), name='update-profile'),
     path('google/', GoogleOauthSignInview.as_view(), name='google'),
-    path('github/', GithubOauthSignInView.as_view(), name='github')
+    path('github/', GithubOauthSignInView.as_view(), name='github'),
 ]
