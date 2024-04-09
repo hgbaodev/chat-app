@@ -196,7 +196,7 @@ const VideoCall = () => {
     peer.destroy();
   };
   // handle interrupt call
-  const handleLeaveCall = () => {
+  const handleLeaveCall = useCallback(() => {
     const confirm = window.confirm('Are you sure you want to leave this call?');
     if (!confirm) return;
     if (call.calling) {
@@ -234,7 +234,7 @@ const VideoCall = () => {
 
     // destrop peer
     stopStreamAndDestroyPeer();
-  };
+  });
   // handle close call
   const handleCloseCall = () => {
     // destrop peer
@@ -251,17 +251,6 @@ const VideoCall = () => {
     initPeer();
     setDuration(0);
   };
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      handleCloseCall();
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    // Clean up
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [call]);
 
   return (
     <div className="w-[100vw] h-[100vh]  bg-[#202124] flex flex-col items-center  text-white">
