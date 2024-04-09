@@ -32,7 +32,7 @@ export const ContactItem = ({
   members,
   active,
   is_pinned,
-  admin
+  admin,
 }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
@@ -90,7 +90,7 @@ export const ContactItem = ({
           members,
           type,
           is_pinned,
-          admin
+          admin,
         })
       );
       dispatch(showContactInfo());
