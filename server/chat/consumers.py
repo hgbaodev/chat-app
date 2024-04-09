@@ -252,11 +252,18 @@ class ChatConsumer(WebsocketConsumer):
             'message_id': video_call_message.id,
         }
 
-        participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
-        room_group_name = f"user_{participant.user.id}"
-        async_to_sync(self.channel_layer.group_send)(
-            room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
+        participants = Participants.objects.filter(conversation_id=conversation_id)
+        for participant in participants:
+            room_group_name = f"user_{participant.user.id}"
+            async_to_sync(self.channel_layer.group_send)(
+                room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
             )
+        
+       
+        
+        print('DELETE CALL STORE', self.call_store)
+        self.call_store[conversation_id] = []
+        print('DELETE CALL STORE', self.call_store)
         
     def receive_cancel_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -270,12 +277,17 @@ class ChatConsumer(WebsocketConsumer):
             'conversation_id': conversation_id,
             'message_id': video_call_message.id,
         }
-        participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
+        participants = Participants.objects.filter(conversation_id=conversation_id)
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "cancel_video_call", "message": json.dumps(return_data)}
                 )
+            
+        print('DELETE CALL STORE', self.call_store)
+        self.call_store[conversation_id] = []
+        print('DELETE CALL STORE', self.call_store)
+            
     
     def receive_leave_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -294,10 +306,7 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "leave_video_call", "message": json.dumps(return_data)}
                 )
         # 
-
-        if(len(self.call_store[conversation_id]) == 0):
-            del self.call_store[conversation_id]
-
+       
 
     def receive_end_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -319,6 +328,10 @@ class ChatConsumer(WebsocketConsumer):
             async_to_sync(self.channel_layer.group_send)(
                 room_group_name, {"type": "end_video_call", "message": json.dumps(return_data)}
                 )
+            
+        print('DELETE CALL STORE', self.call_store)
+        self.call_store[conversation_id] = []
+        print('DELETE CALL STORE', self.call_store)
             
 
     def receive_get_peer_ids(self, data):

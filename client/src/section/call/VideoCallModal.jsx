@@ -2,7 +2,7 @@ import { Avatar, Button, Modal, Space } from 'antd';
 import { IoClose, IoVideocam } from 'react-icons/io5';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
-import { setCall } from '~/store/slices/chatSlice';
+import { setCall, setConversationCallingState } from '~/store/slices/chatSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { ConversationTypes } from '~/utils/enum';
 
@@ -36,6 +36,12 @@ const VideoCallModal = () => {
       emitRefuseVideoCall({
         conversation_id: call.conversation.conversation_id
       });
+      dispatch(
+        setConversationCallingState({
+          conversation_id: call.conversation.conversation_id,
+          calling: false
+        })
+      );
     }
     dispatch(setCall({ open: false }));
   };

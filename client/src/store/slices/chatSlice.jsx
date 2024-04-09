@@ -331,6 +331,12 @@ const chatSlice = createSlice({
     },
     setConversationCall(state, action) {
       state.call.conversation = action.payload.conversation;
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === action.payload.conversation.conversation_id) {
+          conversation.calling = true;
+        }
+        return conversation;
+      });
     },
     resetVideoCall(state, action) {
       state.call.open = false;
@@ -339,6 +345,13 @@ const chatSlice = createSlice({
       state.call.ended = true;
       state.call.peer_ids = [];
 
+      // update conversation calling
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === action.payload.conversation_id) {
+          conversation.calling = false;
+        }
+        return conversation;
+      });
       // update video-call message
       if (
         state.chat.currentConversation.id === action.payload.conversation_id
@@ -355,6 +368,14 @@ const chatSlice = createSlice({
       }
     },
     updateVideoCallMessage(state, action) {
+      // update conversation calling
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === action.payload.conversation_id) {
+          conversation.calling = false;
+        }
+        return conversation;
+      });
+      // update video-call message
       if (
         state.chat.currentConversation.id === action.payload.conversation_id
       ) {
@@ -368,6 +389,14 @@ const chatSlice = createSlice({
           return message;
         });
       }
+    },
+    setConversationCallingState(state, action) {
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === action.payload.conversation_id) {
+          conversation.calling = action.payload.calling;
+        }
+        return conversation;
+      });
     },
     setTypingIndicator(state, action) {
       state.chat.typingIndicator = action.payload;
@@ -525,5 +554,6 @@ export const {
   changeStatePinMessage,
   receiveChangeNameConversation,
   changeStatusUser,
-  setOpenPinnedMessage
+  setOpenPinnedMessage,
+  setConversationCallingState
 } = chatSlice.actions;

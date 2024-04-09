@@ -12,7 +12,6 @@ import {
 import useDebounce from '~/hooks/useDebounce';
 import useCustomMessage from '~/hooks/useCustomMessage';
 import UserSearchItem from '~/section/common/UserSearchItem';
-import Loader from '~/components/Loader';
 import CustomLoader from '~/components/CustomLoader';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
@@ -104,7 +103,6 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
       >
         {userSelected ? (
           <Space direction="vertical" className="w-[100%] mt-3" size="middle">
-            {isLoading && <Loader />}
             <Space gap={12}>
               <Avatar size="large" src={userSelected.avatar} />
               <Space direction="vertical" size={0}>
@@ -126,7 +124,11 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
               <Button type="default" onClick={handleResetSelectedUser}>
                 Cancel
               </Button>
-              <Button type="primary" onClick={handleAddFriend}>
+              <Button
+                loading={isLoading}
+                type="primary"
+                onClick={handleAddFriend}
+              >
                 Add friend
               </Button>
             </Flex>

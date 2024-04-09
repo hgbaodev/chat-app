@@ -1,4 +1,4 @@
-import { Button, Flex, Space, Typography } from 'antd';
+import { Button, Flex, Space, Typography, Badge } from 'antd';
 import {
   SearchOutlined,
   ExclamationCircleOutlined,
@@ -17,6 +17,7 @@ export const ChatHeader = () => {
   const { emitVideoCall } = useSocket();
   const { contactInfo } = useSelector((state) => state.app);
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { conversations } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.auth);
   const handleOpenContactInfo = () => {
     dispatch(toggleContactInfo());
@@ -74,6 +75,7 @@ export const ChatHeader = () => {
           shape="circle"
           icon={<IoVideocamOutline size={20} />}
           onClick={handleVideoCall}
+          disabled={conversations.some((c) => c.id === currentConversation.id && c.calling)}
         />
         <Button type="text" shape="circle" icon={<PhoneOutlined />} />
         <Button type="text" shape="circle" icon={<SearchOutlined />} />
