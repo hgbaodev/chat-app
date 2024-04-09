@@ -259,7 +259,6 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
             )
         
-       
         
         print('DELETE CALL STORE', self.call_store)
         self.call_store[conversation_id] = []
