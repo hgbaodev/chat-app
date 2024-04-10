@@ -16,7 +16,7 @@ class Google():
         except:
             return "the token is either invalid or has expired"
 
-def register_social_user(email, first_name, last_name):
+def register_social_user(email, first_name, last_name, avatar):
     old_user=User.objects.filter(email=email).first()
     if old_user:
         refresh = RefreshToken.for_user(old_user)
@@ -33,6 +33,7 @@ def register_social_user(email, first_name, last_name):
             'email':email,
             'first_name':first_name,
             'last_name':last_name,
+            'avatar': avatar,
             'password':settings.SOCIAL_AUTH_PASSWORD
         }
         user=User.objects.create_user(**new_user)

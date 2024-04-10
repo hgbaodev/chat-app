@@ -60,7 +60,8 @@ export const ChatFooter = () => {
         conversation_id: chat.currentConversation.id,
         message: text,
         message_type: MessageTypes.TEXT,
-        forward: forwardMessage?.id
+        forward: forwardMessage?.id,
+        conversation: chat.currentConversation
       });
       setText('');
       dispatch(setForwardMessage(null));

@@ -137,7 +137,6 @@ class ChatConsumer(WebsocketConsumer):
             forward = None
             
         conversation = Conversation.objects.get(id=conversation_id)
-            
         # Create message
         message = Message.objects.create(
             conversation=conversation,

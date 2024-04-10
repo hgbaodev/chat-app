@@ -110,69 +110,52 @@ const initialState = {
   isLoadingVerifyEmail: false
 };
 
+const handleLoginFulfilled = (state, action) => {
+  const result = action.payload.data.result;
+  state.isLoaded = true;
+  state.isAuthenticated = true;
+  state.user.id = result.id;
+  state.user.email = result.email;
+  state.user.fullName = result.full_name;
+  state.user.avatar = result.avatar;
+  Cookies.set('token', result.access_token);
+  Cookies.set('refresh_token', result.refresh_token);
+  state.isLoadingLogin = false;
+  message.open({
+    type: 'success',
+    content: 'Login Successfully!',
+    duration: 2
+  });
+};
+
+const handleLoginPending = (state) => {
+  state.isLoadingLogin = true;
+};
+
+const handleLoginRejected = (state, action) => {
+  state.isLoadingLogin = false;
+  message.open({
+    type: 'error',
+    content: 'Login Failed: ' + action.error.message,
+    duration: 2
+  });
+};
+
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(login.pending, (state) => {
-        state.isLoadingLogin = true;
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        const result = action.payload.data.result;
-        state.isLoaded = true;
-        state.isAuthenticated = true;
-        state.user.id = result.id;
-        state.user.email = result.email;
-        state.user.fullName = result.full_name;
-        state.user.avatar = result.avatar;
-        Cookies.set('token', result.access_token);
-        Cookies.set('refresh_token', result.refresh_token);
-        state.isLoadingLogin = false;
-        message.open({
-          type: 'success',
-          content: 'Login Successfully!',
-          duration: 2
-        });
-      })
-      .addCase(loginWithGoogle.fulfilled, (state, action) => {
-        const result = action.payload.data.result;
-        state.isLoaded = true;
-        state.isAuthenticated = true;
-        state.user.id = result.id;
-        state.user.email = result.email;
-        state.user.fullName = result.full_name;
-        state.user.avatar = result.avatar;
-        Cookies.set('token', result.access_token);
-        Cookies.set('refresh_token', result.refresh_token);
-        state.isLoadingLogin = false;
-        message.open({
-          type: 'success',
-          content: 'Login Successfully!',
-          duration: 2
-        });
-      })
-      .addCase(loginWithGithub.fulfilled, (state, action) => {
-        const result = action.payload.data.result;
-        state.isLoaded = true;
-        state.isAuthenticated = true;
-        state.user.id = result.id;
-        state.user.email = result.email;
-        state.user.fullName = result.full_name;
-        state.user.avatar = result.avatar;
-        Cookies.set('token', result.access_token);
-        Cookies.set('refresh_token', result.refresh_token);
-        state.isLoadingLogin = false;
-        message.open({
-          type: 'success',
-          content: 'Login Successfully!',
-          duration: 2
-        });
-      })
-      .addCase(login.rejected, (state) => {
-        state.isLoadingLogin = false;
-      })
+      .addCase(login.pending, handleLoginPending)
+      .addCase(login.fulfilled, handleLoginFulfilled)
+      .addCase(login.rejected, handleLoginRejected)
+      .addCase(loginWithGoogle.pending, handleLoginPending)
+      .addCase(loginWithGoogle.fulfilled, handleLoginFulfilled)
+      .addCase(loginWithGoogle.rejected, handleLoginRejected)
+      .addCase(loginWithGithub.pending, handleLoginPending)
+      .addCase(loginWithGithub.fulfilled, handleLoginFulfilled)
+      .addCase(loginWithGithub.rejected, handleLoginRejected)
       .addCase(logout.fulfilled, (state, action) => {
         if (action.payload.status == 204) {
           state.isAuthenticated = false;

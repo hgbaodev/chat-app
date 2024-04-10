@@ -52,55 +52,54 @@ const ContactsHeaderFind = () => {
             type={conversation.type}
             admin={conversation.admin}
             active={conversation.id === chat.currentConversation.id}
+            search={debouceQuery.trim()}
           />
         );
       });
   };
   return (
-    <>
-      <Flex vertical className="overflow-y-auto">
-        <Flex className="w-[100%] p-4" justify="space-between" gap="small">
-          <Input
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            variant="filled"
-            placeholder="Search here..."
-            prefix={<CiSearch />}
-            className="w-auto flex-1"
-            autoFocus
-          />
-          <Button type="text" onClick={handleExitSearch}>
-            Close
-          </Button>
-        </Flex>
-        {!isLoading ? (
-          <>
-            <Flex vertical>
-              {searchConversation.some(
-                (conversation) => conversation.type === ConversationTypes.FRIEND
-              ) && (
-                <Typography.Text strong className="px-4 mb-2">
-                  Friends
-                </Typography.Text>
-              )}
-              {renderConversationsByType(ConversationTypes.FRIEND)}
-              {searchConversation.some(
-                (conversation) => conversation.type === ConversationTypes.GROUP
-              ) && (
-                <Typography.Text strong className="px-4 my-2">
-                  Groups
-                </Typography.Text>
-              )}
-              {renderConversationsByType(ConversationTypes.GROUP)}
-            </Flex>
-          </>
-        ) : (
-          Array.from({ length: 10 }).map((_, i) => (
-            <ContactItemSkeleton key={i} />
-          ))
-        )}
+    <Flex vertical className="overflow-auto custom-scrollbar">
+      <Flex className="w-[100%] p-4" justify="space-between" gap="small">
+        <Input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          variant="filled"
+          placeholder="Search here..."
+          prefix={<CiSearch />}
+          className="w-auto flex-1"
+          autoFocus
+        />
+        <Button type="text" onClick={handleExitSearch}>
+          Close
+        </Button>
       </Flex>
-    </>
+      {!isLoading ? (
+        <>
+          <Flex vertical size={0}>
+            {searchConversation.some(
+              (conversation) => conversation.type === ConversationTypes.FRIEND
+            ) && (
+              <Typography.Text strong className="px-4 mb-2">
+                Friends
+              </Typography.Text>
+            )}
+            {renderConversationsByType(ConversationTypes.FRIEND)}
+            {searchConversation.some(
+              (conversation) => conversation.type === ConversationTypes.GROUP
+            ) && (
+              <Typography.Text strong className="px-4 my-2">
+                Groups
+              </Typography.Text>
+            )}
+            {renderConversationsByType(ConversationTypes.GROUP)}
+          </Flex>
+        </>
+      ) : (
+        Array.from({ length: 10 }).map((_, i) => (
+          <ContactItemSkeleton key={i} />
+        ))
+      )}
+    </Flex>
   );
 };
 
