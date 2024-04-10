@@ -1,8 +1,10 @@
-import { Avatar, Button, Dropdown, Flex, Space, Typography } from 'antd';
+import { Avatar, Button, Dropdown, Flex, Space, Typography, Badge } from 'antd';
 import useHover from '~/hooks/useHover';
 import { AiOutlineEllipsis } from 'react-icons/ai';
 import { useDispatch, useSelector } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
+import { ConversationTypes } from '~/utils/enum';
+import AvatarGroup from '~/components/AvatarGroup';
 
 export const ContactItemSearch = ({
   id,
@@ -11,11 +13,13 @@ export const ContactItemSearch = ({
   members,
   type,
   active,
-  admin
+  admin,
+  search
 }) => {
   const [hoverRef, isHovering] = useHover();
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const user = useSelector((state) => state.auth.user);
 
   const items = [
     {
@@ -36,6 +40,7 @@ export const ContactItemSearch = ({
       );
     }
   };
+
   return (
     <Flex
       ref={hoverRef}
@@ -47,11 +52,66 @@ export const ContactItemSearch = ({
       onClick={getAllMessages}
     >
       <Space className="flex-1">
-        <Avatar size={42} src={image} />
+        <Badge
+          size="default"
+          dot={members
+            .filter((member) => member.id != user.id)
+            .some((mem) => mem['status'] === true)}
+          color="green"
+          offset={[0, 40]}
+        >
+          {image == null && type === ConversationTypes.GROUP ? (
+            <AvatarGroup users={members} />
+          ) : (
+            <Avatar size={50} src={image} />
+          )}
+        </Badge>
         <Flex vertical justify="center">
-          <Typography className="text-gray-700 font-semibold overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]">
-            {title}
-          </Typography>
+          <Typography
+            className="text-gray-700 font-semibold overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]"
+            dangerouslySetInnerHTML={{
+              __html:
+                search.length === 0
+                  ? title
+                  : title.replace(new RegExp(search, 'gi'), (match) =>
+                      match.toLowerCase() === search.toLowerCase()
+                        ? `<span class="text-blue-500">${match}</span>`
+                        : match
+                    )
+            }}
+          />
+          {search.length != 0 &&
+            type === ConversationTypes.GROUP &&
+            members.some((member) =>
+              (member.first_name + member.last_name)
+                .toLowerCase()
+                .includes(search.toLowerCase())
+            ) && (
+              <div
+                className="text-gray-500 text-sm overflow-hidden whitespace-nowrap text-ellipsis max-w-[180px]"
+                dangerouslySetInnerHTML={{
+                  __html:
+                    'Members: ' +
+                    members
+                      .filter(
+                        (member) =>
+                          (member.first_name + ' ' + member.last_name)
+                            .toLowerCase()
+                            .includes(search.toLowerCase()) &&
+                          member.id != user.id
+                      )
+                      .map((member) =>
+                        (member.first_name + ' ' + member.last_name).replace(
+                          new RegExp(search, 'gi'),
+                          (match) =>
+                            match.toLowerCase() === search.toLowerCase()
+                              ? `<span class="text-blue-500">${match}</span>`
+                              : match
+                        )
+                      )
+                }}
+              />
+            )}
         </Flex>
       </Space>
       <Dropdown

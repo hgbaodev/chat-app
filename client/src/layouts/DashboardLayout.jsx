@@ -15,7 +15,7 @@ import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSli
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
 import VideoCallModal from '~/section/call/VideoCallModal';
-import { setOpenProfile } from '~/store/slices/contactSlice';
+import { setOpenProfile, setOpenSearch } from '~/store/slices/contactSlice';
 import AccountModal from '~/section/common/AccountModal';
 import ProfileModal from '~/section/common/ProfileModal';
 
@@ -61,6 +61,9 @@ const DashboardLayout = () => {
                   <IoChatbubbleEllipses size={27} className="text-gray-500" />
                 }
                 badge={0}
+                onClick={() => {
+                  dispatch(setOpenSearch(false));
+                }}
               />
               <NavButton
                 href="/contacts"

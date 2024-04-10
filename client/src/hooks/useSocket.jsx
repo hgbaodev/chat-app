@@ -11,7 +11,8 @@ export const useSocket = () => {
     attachment = null,
     namecard = null,
     message_type,
-    forward = null
+    forward = null,
+    conversation
   }) => {
     console.log({ conversation_id, message, attachment, message_type });
     if (attachment != null) {
@@ -25,7 +26,8 @@ export const useSocket = () => {
         attachment,
         namecard,
         forward,
-        message_type
+        message_type,
+        conversation
       })
     );
   };

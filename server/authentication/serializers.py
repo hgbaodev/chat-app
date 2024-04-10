@@ -197,10 +197,11 @@ class GoogleSignInSerializer(serializers.Serializer):
             raise AuthenticationFailed('Could not verify user.')
         email = user_data['email']
         name = user_data['name']
-        name_parts = name.split()  # Tách chuỗi thành các phần, mặc định là theo khoảng trắng
-        first_name = ' '.join(name_parts[:-1])  # Ghép lại các phần trừ phần cuối cùng
+        name_parts = name.split() 
+        first_name = ' '.join(name_parts[:-1]) 
         last_name = name_parts[-1]
-        return register_social_user(email, first_name, last_name)
+        avatar = user_data['picture']
+        return register_social_user(email, first_name, last_name, avatar)
     def to_representation(self, instance):
         return instance
 
@@ -208,16 +209,15 @@ class GithubLoginSerializer(serializers.Serializer):
     code = serializers.CharField()
 
     def validate_code(self, code):   
-        print("code", code)
         access_token = Github.exchange_code_for_token(code)
         if access_token:
             user_data=Github.get_github_user(access_token)
-            print('user_data', user_data)
             full_name=user_data['name']
             email=user_data['login']+"@gmail.com"
             names=full_name.split(" ")
             first_name = ' '.join(names[:-1]) 
             last_name = names[-1]
-            return register_social_user(email, first_name, last_name)
+            avatar = user_data['avatar_url']
+            return register_social_user(email, first_name, last_name, avatar)
         else: 
             return {'error': 'Invalid access token'}
