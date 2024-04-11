@@ -83,6 +83,21 @@ export const addMembersInConversation = createAsyncThunk(
   }
 );
 
+export const verifyCaptcha = createAsyncThunk(
+  'contact/verify-captcha',
+  async (value, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(
+        `https://www.google.com/recaptcha/api/siteverify`,
+        value
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   searchConversation: [],
   openSearch: false,
