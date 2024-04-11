@@ -22,11 +22,8 @@ const Login = () => {
           vertical
           justify="center"
           align="center"
-          className="w-full mx-auto bg-white rounded-lg py-3 px-8"
+          className="w-full mx-auto bg-white rounded-lg py-6 px-8"
         >
-          <Link href="/" className="cursor-pointer">
-            <img src={logo_light} className="object-fill w-[100px] h-[100px]" />
-          </Link>
           <Space direction="vertical">
             <GoogleComponent />
             <GithubComponent />
