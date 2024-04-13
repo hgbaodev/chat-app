@@ -12,7 +12,7 @@ import {
   resetVideoCall,
   setCall,
   setConversationCall,
-  setPeerIds,
+  setCallMembers,
   setTypingIndicator,
   updateVideoCallMessage
 } from '~/store/slices/chatSlice';
@@ -40,7 +40,6 @@ export const SocketProvider = ({ children }) => {
       };
 
       socket.onmessage = function (event) {
-        console.log('socket event', event.data);
         try {
           const data = JSON.parse(event.data);
           if (data.type === 'chat_message') {
@@ -69,10 +68,10 @@ export const SocketProvider = ({ children }) => {
             dispatch(setConversationCall({ conversation }));
           } else if (data.type === 'return_get_peer_ids') {
             console.log(data);
-            const { conversation, peer_ids } = JSON.parse(data.message);
+            const { conversation, members } = JSON.parse(data.message);
             dispatch(setConversationCall({ conversation }));
-            dispatch(setPeerIds({ peer_ids }));
-            if (peer_ids.length === 1) {
+            dispatch(setCallMembers({ members }));
+            if (members.length === 1) {
               dispatch(
                 setCall({
                   calling: false,
@@ -106,6 +105,8 @@ export const SocketProvider = ({ children }) => {
               })
             );
           } else if (data.type === 'accept_video_call') {
+            const { members } = JSON.parse(data.message);
+            dispatch(setCallMembers({ members }));
             dispatch(
               setCall({
                 calling: true,
@@ -114,8 +115,8 @@ export const SocketProvider = ({ children }) => {
               })
             );
           } else if (data.type === 'leave_video_call') {
-            const { peer_ids } = JSON.parse(data.message);
-            dispatch(setPeerIds({ peer_ids }));
+            const { members } = JSON.parse(data.message);
+            dispatch(setCallMembers({ members }));
           } else if (data.type === 'cancel_video_call') {
             const { conversation_id, message_id } = JSON.parse(data.message);
             dispatch(

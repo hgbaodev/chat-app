@@ -75,7 +75,9 @@ export const ChatHeader = () => {
           shape="circle"
           icon={<IoVideocamOutline size={20} />}
           onClick={handleVideoCall}
-          disabled={conversations.some((c) => c.id === currentConversation.id && c.calling)}
+          disabled={conversations.some(
+            (c) => c.id === currentConversation.id && c.calling
+          )}
         />
         <Button type="text" shape="circle" icon={<PhoneOutlined />} />
         <Button type="text" shape="circle" icon={<SearchOutlined />} />
