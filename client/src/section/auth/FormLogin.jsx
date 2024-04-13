@@ -16,7 +16,6 @@ const FormLogin = () => {
   const { isLoadingLogin } = useSelector((state) => state.auth);
   const recaptchaRef = React.createRef();
   const onFinish = async (values) => {
-    recaptchaRef.current.execute();
     const response = await dispatch(login(values));
     if (response.error && response.payload) {
       messageApi.open({
