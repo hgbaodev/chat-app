@@ -6,7 +6,11 @@ const initialState = {
   friends: [],
   sent_friend_requests: [],
   received_friend_requests: [],
-  isLoadingGetAll: false
+  isLoadingGetAll: false,
+  groups: {
+    isLoading: false,
+    data: []
+  }
 };
 
 export const getRecommendedUsers = createAsyncThunk(
@@ -120,6 +124,18 @@ export const getAllFriends = createAsyncThunk(
   }
 );
 
+export const getAllGroup = createAsyncThunk(
+  'relationship/getAllGroup',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`chat/conversations-group`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -208,6 +224,16 @@ const relationshipSlice = createSlice({
       .addCase(getAllFriends.rejected, (state) => {
         state.isLoading = false;
         state.isLoadingGetAll = false;
+      })
+      .addCase(getAllGroup.pending, (state) => {
+        state.groups.isLoading = true;
+      })
+      .addCase(getAllGroup.fulfilled, (state, action) => {
+        state.groups.data = action.payload.data.result;
+        state.groups.isLoading = false;
+      })
+      .addCase(getAllGroup.rejected, (state) => {
+        state.groups.isLoading = false;
       })
       .addCase(getNumberOfReceiveFriendRequests.pending, (state) => {
         state.isLoading = true;

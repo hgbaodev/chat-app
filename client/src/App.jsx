@@ -27,7 +27,8 @@ function App() {
     <ConfigProvider
       theme={{
         token: {
-          fontFamily: 'Inter'
+          fontFamily: 'Inter',
+          borderRadius: 4
         },
         hashed: false
       }}

@@ -4,25 +4,21 @@ import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
-import { setOpenProfile } from '~/store/slices/appSlice';
+import AvatarGroup from '~/components/AvatarGroup';
 
-export const FriendItem = ({ id, avatar, fullName, conversation }) => {
+export const GroupItem = ({ group }) => {
+  const { title, image, members } = group;
   const [openOptions, setOpenOptions] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  // handle
   const handleDeleteFriend = () => {
-    // logic here
-  };
-
-  const handleShowFriendDetail = () => {
-    dispatch(setOpenProfile(id));
+    console.log('delete friend');
   };
 
   const handleChatFriend = () => {
     navigate('/');
-    dispatch(setCurrentConversation(conversation));
+    dispatch(setCurrentConversation(group));
   };
 
   const dropdownItems = [
@@ -32,13 +28,8 @@ export const FriendItem = ({ id, avatar, fullName, conversation }) => {
       onClick: handleChatFriend
     },
     {
-      key: '2',
-      label: 'View profile',
-      onClick: handleShowFriendDetail
-    },
-    {
       key: '3',
-      label: 'Delete',
+      label: 'Leave group',
       onClick: handleDeleteFriend,
       danger: true
     }
@@ -49,12 +40,21 @@ export const FriendItem = ({ id, avatar, fullName, conversation }) => {
     <Flex
       align="center"
       justify="space-between"
-      className="w-full py-3 px-4 hover:bg-neutral-100 cursor-pointer rounded"
+      className="w-full py-2 px-4 hover:bg-neutral-100 cursor-pointer rounded"
       onClick={handleChatFriend}
     >
       <Space align="center">
-        <Avatar size={40} src={avatar} />
-        <Typography className="font-semibold">{fullName}</Typography>
+        {image ? (
+          <Avatar size={40} src={image} />
+        ) : (
+          <AvatarGroup users={members} />
+        )}
+        <div>
+          <Typography className="font-semibold">{title}</Typography>
+          <p className="m-0 text-[13px] text-gray-500">
+            {members.length} members
+          </p>
+        </div>
       </Space>
       <Dropdown
         menu={{

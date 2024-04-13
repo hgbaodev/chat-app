@@ -8,7 +8,7 @@ const GoogleComponent = () => {
     const payload = response.credential;
     setTimeout(() => {
       dispatch(loginWithGoogle(payload));
-    }, 2000);
+    }, 5000);
   };
   const errorMessage = (error) => {
     console.log(error);

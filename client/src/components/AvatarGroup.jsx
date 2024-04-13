@@ -1,4 +1,5 @@
 import { Avatar } from 'antd';
+
 const AvatarGroup = ({ users }) => {
   if (users.length < 2) return <Avatar>B</Avatar>;
   if (users.length === 2) {
