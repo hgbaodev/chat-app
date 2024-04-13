@@ -7,10 +7,16 @@ export const MessageTypes = {
   RECALL: 6,
   NEWS: 7,
   NAMECARD: 8,
-  VIDEOCALL: 9
+  VIDEOCALL: 9,
+  VOICECALL: 10
 };
 
 export const ConversationTypes = {
   GROUP: 1,
   FRIEND: 2
+};
+
+export const CallTypes = {
+  VIDEO: 1,
+  AUDIO: 2
 };

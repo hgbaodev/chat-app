@@ -4,8 +4,6 @@ import { FaPhoneAlt } from 'react-icons/fa';
 import {
   IoMicOffOutline,
   IoMicOutline,
-  IoVideocamOffOutline,
-  IoVideocamOutline,
   IoClose,
   IoEllipsisVerticalSharp
 } from 'react-icons/io5';
@@ -14,19 +12,21 @@ import AvatarGroup from '~/components/AvatarGroup';
 
 import { ConversationTypes } from '~/utils/enum';
 import { formatSeconds } from '~/utils/formatDayTime';
-const VideoCall = ({
+const VoiceCall = ({
   stream,
   remoteStreams,
   videoRef,
   videoRefs,
-  duration,
   handleCloseCall,
   handleLeaveCall,
-  handleRecall
+  handleRecall,
+  duration
 }) => {
   const { call } = useSelector((state) => state.chat);
+  const { user } = useSelector((state) => state.auth);
+
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
-  const [isCameraOn, setIsCameraOn] = useState(true);
+
   const [showMembers, setShowMembers] = useState(false);
 
   // handle toggle microphone
@@ -39,21 +39,11 @@ const VideoCall = ({
       setIsMicrophoneOn(!isMicrophoneOn);
     }
   };
-  // handle toggle camera
-  const toggleCamera = () => {
-    if (stream) {
-      const videoTracks = stream.getVideoTracks();
-      videoTracks.forEach((track) => {
-        track.enabled = !track.enabled;
-      });
-      setIsCameraOn(!isCameraOn);
-    }
-  };
   const gridLayout = Math.ceil(Math.sqrt(remoteStreams.length + 1));
   return (
     <Flex
       align="center"
-      className="w-[100vw] h-[100vh]  bg-[#202124] flex-col text-white"
+      className="w-[100vw] h-[100vh]  bg-slate-300 flex-col text-slate-600"
     >
       <Flex
         align="center"
@@ -76,7 +66,11 @@ const VideoCall = ({
                   : `grid-cols-${gridLayout} grid-rows-${gridLayout}`
               }`}
             >
-              <VideoFrame name="You" videoRef={videoRef} />
+              <VideoFrame
+                name={user.fullName}
+                avatar={user.avatar}
+                videoRef={videoRef}
+              />
               {remoteStreams.map((stream, index) => {
                 const member = call.members.find(
                   (member) => member.peer_id === stream.peer_id
@@ -85,6 +79,7 @@ const VideoCall = ({
                   <VideoFrame
                     key={index}
                     name={member?.name}
+                    avatar={member?.avatar}
                     videoRef={videoRefs[index]}
                   />
                 );
@@ -95,7 +90,7 @@ const VideoCall = ({
         )}
       </Flex>
 
-      <Flex justify="space-between" className="bg-[#3c4043] w-full p-3">
+      <Flex justify="space-between" className="bg-white w-full p-3">
         <Flex align="center" className="w-[30%]">
           {call.conversation.type === ConversationTypes.FRIEND ? (
             <Avatar size={40} src={call.conversation?.image} />
@@ -128,19 +123,6 @@ const VideoCall = ({
           </Space>
         ) : (
           <Space size={23} className="flex-1 justify-center">
-            <Button
-              type="default"
-              shape="circle"
-              icon={
-                isCameraOn ? (
-                  <IoVideocamOutline size={24} />
-                ) : (
-                  <IoVideocamOffOutline size={24} />
-                )
-              }
-              size={'large'}
-              onClick={toggleCamera}
-            />
             <Button
               type="default"
               shape="circle"
@@ -181,40 +163,41 @@ const VideoCall = ({
   );
 };
 
-const VideoFrame = ({ name, videoRef }) => {
+const VideoFrame = ({ name, avatar, videoRef }) => {
   return (
-    <Flex align="center" justify="center" className="relative bg-[#3c4043] p-2">
+    <Flex
+      align="center"
+      justify="center"
+      className="flex-col bg-white rounded-md p-2 gap-4"
+    >
       <video
         ref={videoRef}
         autoPlay
         playsInline
-        className="w-full max-w-full max-h-full"
+        className="w-full max-w-full max-h-full hidden"
       />
-      <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-        {name}
-      </div>
+      <Avatar size={60} src={avatar} />
+      <h4 className="text-slate-600"> {name}</h4>
     </Flex>
   );
 };
-const MembersList = ({members}) => {
+const MembersList = ({ members }) => {
   return (
-  <div className="h-full w-[30%] bg-[#202124] py-4 pe-4">
-    <Flex vertical className="h-full bg-[#3c4043] p-2">
-      <p>Members</p>
-      <Flex vertical className="gap-3 py-4">
-        {members.map((member) => {
-          return (
-            <>
-              <MemberItem
-                avatar={member?.avatar}
-                name={member?.name}
-              />
-            </>
-          );
-        })}
+    <div className="h-full w-[30%] bg-slate-300 py-4 pe-4">
+      <Flex vertical className="h-full bg-white rounded-md p-2">
+        <p>Members</p>
+        <Flex vertical className="gap-3 py-4">
+          {members.map((member) => {
+            return (
+              <>
+                <MemberItem avatar={member?.avatar} name={member?.name} />
+              </>
+            );
+          })}
+        </Flex>
       </Flex>
-    </Flex>
-  </div>);
+    </div>
+  );
 };
 const MemberItem = ({ avatar, name }) => {
   return (
@@ -224,4 +207,4 @@ const MemberItem = ({ avatar, name }) => {
     </Flex>
   );
 };
-export default VideoCall;
+export default VoiceCall;

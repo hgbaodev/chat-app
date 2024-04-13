@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { SocketContext } from '../contexts/socketContext';
 import { fileToBase64 } from '~/utils/convertToBase64';
+import { CallTypes } from '~/utils/enum';
 
 export const useSocket = () => {
   const { socketInstance } = useContext(SocketContext);
@@ -48,9 +49,23 @@ export const useSocket = () => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
-          source: 'video_call',
+          source: 'init_call',
           conversation_id,
-          peer_id
+          peer_id,
+          type: CallTypes.VIDEO
+        })
+      );
+    }
+  };
+
+  const emitVoiceCall = ({ conversation_id, peer_id }) => {
+    if (socketInstance) {
+      socketInstance.send(
+        JSON.stringify({
+          source: 'init_call',
+          conversation_id,
+          peer_id,
+          type: CallTypes.AUDIO
         })
       );
     }
@@ -99,12 +114,13 @@ export const useSocket = () => {
     }
   };
 
-  const emitGetPeerIds = ({ conversation_id }) => {
+  const emitGetPeerIds = ({ conversation_id, type }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'get_peer_ids',
-          conversation_id: parseInt(conversation_id)
+          conversation_id: parseInt(conversation_id),
+          type
         })
       );
     }
@@ -125,6 +141,7 @@ export const useSocket = () => {
   return {
     emitMessage,
     emitVideoCall,
+    emitVoiceCall,
     emitAcceptVideoCall,
     emitLeaveVideoCall,
     emitCancelVideoCall,

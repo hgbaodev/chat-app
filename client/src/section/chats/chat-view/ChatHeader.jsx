@@ -1,4 +1,4 @@
-import { Button, Flex, Space, Typography, Badge } from 'antd';
+import { Button, Flex, Space, Typography } from 'antd';
 import {
   SearchOutlined,
   ExclamationCircleOutlined,
@@ -7,14 +7,14 @@ import {
 import { IoVideocamOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
-import { ConversationTypes } from '~/utils/enum';
+import { CallTypes, ConversationTypes } from '~/utils/enum';
 import { v4 as uuidv4 } from 'uuid';
 import AvatarImage from '~/section/users/AvatarImage';
 import { useSocket } from '~/hooks/useSocket';
 
 export const ChatHeader = () => {
   const dispatch = useDispatch();
-  const { emitVideoCall } = useSocket();
+  const { emitVideoCall, emitVoiceCall } = useSocket();
   const { contactInfo } = useSelector((state) => state.app);
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const { conversations } = useSelector((state) => state.chat);
@@ -31,11 +31,27 @@ export const ChatHeader = () => {
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}?conversation_id=${currentConversation.id}`,
+      `/call/${CallTypes.VIDEO}/${currentConversation.id}/${peer_id}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
     emitVideoCall({
+      conversation_id: currentConversation.id,
+      peer_id
+    });
+  };
+  const handleVoiceCall = () => {
+    const peer_id = uuidv4();
+    const width = 1000;
+    const height = 600;
+    const leftPos = (window.innerWidth - width) / 2;
+    const topPos = (window.innerHeight - height) / 2;
+    window.open(
+      `/call/${CallTypes.AUDIO}/${currentConversation.id}/${peer_id}`,
+      '_blank',
+      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+    );
+    emitVoiceCall({
       conversation_id: currentConversation.id,
       peer_id
     });
@@ -79,7 +95,15 @@ export const ChatHeader = () => {
             (c) => c.id === currentConversation.id && c.calling
           )}
         />
-        <Button type="text" shape="circle" icon={<PhoneOutlined />} />
+        <Button
+          type="text"
+          shape="circle"
+          icon={<PhoneOutlined />}
+          onClick={handleVoiceCall}
+          disabled={conversations.some(
+            (c) => c.id === currentConversation.id && c.calling
+          )}
+        />
         <Button type="text" shape="circle" icon={<SearchOutlined />} />
         {!contactInfo.open && (
           <Button

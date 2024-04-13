@@ -41,6 +41,7 @@ class Message(models.Model):
         NEWS = 7
         NAMECARD = 8
         VIDEOCALL = 9
+        VOICECALL = 10
         
     conversation = models.ForeignKey(Conversation, on_delete=models.CASCADE)
     sender = models.ForeignKey(User, on_delete=models.CASCADE)
