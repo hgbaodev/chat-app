@@ -184,7 +184,12 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         # init call store
-        self.call_store[conversation_id] = [{'peer_id': peer_id, 'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}'}]
+        self.call_store[conversation_id] = [
+            {
+                'peer_id': peer_id, 
+                'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
+                'avatar': self.scope["user"].avatar
+            }]
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title
@@ -228,7 +233,9 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         # append peer_id into call store
-        self.call_store[conversation_id].append({'peer_id': peer_id, 'name':  f'{self.scope["user"].first_name} {self.scope["user"].last_name}'})
+        self.call_store[conversation_id].append({'peer_id': peer_id, 
+                                                'name':  f'{self.scope["user"].first_name} {self.scope["user"].last_name}', 
+                                                'avatar': self.scope["user"].avatar})
         return_data = {
             'members': self.call_store[conversation_id],
         }

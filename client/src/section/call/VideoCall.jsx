@@ -1,9 +1,11 @@
-import { Avatar, Button, Space } from 'antd';
+import { Avatar, Button, Flex, Space } from 'antd';
+
 import Peer from 'peerjs';
 import React, { useContext, useEffect, useRef } from 'react';
 import { useCallback } from 'react';
 import { useState } from 'react';
 import { FaPhoneAlt } from 'react-icons/fa';
+import { MdPushPin } from 'react-icons/md';
 import {
   IoMicOffOutline,
   IoMicOutline,
@@ -13,6 +15,7 @@ import {
   IoEllipsisVerticalSharp
 } from 'react-icons/io5';
 import { useParams } from 'react-router-dom';
+import AvatarGroup from '~/components/AvatarGroup';
 import { SocketContext } from '~/contexts/socketContext';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
@@ -39,6 +42,7 @@ const VideoCall = () => {
   const [remoteStreams, setRemoteStreams] = useState([]);
   const videoRefs = remoteStreams.map(() => React.createRef());
   const [duration, setDuration] = useState(0);
+  const [showMembers, setShowMembers] = useState(false);
 
   const initPeer = useCallback(() => {
     let params = new URLSearchParams(window.location.search);
@@ -257,70 +261,93 @@ const VideoCall = () => {
 
   return (
     <div className="w-[100vw] h-[100vh]  bg-[#202124] flex flex-col items-center  text-white">
-      <div className="flex-1 w-full h-[100%] flex items-center justify-center ">
+      <div className="flex-1 w-full h-[calc(100%-74px)] flex items-center justify-center">
         {call.refused ? (
           <p>{call.conversation?.title} has refused this call.</p>
         ) : call.ended ? (
           <p>This call has ended.</p>
         ) : (
-          <div
-            id="video-frame"
-            className="relative w-full h-full gap-4 p-4"
-            style={{
-              height: '100%',
-              display: 'grid',
-              gridTemplateColumns: `${
-                remoteStreams.length === 0 ? '1fr' : '1fr 1fr'
-              }`,
-              gridTemplateRows: `repeat(${remoteStreams.length}, 1fr)`
-            }}
-          >
-            <div
-              className="relative bg-[#3c4043] p-2 flex items-center justify-center"
-              style={{
-                height: `${remoteStreams.length < 2 ? '100%' : '50%'}`
-              }}
+          <>
+            <Flex
+              id="video-frame"
+              className={`relative w-full h-full gap-4 p-4 grid ${
+                remoteStreams.length === 0
+                  ? 'grid-cols-1'
+                  : remoteStreams.length === 1
+                  ? 'grid-cols-2 grid-rows-1'
+                  : 'grid-cols-2 grid-rows-2'
+              }`}
             >
-              <video
-                ref={videoRef}
-                autoPlay
-                playsInline
-                className="max-w-full max-h-full"
-              />
-              <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-                You
-              </div>
-            </div>
-            {remoteStreams.map((stream, index) => (
               <div
-                key={index}
-                className="relative bg-[#3c4043] p-2 flex items-center justify-center"
-                style={{
-                  height: `${remoteStreams.length < 2 ? '100%' : '50%'}`
-                }}
+                className={`relative bg-[#3c4043] p-2 flex items-center justify-center `}
               >
                 <video
-                  ref={videoRefs[index]}
+                  ref={videoRef}
                   autoPlay
                   playsInline
-                  className="w-full max-w-full max-h-full"
+                  className="max-w-full max-h-full"
                 />
                 <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-                  {
-                    call.members.find(
-                      (member) => member.peer_id === stream.peer_id
-                    )?.name
-                  }
+                  You
                 </div>
               </div>
-            ))}
-          </div>
+              {remoteStreams.map((stream, index) => {
+                const member = call.members.find(
+                  (member) => member.peer_id === stream.peer_id
+                );
+                return (
+                  <div
+                    key={index}
+                    className="relative bg-[#3c4043] p-2 flex items-center justify-center"
+                  >
+                    <video
+                      ref={videoRefs[index]}
+                      autoPlay
+                      playsInline
+                      className="w-full max-w-full max-h-full"
+                    />
+                    <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
+                      {member?.name}
+                    </div>
+                  </div>
+                );
+              })}
+            </Flex>
+            {showMembers && (
+              <div className="h-full w-[30%] bg-[#202124] py-4 pe-4">
+                <Flex vertical className="h-full bg-[#3c4043] p-2">
+                  <p>Members</p>
+                  <Flex vertical className="gap-3 py-4">
+                    {call.members.map((member) => {
+                      return (
+                        <>
+                          <Flex
+                            key={member.peer_id}
+                            align="center"
+                            className="w-full gap-2"
+                          >
+                            <Avatar size={36} src={member.avatar} />
+                            <p>{member.name}</p>
+                          </Flex>
+                        </>
+                      );
+                    })}
+                  </Flex>
+                </Flex>
+              </div>
+            )}
+          </>
         )}
       </div>
 
       <div className="bg-[#3c4043] w-full flex justify-between p-3">
         <div className="flex items-center w-[30%]">
-          <Avatar size={40} src={call.conversation?.image} />
+          {call.conversation.type === ConversationTypes.FRIEND ? (
+            <Avatar size={40} src={call.conversation?.image} />
+          ) : (
+            <AvatarGroup size={40} users={call?.members} />
+          )}
+
           <h2 className="ml-2 my-3 text-[14px] font-semibold">
             {call.conversation?.title}
           </h2>
@@ -389,7 +416,9 @@ const VideoCall = () => {
             shape="circle"
             icon={<IoEllipsisVerticalSharp size={20} />}
             size={'large'}
-            onClick={null}
+            onClick={() => {
+              setShowMembers(!showMembers);
+            }}
           />
         </div>
       </div>

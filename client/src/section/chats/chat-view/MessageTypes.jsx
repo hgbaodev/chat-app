@@ -173,29 +173,29 @@ export const VideoCallMessage = ({
             <IoVideocamOutline size={20} />
           </Flex>
           <Space direction="vertical" className="gap-0">
-            <Typography className="font-semibold">Cuộc gọi video</Typography>
+            <Typography className="font-semibold">Video Call</Typography>
             <Typography className="text-[12px]">
               {videocall.ended ? (
                 videocall.duration === 0 ? (
-                  <Typography className="text-red-500">
-                    Cuộc gọi đã hủy
+                  <Typography className="text-red-500 text-[12px]">
+                    Has been canceled
                   </Typography>
                 ) : (
                   formatSeconds(videocall.duration)
                 )
               ) : (
-                'Cuộc gọi đang diễn ra'
+                'This call is calling...'
               )}
             </Typography>
           </Space>
         </Space>
         {videocall.ended ? (
           <Button type="primary" onClick={handleRecall}>
-            Gọi lại
+            Recall
           </Button>
         ) : (
           <Button type="primary" onClick={handleJoinCall}>
-            Tham gia
+            Join now
           </Button>
         )}
       </Flex>
