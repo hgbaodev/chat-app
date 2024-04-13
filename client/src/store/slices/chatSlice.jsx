@@ -193,7 +193,8 @@ const initialState = {
     },
     attachments: {
       images: [],
-      documents: []
+      documents: [],
+      isLoading: true
     },
     pinned_messages: {
       isOpen: false,
@@ -513,12 +514,19 @@ const chatSlice = createSlice({
           is_pinned: null
         };
       })
+      .addCase(getAttachments.pending, (state) => {
+        state.chat.attachments.isLoading = true;
+      })
       .addCase(getAttachments.fulfilled, (state, action) => {
         if (action.payload.type === MessageTypes.IMAGE) {
           state.chat.attachments.images = action.payload.data;
         } else if (action.payload.type === MessageTypes.DOCUMENT) {
           state.chat.attachments.documents = action.payload.data;
         }
+        state.chat.attachments.isLoading = false;
+      })
+      .addCase(getAttachments.rejected, (state) => {
+        state.chat.attachments.isLoading = false;
       })
       .addCase(getPinnedMessages.fulfilled, (state, action) => {
         state.chat.pinned_messages.data = action.payload.data;

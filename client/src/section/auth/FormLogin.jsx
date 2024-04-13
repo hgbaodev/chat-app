@@ -16,7 +16,6 @@ const FormLogin = () => {
   const { isLoadingLogin } = useSelector((state) => state.auth);
   const recaptchaRef = React.createRef();
   const onFinish = async (values) => {
-    recaptchaRef.current.execute();
     const response = await dispatch(login(values));
     if (response.error && response.payload) {
       messageApi.open({
@@ -91,13 +90,13 @@ const FormLogin = () => {
             Forgot password
           </Link>
         </Form.Item>
-        <Form.Item>
+        {/* <Form.Item>
           <ReCAPTCHA
             ref={recaptchaRef}
             sitekey="6LfpubYpAAAAAEaVdwJ3y8F1k7t0QJ_C2UMGWXBl"
             onChange={onChange}
           />
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item>
           <Button
             type="primary"
@@ -105,7 +104,7 @@ const FormLogin = () => {
             className="w-full"
             size="large"
             loading={isLoadingLogin}
-            disabled={!captchaCompleted}
+            // disabled={!captchaCompleted}
           >
             Login
           </Button>

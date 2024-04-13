@@ -9,6 +9,7 @@ import { getAttachments } from '~/store/slices/chatSlice';
 import { MessageTypes } from '~/utils/enum';
 import { getIconDocument } from '~/utils/getPropertyMessage';
 import { formatFileSize } from '~/utils/formatFileSize';
+import CustomLoader from '~/components/CustomLoader';
 const { useBreakpoint } = Grid;
 
 export const SharedMessages = () => {
@@ -80,7 +81,11 @@ export const Media = () => {
 
   return (
     <Row gutter={[8, 8]}>
-      {attachments.images.length > 0 ? (
+      {attachments.isLoading ? (
+        <Col span={24}>
+          <CustomLoader />
+        </Col>
+      ) : attachments.images.length > 0 ? (
         attachments.images.map((image) => (
           <Col span={8} key={image.id}>
             <Image
@@ -117,7 +122,9 @@ export const Docs = () => {
 
   return (
     <Flex vertical className="overflow-y-auto h-[calc(100vh-160px)] scrollbar">
-      {attachments.documents.length > 0 ? (
+      {attachments.isLoading ? (
+        <CustomLoader />
+      ) : attachments.documents.length > 0 ? (
         attachments.documents.map((document) => (
           <DocItem key={document.id} {...document} />
         ))

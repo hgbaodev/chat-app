@@ -1,7 +1,4 @@
-import logo_light from '~/assets/icon_app.svg';
 import { Flex, Row, Typography, Col, Divider, Space } from 'antd';
-
-import { Link } from 'react-router-dom';
 import FormLogin from '~/section/auth/FormLogin';
 import GoogleComponent from '~/components/GoogleComponent';
 import GithubComponent from '~/components/GithubComponent';

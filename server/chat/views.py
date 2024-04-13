@@ -413,6 +413,15 @@ class ChangeNameConversation(APIView):
         }, status=status.HTTP_200_OK)
 
 
+class GetListConversationTypeGroup(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ConversationSerializer
 
+    def get(self, request):
+        conversations = Conversation.objects.filter(participants__user=request.user, message__isnull=False, type=Conversation.ConversationType.GROUP).annotate(
+            latest_message_time=Max('message__created_at')
+        ).order_by('-latest_message_time')
+        serializer = self.serializer_class(conversations, many=True, context={'request': request})
+        return SuccessResponse(data=serializer.data, status=status.HTTP_200_OK)
 
 

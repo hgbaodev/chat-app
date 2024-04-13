@@ -4,6 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { IoChevronForward } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import {
+  setOpenProfile,
   showMembersGroup,
   showSharedMessage,
   toggleContactInfo
@@ -188,6 +189,8 @@ const ContactInfoItem = ({ icon, title, danger, ...props }) => {
 const HeaderInfoTool = () => {
   const dispatch = useDispatch();
   const { currentConversation } = useSelector((state) => state.chat.chat);
+  const { user } = useSelector((state) => state.auth);
+
   const handlePin = () => {
     dispatch(pinConversation(currentConversation.id));
   };
@@ -195,6 +198,11 @@ const HeaderInfoTool = () => {
   const handleUnPin = () => {
     dispatch(unPinConversation(currentConversation.id));
   };
+
+  const member = useMemo(
+    () => currentConversation.members.filter((m) => m.id !== user.id)[0],
+    [currentConversation, user]
+  );
 
   const showDeleteConfirm = () => {
     confirm({
@@ -216,7 +224,13 @@ const HeaderInfoTool = () => {
     <Flex>
       {currentConversation.type === ConversationTypes.FRIEND && (
         <>
-          <ToolButton icon={<LuUser />} text="Profile" />
+          <ToolButton
+            icon={<LuUser />}
+            text="Profile"
+            onClick={() =>
+              dispatch(setOpenProfile(member.id))
+            }
+          />
           <ToolButton icon={<GrGroup />} text="Create group" />
         </>
       )}

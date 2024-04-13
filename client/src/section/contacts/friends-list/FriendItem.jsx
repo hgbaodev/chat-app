@@ -5,8 +5,9 @@ import useHover from '~/hooks/useHover';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
+import { setOpenProfile } from '~/store/slices/appSlice';
 
-export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
+export const FriendItem = ({ id, avatar, fullName, conversation }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
   const navigate = useNavigate();
@@ -18,8 +19,7 @@ export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
   };
 
   const handleShowFriendDetail = () => {
-    // logic here
-    console.log('Show friend detail', id);
+    dispatch(setOpenProfile(id));
   };
 
   const handleChatFriend = () => {
@@ -53,23 +53,18 @@ export const FriendItem = ({ id, avatar, fullName, email, conversation }) => {
       justify="space-between"
       className="w-full py-3 px-4 hover:bg-blue-50 cursor-pointer rounded"
       ref={hoverRef}
-      onClick={handleChatFriend}
     >
       <Space align="center">
         <Avatar size={40} src={avatar} />
-        <div>
-          <Typography className="font-semibold">{fullName}</Typography>
-          <p className="m-0 text-[13px] text-gray-500">{email}</p>
-        </div>
+        <Typography className="font-semibold">{fullName}</Typography>
       </Space>
       <Dropdown
         menu={{ items: dropdownItems }}
         placement="bottomLeft"
         className={`${isHovering || openOptions ? 'block' : '!hidden'}`}
-        trigger={['click']}
+        trigger={['hover']}
         arrow={true}
         onOpenChange={(o) => setOpenOptions(o)}
-        onClick={(e) => e.stopPropagation()}
       >
         <Button
           type="text"
