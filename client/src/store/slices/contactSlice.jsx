@@ -118,7 +118,7 @@ const contactSlice = createSlice({
     setOpenSearch(state, action) {
       state.openSearch = action.payload;
     },
-    setOpenProfile(state, action) {
+    setOpenMyProfile(state, action) {
       state.openProfile = action.payload;
     },
     setType(state, action) {
@@ -178,7 +178,7 @@ const contactSlice = createSlice({
 export default contactSlice.reducer;
 export const {
   setOpenSearch,
-  setOpenProfile,
+  setOpenMyProfile,
   setType,
   setOpenChangeNameConversation
 } = contactSlice.actions;

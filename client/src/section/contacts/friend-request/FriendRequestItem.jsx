@@ -32,7 +32,7 @@ const FriendRequestItem = ({
   };
 
   return (
-    <Col sm={12} md={8} lg={8} xl={8}>
+    <Col sm={12} md={12} lg={12} xl={8}>
       <div className="bg-white p-4 rounded-md">
         <Flex align="center" justify="space-between">
           <Flex align="center" gap={10}>

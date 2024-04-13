@@ -48,7 +48,7 @@ const TabFriendsRequest = () => {
                 <Row gutter={[16, 16]}>
                   {received_friend_requests.map((item) => (
                     <FriendRequestItem
-                      key={item?.id}
+                      key={item.id}
                       id={item?.id}
                       avatar={item?.sender?.avatar}
                       fullName={item?.sender?.full_name}

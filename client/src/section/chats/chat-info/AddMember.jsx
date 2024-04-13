@@ -22,9 +22,7 @@ const AddMember = ({ open, onClose }) => {
   const { friends, isLoading } = useSelector((state) => state.relationship);
   const { isLoadingCreateConversation } = useSelector((state) => state.contact);
   const { currentConversation } = useSelector((state) => state.chat.chat);
-  const { members } = useSelector(
-    (state) => state.chat.chat.currentConversation
-  );
+  const { members } = currentConversation;
   const [selectedFriends, setSelectedFriends] = useState([]);
   const [search, setSearch] = useState('');
   const searchDebauce = useDebounce(search, 500);

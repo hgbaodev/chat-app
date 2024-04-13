@@ -3,8 +3,9 @@ import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { setOpenProfile, showContactInfo } from '~/store/slices/appSlice';
 import { LuUserPlus } from 'react-icons/lu';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import AddMember from '~/section/chats/chat-info/AddMember';
+import { setOpenMyProfile } from '~/store/slices/contactSlice';
 const { useBreakpoint } = Grid;
 
 const ListMemberOfGroup = () => {
@@ -65,29 +66,51 @@ const ListMemberOfGroup = () => {
 };
 
 const MemberItem = ({ id, avatar, first_name, last_name, status }) => {
-  const { currentConversation } = useSelector((state) => state.chat.chat);
   const dispatch = useDispatch();
-  const handleDeleteFriend = () => {
-    // logic here
-  };
+  const currentUserId = useSelector((state) => state.auth.user.id);
+  const { currentConversation } = useSelector((state) => state.chat.chat);
 
-  const handleShowFriendDetail = () => {
-    dispatch(setOpenProfile(id));
-  };
+  // Define the dropdown menu items based on the user's privileges
+  const dropdownMenuItems = useMemo(() => {
+    const items = [
+      {
+        key: '1',
+        label: 'View profile',
+        onClick: () => {
+          if (id === currentUserId) {
+            dispatch(setOpenMyProfile(true));
+          } else {
+            dispatch(setOpenProfile(id));
+          }
+        }
+      }
+    ];
 
-  const dropdownItems = [
-    {
-      key: '1',
-      label: 'View profile',
-      onClick: handleShowFriendDetail
-    },
-    {
-      key: '2',
-      label: 'Delete',
-      onClick: handleDeleteFriend,
-      danger: true
+    if (id !== currentUserId) {
+      items.push({
+        key: '2',
+        label: 'Block',
+        onClick: () => {
+          console.log('block');
+        }
+      });
     }
-  ];
+
+    // Only add the delete/leave option if the current user is the admin of the conversation
+    if (currentConversation.admin === currentUserId) {
+      items.push({
+        key: '3',
+        label: `${id === currentUserId ? 'Leave group' : 'Delete'}`,
+        onClick: () => {
+          console.log('delete');
+        },
+        danger: true
+      });
+    }
+
+    return items;
+  }, [currentConversation.admin, currentUserId, dispatch, id]);
+
   return (
     <Flex
       className="p-2 ps-0 cursor-pointer"
@@ -106,7 +129,7 @@ const MemberItem = ({ id, avatar, first_name, last_name, status }) => {
         </Space>
       </Space>
       <Dropdown
-        menu={{ items: dropdownItems }}
+        menu={{ items: dropdownMenuItems }}
         placement="bottomLeft"
         trigger={['click']}
         arrow={true}

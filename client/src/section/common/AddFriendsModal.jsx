@@ -1,29 +1,24 @@
-import { Avatar, Button, Empty, Flex, Input, Modal, Space } from 'antd';
+import { Button, Empty, Flex, Input, Modal, Space } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { useEffect, useState } from 'react';
 import { IoChevronBack } from 'react-icons/io5';
-import TextArea from 'antd/es/input/TextArea';
 import { useDispatch, useSelector } from '~/store';
 import {
   getRecommendedUsers,
-  searchUsers,
-  sendFriendRequest
+  searchUsers
 } from '~/store/slices/relationshipSlice';
 import useDebounce from '~/hooks/useDebounce';
-import useCustomMessage from '~/hooks/useCustomMessage';
 import UserSearchItem from '~/section/common/UserSearchItem';
 import CustomLoader from '~/components/CustomLoader';
+import SendFriendRequest from '~/section/common/SendFriendRequest';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
   const dispatch = useDispatch();
-  const { fullName } = useSelector((state) => state.auth.user);
   const { isLoading } = useSelector((state) => state.relationship);
-  const { success, error } = useCustomMessage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState('');
   const debouncedSearchText = useDebounce(search, 500);
   const [userSelected, setUserSelected] = useState(null);
-  const [invitationMessage, setInvitationMessage] = useState('');
 
   useEffect(() => {
     (async () => {
@@ -45,31 +40,19 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
 
   const handleSelectUser = (user_id) => {
     setUserSelected(users.find((user) => user.id === user_id));
-    setInvitationMessage(`Hello, I'm ${fullName}, Let's be friends!`);
   };
 
   const handleResetSelectedUser = () => {
     setUserSelected(null);
   };
 
-  const handleAddFriend = async () => {
-    if (invitationMessage) {
-      const response = await dispatch(
-        sendFriendRequest({
-          receiver: userSelected.id,
-          message: invitationMessage
-        })
-      );
-      if (!response.error) {
-        success(response.payload.data.msg);
-        users.map((user) => {
-          if (user.id == userSelected.id) {
-            user.relationship = 1;
-          }
-        });
-        setUserSelected(null);
-      } else error(response.payload.receiver[0]);
-    } else error('Invitation message cannot be empty!');
+  const fnCallBackSuccess = () => {
+    users.map((user) => {
+      if (user.id == userSelected.id) {
+        user.relationship = 1;
+      }
+    });
+    setUserSelected(null);
   };
 
   const handleSearchUsers = (e) => {
@@ -102,37 +85,11 @@ const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
         footer={null}
       >
         {userSelected ? (
-          <Space direction="vertical" className="w-[100%] mt-3" size="middle">
-            <Space gap={12}>
-              <Avatar size="large" src={userSelected.avatar} />
-              <Space direction="vertical" size={0}>
-                <p className="m-0">{userSelected.full_name}</p>
-                <p className="m-0 text-xs text-gray-500">
-                  {userSelected.email}
-                </p>
-              </Space>
-            </Space>
-
-            <TextArea
-              rows={4}
-              value={invitationMessage}
-              onChange={(e) => {
-                setInvitationMessage(e.target.value);
-              }}
-            />
-            <Flex align="center" justify="end" gap={10}>
-              <Button type="default" onClick={handleResetSelectedUser}>
-                Cancel
-              </Button>
-              <Button
-                loading={isLoading}
-                type="primary"
-                onClick={handleAddFriend}
-              >
-                Add friend
-              </Button>
-            </Flex>
-          </Space>
+          <SendFriendRequest
+            user={userSelected}
+            handleCancel={handleResetSelectedUser}
+            fnCallBack={fnCallBackSuccess}
+          />
         ) : (
           <Space direction="vertical" className="w-[100%]" size="middle">
             <Input

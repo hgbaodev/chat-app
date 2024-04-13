@@ -19,7 +19,7 @@ import { MdEdit } from 'react-icons/md';
 import moment from 'moment';
 import {
   getInfoUser,
-  setOpenProfile,
+  setOpenMyProfile,
   setType,
   uploadProfile
 } from '~/store/slices/contactSlice';
@@ -37,7 +37,7 @@ const AccountModal = () => {
   }, [dispatch]);
   const handleClose = () => {
     dispatch(setType(0));
-    dispatch(setOpenProfile(false));
+    dispatch(setOpenMyProfile(false));
   };
   if (!info) return;
   if (type == 0)
@@ -126,7 +126,7 @@ const UpdateProfile = () => {
 
   const handleClose = () => {
     dispatch(setType(0));
-    dispatch(setOpenProfile(false));
+    dispatch(setOpenMyProfile(false));
   };
 
   const handleFileInputChange = (event) => {
