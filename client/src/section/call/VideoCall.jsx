@@ -260,8 +260,15 @@ const VideoCall = () => {
   };
 
   return (
-    <div className="w-[100vw] h-[100vh]  bg-[#202124] flex flex-col items-center  text-white">
-      <div className="flex-1 w-full h-[calc(100%-74px)] flex items-center justify-center">
+    <Flex
+      align="center"
+      className="w-[100vw] h-[100vh]  bg-[#202124] flex-col text-white"
+    >
+      <Flex
+        align="center"
+        justify="center"
+        className="flex-1 w-full h-[calc(100%-74px)]"
+      >
         {call.refused ? (
           <p>{call.conversation?.title} has refused this call.</p>
         ) : call.ended ? (
@@ -272,44 +279,23 @@ const VideoCall = () => {
               id="video-frame"
               className={`relative w-full h-full gap-4 p-4 grid ${
                 remoteStreams.length === 0
-                  ? 'grid-cols-1'
+                  ? 'grid-cols-1 grid-rows-1'
                   : remoteStreams.length === 1
                   ? 'grid-cols-2 grid-rows-1'
                   : 'grid-cols-2 grid-rows-2'
               }`}
             >
-              <div
-                className={`relative bg-[#3c4043] p-2 flex items-center justify-center `}
-              >
-                <video
-                  ref={videoRef}
-                  autoPlay
-                  playsInline
-                  className="max-w-full max-h-full"
-                />
-                <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-                  You
-                </div>
-              </div>
+              <VideoFrame name="You" videoRef={videoRef} />
               {remoteStreams.map((stream, index) => {
                 const member = call.members.find(
                   (member) => member.peer_id === stream.peer_id
                 );
                 return (
-                  <div
+                  <VideoFrame
                     key={index}
-                    className="relative bg-[#3c4043] p-2 flex items-center justify-center"
-                  >
-                    <video
-                      ref={videoRefs[index]}
-                      autoPlay
-                      playsInline
-                      className="w-full max-w-full max-h-full"
-                    />
-                    <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-                      {member?.name}
-                    </div>
-                  </div>
+                    name={member?.name}
+                    videoRef={videoRefs[index]}
+                  />
                 );
               })}
             </Flex>
@@ -321,14 +307,10 @@ const VideoCall = () => {
                     {call.members.map((member) => {
                       return (
                         <>
-                          <Flex
-                            key={member.peer_id}
-                            align="center"
-                            className="w-full gap-2"
-                          >
-                            <Avatar size={36} src={member.avatar} />
-                            <p>{member.name}</p>
-                          </Flex>
+                          <MemberItem
+                            avatar={member.avatar}
+                            name={member.name}
+                          />
                         </>
                       );
                     })}
@@ -338,10 +320,10 @@ const VideoCall = () => {
             )}
           </>
         )}
-      </div>
+      </Flex>
 
-      <div className="bg-[#3c4043] w-full flex justify-between p-3">
-        <div className="flex items-center w-[30%]">
+      <Flex justify="space-between" className="bg-[#3c4043] w-full p-3">
+        <Flex align="center" className="w-[30%]">
           {call.conversation.type === ConversationTypes.FRIEND ? (
             <Avatar size={40} src={call.conversation?.image} />
           ) : (
@@ -351,7 +333,7 @@ const VideoCall = () => {
           <h2 className="ml-2 my-3 text-[14px] font-semibold">
             {call.conversation?.title}
           </h2>
-        </div>
+        </Flex>
         {call.refused || call.ended ? (
           <Space size={50} className="flex-1 justify-center">
             <Button
@@ -409,7 +391,7 @@ const VideoCall = () => {
             />
           </Space>
         )}
-        <div className="w-[30%] flex justify-end items-center">
+        <Flex justify="end" align="center" className="w-[30%]">
           <p className="me-4">{formatSeconds(duration)}</p>
           <Button
             type="default"
@@ -420,9 +402,34 @@ const VideoCall = () => {
               setShowMembers(!showMembers);
             }}
           />
-        </div>
+        </Flex>
+      </Flex>
+    </Flex>
+  );
+};
+
+const VideoFrame = ({ name, videoRef }) => {
+  return (
+    <Flex align="center" justify="center" className="relative bg-[#3c4043] p-2">
+      <video
+        ref={videoRef}
+        autoPlay
+        playsInline
+        className="w-full max-w-full max-h-full"
+      />
+      <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
+        {name}
       </div>
-    </div>
+    </Flex>
+  );
+};
+
+const MemberItem = ({ avatar, name }) => {
+  return (
+    <Flex align="center" className="w-full gap-2">
+      <Avatar size={36} src={avatar} />
+      <p>{name}</p>
+    </Flex>
   );
 };
 export default VideoCall;
