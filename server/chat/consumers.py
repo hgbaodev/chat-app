@@ -344,10 +344,16 @@ class ChatConsumer(WebsocketConsumer):
 
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
+        call_type = data["type"]
+        # can not access when call type is different
+        if str(self.call_store[conversation_id]["type"]) != str(call_type):
+            print('diff', call_type)
+            return
 
         # check user is in this conversation
         if not Participants.objects.filter(conversation_id=conversation_id, user=self.scope["user"]).exists():
             return
+
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title

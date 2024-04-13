@@ -85,25 +85,7 @@ const VoiceCall = ({
                 );
               })}
             </Flex>
-            {showMembers && (
-              <div className="h-full w-[30%] bg-slate-300 py-4 pe-4 ">
-                <Flex vertical className="h-full bg-white rounded-md p-2">
-                  <p>Members</p>
-                  <Flex vertical className="gap-3 py-4">
-                    {call.members.map((member) => {
-                      return (
-                        <>
-                          <MemberItem
-                            avatar={member.avatar}
-                            name={member.name}
-                          />
-                        </>
-                      );
-                    })}
-                  </Flex>
-                </Flex>
-              </div>
-            )}
+            {showMembers && <MembersList members={call.members} />}
           </>
         )}
       </Flex>
@@ -199,7 +181,24 @@ const VideoFrame = ({ name, avatar, videoRef }) => {
     </Flex>
   );
 };
-
+const MembersList = ({ members }) => {
+  return (
+    <div className="h-full w-[30%] bg-slate-300 py-4 pe-4">
+      <Flex vertical className="h-full bg-white rounded-md p-2">
+        <p>Members</p>
+        <Flex vertical className="gap-3 py-4">
+          {members.map((member) => {
+            return (
+              <>
+                <MemberItem avatar={member?.avatar} name={member?.name} />
+              </>
+            );
+          })}
+        </Flex>
+      </Flex>
+    </div>
+  );
+};
 const MemberItem = ({ avatar, name }) => {
   return (
     <Flex align="center" className="w-full gap-2">

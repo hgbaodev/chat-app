@@ -33,7 +33,7 @@ const CallWrapper = () => {
   const initPeer = useCallback(() => {
     if (socketInstance) {
       const peerInstance = new Peer(peer_id);
-      emitGetPeerIds({ conversation_id });
+      emitGetPeerIds({ conversation_id, type: call_type });
       if (peer) peer.destroy();
       setPeer(peerInstance);
       navigator.mediaDevices
