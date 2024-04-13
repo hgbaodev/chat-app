@@ -143,11 +143,11 @@ class MessageSerializer(serializers.ModelSerializer):
     forward = serializers.SerializerMethodField()
     attachments = serializers.SerializerMethodField()
     namecard = serializers.SerializerMethodField()
-    videocall = serializers.SerializerMethodField()
+    call = serializers.SerializerMethodField()
     
     class Meta:
         model = Message
-        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'namecard', 'is_pinned', 'videocall']
+        fields = ['id', 'message', 'message_type', 'created_at', 'sender', 'conversation_id', 'forward', 'attachments', 'namecard', 'is_pinned', 'call']
 
     def get_forward(self, obj):
         if obj.forward:
@@ -168,10 +168,10 @@ class MessageSerializer(serializers.ModelSerializer):
         except NameCard.DoesNotExist:
             return None
         
-    def get_videocall(self, obj):
+    def get_call(self, obj):
         try:
-            videocall = CallMessage.objects.get(message=obj)
-            return CallMessageSerializer(videocall).data
+            call = CallMessage.objects.get(message=obj)
+            return CallMessageSerializer(call).data
         except CallMessage.DoesNotExist:
             return None
     

@@ -1,6 +1,7 @@
 import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-import { IoVideocamOutline } from 'react-icons/io5';
+import { IoVideocam, IoVideocamOutline } from 'react-icons/io5';
+import { FaPhoneAlt } from 'react-icons/fa';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
 import { useDispatch, useSelector } from '~/store';
@@ -8,7 +9,7 @@ import { memo, useState } from 'react';
 import { formatDateTime, formatSeconds } from '~/utils/formatDayTime';
 import { formatFileSize } from '~/utils/formatFileSize';
 import { getContentMessage, getIconDocument } from '~/utils/getPropertyMessage';
-import { MessageTypes } from '~/utils/enum';
+import { CallTypes, MessageTypes } from '~/utils/enum';
 import { convertLinksToAnchorTags } from '~/utils/textProcessing';
 import { v4 as uuidv4 } from 'uuid';
 import { useSocket } from '~/hooks/useSocket';
@@ -110,17 +111,19 @@ export const TextMessage = ({
   );
 };
 
-export const VideoCallMessage = ({
+export const CallMessage = ({
   id,
   sender,
   forward,
   created,
-  videocall,
+  call,
+  message_type,
   is_pinned = false,
   ...props
 }) => {
-  const { emitVideoCall, emitAcceptVideoCall } = useSocket();
+  const { emitVideoCall, emitVoiceCall, emitAcceptVideoCall } = useSocket();
   const { chat } = useSelector((state) => state.chat);
+  const isVideoCall = message_type === MessageTypes.VIDEOCALL;
   // handle for recall
   const handleRecall = () => {
     const peer_id = uuidv4();
@@ -128,15 +131,25 @@ export const VideoCallMessage = ({
     const height = 600;
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
+
     window.open(
-      `/video-call/${peer_id}?conversation_id=${chat.currentConversation.id}`,
+      `/call/${isVideoCall ? CallTypes.VIDEO : CallTypes.AUDIO}/${
+        chat.currentConversation.id
+      }/${peer_id}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
-    emitVideoCall({
-      conversation_id: chat.currentConversation.id,
-      peer_id
-    });
+    if (isVideoCall) {
+      emitVideoCall({
+        conversation_id: chat.currentConversation.id,
+        peer_id
+      });
+    } else {
+      emitVoiceCall({
+        conversation_id: chat.currentConversation.id,
+        peer_id
+      });
+    }
   };
 
   const handleJoinCall = () => {
@@ -150,7 +163,9 @@ export const VideoCallMessage = ({
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     window.open(
-      `/video-call/${peer_id}?conversation_id=${chat.currentConversation.id}`,
+      `/call/${isVideoCall ? CallTypes.VIDEO : CallTypes.AUDIO}/${
+        chat.currentConversation.id
+      }/${peer_id}`,
       '_blank',
       `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
     );
@@ -169,19 +184,21 @@ export const VideoCallMessage = ({
     >
       <Flex vertical gap={10} className="min-w-[180px]">
         <Space>
-          <Flex className="bg-slate-300 p-3 rounded-full">
-            <IoVideocamOutline size={20} />
+          <Flex className="bg-blue-100 p-3 rounded-full text-[#1677ff]">
+            {isVideoCall ? <IoVideocam size={20} /> : <FaPhoneAlt size={16} />}
           </Flex>
           <Space direction="vertical" className="gap-0">
-            <Typography className="font-semibold">Video Call</Typography>
+            <Typography className="font-semibold">
+              {isVideoCall ? 'Video Call' : 'Voice Call'}
+            </Typography>
             <Typography className="text-[12px]">
-              {videocall.ended ? (
-                videocall.duration === 0 ? (
+              {call.ended ? (
+                call.duration === 0 ? (
                   <Typography className="text-red-500 text-[12px]">
                     Has been canceled
                   </Typography>
                 ) : (
-                  formatSeconds(videocall.duration)
+                  formatSeconds(call.duration)
                 )
               ) : (
                 'This call is calling...'
@@ -189,7 +206,7 @@ export const VideoCallMessage = ({
             </Typography>
           </Space>
         </Space>
-        {videocall.ended ? (
+        {call.ended ? (
           <Button type="primary" onClick={handleRecall}>
             Recall
           </Button>

@@ -4,11 +4,10 @@ import PrivateRoute from '~/guards/PrivateRoute';
 import DashboardLayout from '~/layouts/DashboardLayout';
 import Chat from '~/pages/dashboard/Chat';
 import Contacts from '~/pages/dashboard/Contacts';
+import CallWrapper from '~/section/call/CallWrapper';
 
 // dynamic import
 const Settings = Loadable(lazy(() => import('~/pages/dashboard/Settings')));
-const VideoCall = Loadable(lazy(() => import('~/section/call/VideoCall')));
-
 const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
 
 const UserRoutes = {
@@ -34,8 +33,8 @@ const UserRoutes = {
       ]
     },
     {
-      path: '/video-call/:peer_id',
-      element: <VideoCall />
+      path: '/call/:call_type/:conversation_id/:peer_id',
+      element: <CallWrapper />
     }
   ]
 };

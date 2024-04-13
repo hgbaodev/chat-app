@@ -14,10 +14,11 @@ import { useEffect, useState } from 'react';
 import { getNumberOfReceiveFriendRequests } from '~/store/slices/relationshipSlice';
 import { getNumberOfUnseenNotifications } from '~/store/slices/notificationSlice';
 import Notification from '~/pages/dashboard/Notification';
-import VideoCallModal from '~/section/call/VideoCallModal';
+import VideoCallModal from '~/section/call/CallModal';
 import { setOpenProfile, setOpenSearch } from '~/store/slices/contactSlice';
 import AccountModal from '~/section/common/AccountModal';
 import ProfileModal from '~/section/common/ProfileModal';
+import CallModal from '~/section/call/CallModal';
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
@@ -107,7 +108,7 @@ const DashboardLayout = () => {
           setOpenNotification(false);
         }}
       />
-      <VideoCallModal />
+      <CallModal />
       <ProfileModal />
     </>
   );

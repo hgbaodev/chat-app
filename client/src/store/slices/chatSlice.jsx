@@ -202,6 +202,7 @@ const initialState = {
     }
   },
   call: {
+    type: null,
     open: false,
     calling: false,
     refused: false,
@@ -321,6 +322,8 @@ const chatSlice = createSlice({
       if (action.payload.open !== undefined) {
         state.call.open = action.payload.open;
       }
+      if (action.payload.type !== undefined)
+        state.call.type = parseInt(action.payload.type);
     },
     setCallMembers(state, action) {
       state.call.members = action.payload.members;
@@ -358,10 +361,13 @@ const chatSlice = createSlice({
         state.chat.currentConversation.id === action.payload.conversation_id
       ) {
         state.chat.messages.data = state.chat.messages.data.map((message) => {
-          if (message.message_type === MessageTypes.VIDEOCALL) {
-            if (message.videocall.id === action.payload.message_id) {
-              message.videocall.ended = true;
-              message.videocall.duration = action.payload.duration;
+          if (
+            message.message_type === MessageTypes.VIDEOCALL ||
+            message.message_type === MessageTypes.VOICECALL
+          ) {
+            if (message.call.id === action.payload.message_id) {
+              message.call.ended = true;
+              message.call.duration = action.payload.duration;
             }
           }
           return message;
@@ -381,10 +387,13 @@ const chatSlice = createSlice({
         state.chat.currentConversation.id === action.payload.conversation_id
       ) {
         state.chat.messages.data = state.chat.messages.data.map((message) => {
-          if (message.message_type === MessageTypes.VIDEOCALL) {
-            if (message.videocall.id === action.payload.message_id) {
-              message.videocall.ended = true;
-              message.videocall.duration = action.payload.duration;
+          if (
+            message.message_type === MessageTypes.VIDEOCALL ||
+            message.message_type === MessageTypes.VOICECALL
+          ) {
+            if (message.call.id === action.payload.message_id) {
+              message.call.ended = true;
+              message.call.duration = action.payload.duration;
             }
           }
           return message;

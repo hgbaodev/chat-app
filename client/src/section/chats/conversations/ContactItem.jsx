@@ -32,7 +32,7 @@ export const ContactItem = ({
   members,
   active,
   is_pinned,
-  admin,
+  admin
 }) => {
   const [hoverRef, isHovering] = useHover();
   const [openOptions, setOpenOptions] = useState(false);
@@ -90,7 +90,7 @@ export const ContactItem = ({
           members,
           type,
           is_pinned,
-          admin,
+          admin
         })
       );
       dispatch(showContactInfo());
@@ -112,6 +112,8 @@ export const ContactItem = ({
       return `${name} sent an attachment.`;
     } else if (message_type == MessageTypes.VIDEOCALL) {
       return `${name} made a video call.`;
+    } else if (message_type == MessageTypes.VOICECALL) {
+      return `${name} made a voice call.`;
     }
     return message;
   };

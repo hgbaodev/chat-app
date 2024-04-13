@@ -1,12 +1,13 @@
 import { Avatar, Button, Modal, Space } from 'antd';
 import { IoClose, IoVideocam } from 'react-icons/io5';
+import { FaPhoneAlt } from 'react-icons/fa';
 import { useSocket } from '~/hooks/useSocket';
 import { useDispatch, useSelector } from '~/store';
 import { setCall, setConversationCallingState } from '~/store/slices/chatSlice';
 import { v4 as uuidv4 } from 'uuid';
-import { ConversationTypes } from '~/utils/enum';
+import { CallTypes, ConversationTypes } from '~/utils/enum';
 
-const VideoCallModal = () => {
+const CallModal = () => {
   const dispatch = useDispatch();
   const { emitAcceptVideoCall, emitRefuseVideoCall } = useSocket();
   const { call } = useSelector((state) => state.chat);
@@ -23,11 +24,19 @@ const VideoCallModal = () => {
     const leftPos = (window.innerWidth - width) / 2;
     const topPos = (window.innerHeight - height) / 2;
     dispatch(setCall({ open: false }));
-    window.open(
-      `/video-call/${peer_id}?conversation_id=${call.conversation.conversation_id}`,
-      '_blank',
-      `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
-    );
+    if (call.type === CallTypes.VIDEO) {
+      window.open(
+        `/call/${CallTypes.VIDEO}/${call.conversation.conversation_id}/${peer_id}`,
+        '_blank',
+        `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+      );
+    } else {
+      window.open(
+        `/call/${CallTypes.AUDIO}/${call.conversation.conversation_id}/${peer_id}`,
+        '_blank',
+        `width=${width}, height=${height}, left=${leftPos}, top=${topPos}`
+      );
+    }
   };
 
   // handle refuse
@@ -49,7 +58,7 @@ const VideoCallModal = () => {
   return (
     <>
       <Modal
-        title={'Video call'}
+        title={call?.type == CallTypes.VIDEO ? 'Video Call' : 'Voice Call'}
         open={call.open}
         onCancel={handleRefuse}
         width={400}
@@ -77,7 +86,13 @@ const VideoCallModal = () => {
             <Button
               type="default"
               shape="circle"
-              icon={<IoVideocam size={22} />}
+              icon={
+                call.type == CallTypes.VIDEO ? (
+                  <IoVideocam size={22} />
+                ) : (
+                  <FaPhoneAlt size={18} />
+                )
+              }
               size={'large'}
               className="bg-green-500 text-white border-none "
               onClick={handleAccept}
@@ -89,4 +104,4 @@ const VideoCallModal = () => {
   );
 };
 
-export default VideoCallModal;
+export default CallModal;
