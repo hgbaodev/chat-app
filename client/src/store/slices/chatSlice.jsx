@@ -206,7 +206,7 @@ const initialState = {
     calling: false,
     refused: false,
     ended: false,
-    peer_ids: [],
+    members: [],
     conversation: {}
   },
   forwardMessage: null,
@@ -312,7 +312,7 @@ const chatSlice = createSlice({
     },
     openCall(state) {
       state.call.calling = false;
-      state.call.peer_ids = [];
+      state.call.members = [];
     },
     setCall(state, action) {
       state.call.calling = action.payload.calling;
@@ -322,12 +322,12 @@ const chatSlice = createSlice({
         state.call.open = action.payload.open;
       }
     },
-    setPeerIds(state, action) {
-      state.call.peer_ids = action.payload.peer_ids;
+    setCallMembers(state, action) {
+      state.call.members = action.payload.members;
     },
-    removePeerId(state, action) {
-      state.call.peer_ids = state.call.peer_ids.filter(
-        (peer_id) => peer_id !== action.payload.peer_id
+    removeCallMember(state, action) {
+      state.call.members = state.call.members.filter(
+        (member) => member.peer_id !== action.payload.peer_id
       );
     },
     setConversationCall(state, action) {
@@ -344,7 +344,7 @@ const chatSlice = createSlice({
       state.call.calling = false;
       state.call.refused = false;
       state.call.ended = true;
-      state.call.peer_ids = [];
+      state.call.members = [];
 
       // update conversation calling
       state.conversations = state.conversations.map((conversation) => {
@@ -554,8 +554,8 @@ export const {
   openCall,
   setCall,
   setConversationCall,
-  setPeerIds,
-  removePeerId,
+  setCallMembers,
+  removeCallMember,
   resetVideoCall,
   updateVideoCallMessage,
   setTypingIndicator,

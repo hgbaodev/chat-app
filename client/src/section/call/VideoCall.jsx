@@ -94,9 +94,9 @@ const VideoCall = () => {
     if (peer && call.calling && stream) {
       peer.on('open', (my_peer_id) => {
         try {
-          call.peer_ids.forEach((peer_id) => {
-            if (peer_id !== my_peer_id) {
-              const myCall = peer.call(peer_id, stream);
+          call.members.forEach((member) => {
+            if (member.peer_id !== my_peer_id) {
+              const myCall = peer.call(member.peer_id, stream);
               myCall.on('stream', (remoteStream) => {
                 setRemoteStreams((prevStreams) => {
                   const streamExists = prevStreams.some(
@@ -143,10 +143,13 @@ const VideoCall = () => {
 
   // on listener peer_ids change
   useEffect(() => {
+    // serialize peer_ids
+    const peer_ids = call.members.map((member) => member.peer_id);
+    console.log('peer_ids', peer_ids);
     setRemoteStreams((preStream) =>
-      preStream.filter((stream) => call.peer_ids.includes(stream.peer_id))
+      preStream.filter((stream) => peer_ids.includes(stream.peer_id))
     );
-  }, [call.peer_ids]);
+  }, [call.members]);
 
   // set stream to video
   useEffect(() => {
@@ -303,7 +306,11 @@ const VideoCall = () => {
                   className="w-full max-w-full max-h-full"
                 />
                 <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
-                  {stream.peer_id}
+                  {
+                    call.members.find(
+                      (member) => member.peer_id === stream.peer_id
+                    )?.name
+                  }
                 </div>
               </div>
             ))}
