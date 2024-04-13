@@ -3,13 +3,13 @@ import { useEffect } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {
   AudioMessage,
+  CallMessage,
   DocMessage,
   MediaMessage,
   NameCardMessage,
   NewMessage,
   RecallMessage,
-  TextMessage,
-  VideoCallMessage
+  TextMessage
 } from '~/section/chats/chat-view/MessageTypes';
 import { useDispatch, useSelector } from '~/store';
 import { getMessagesOfConversation, setPage } from '~/store/slices/chatSlice';
@@ -146,8 +146,9 @@ const MesssageList = () => {
                   />
                 );
               case MessageTypes.VIDEOCALL:
+              case MessageTypes.VOICECALL:
                 return (
-                  <VideoCallMessage
+                  <CallMessage
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}

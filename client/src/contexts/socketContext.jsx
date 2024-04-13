@@ -56,13 +56,14 @@ export const SocketProvider = ({ children }) => {
           } else if (data.type === 'recall_message') {
             dispatch(recallMessage(data.message));
           } else if (data.type === 'video_call') {
-            const { conversation } = JSON.parse(data.message);
+            const { conversation, type } = JSON.parse(data.message);
             dispatch(
               setCall({
                 open: true,
                 calling: false,
                 ended: false,
-                refused: false
+                refused: false,
+                type
               })
             );
             dispatch(setConversationCall({ conversation }));
