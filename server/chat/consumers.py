@@ -184,7 +184,12 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         # init call store
-        self.call_store[conversation_id] = [peer_id]
+        self.call_store[conversation_id] = [
+            {
+                'peer_id': peer_id, 
+                'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
+                'avatar': self.scope["user"].avatar
+            }]
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
         conversation_title = conversation.title
@@ -193,14 +198,14 @@ class ChatConsumer(WebsocketConsumer):
             participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
             conversation_title = participant.user.first_name + ' ' + participant.user.last_name
             conversation_image = participant.user.avatar
-        conversation_dict = {
-            'conversation_id': conversation_id,
-            'title': conversation_title,
-            'image' : conversation_image,
-            'type': conversation_type,
-        }
+        
         message_dict = {
-            'conversation': conversation_dict,
+            'conversation': {
+                'conversation_id': conversation_id,
+                'title': conversation_title,
+                'image': conversation_image,
+                'type': conversation_type,
+            },
         }
         # create call message
         message = Message.objects.create(
@@ -228,13 +233,17 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         # append peer_id into call store
-        self.call_store[conversation_id].append(peer_id)
-
+        self.call_store[conversation_id].append({'peer_id': peer_id, 
+                                                'name':  f'{self.scope["user"].first_name} {self.scope["user"].last_name}', 
+                                                'avatar': self.scope["user"].avatar})
+        return_data = {
+            'members': self.call_store[conversation_id],
+        }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
             room_group_name = f"user_{participant.user.id}"
             async_to_sync(self.channel_layer.group_send)(
-                room_group_name, {"type": "accept_video_call", "message": "empty"}
+                room_group_name, {"type": "accept_video_call", "message": json.dumps(return_data)}
                 )
        
     def receive_refuse_video_call(self, data):
@@ -258,10 +267,7 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "refuse_video_call", "message": json.dumps(return_data)}
             )
         
-        
-        print('DELETE CALL STORE', self.call_store)
         self.call_store[conversation_id] = []
-        print('DELETE CALL STORE', self.call_store)
         
     def receive_cancel_video_call(self, data):
         conversation_id = data["conversation_id"]
@@ -282,9 +288,7 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "cancel_video_call", "message": json.dumps(return_data)}
                 )
             
-        print('DELETE CALL STORE', self.call_store)
         self.call_store[conversation_id] = []
-        print('DELETE CALL STORE', self.call_store)
             
     
     def receive_leave_video_call(self, data):
@@ -292,10 +296,10 @@ class ChatConsumer(WebsocketConsumer):
         peer_id = data["peer_id"]
 
         # remove peer_id from call store
-        self.call_store[conversation_id].remove(peer_id)
+        self.call_store[conversation_id] = list(filter(lambda member: member['peer_id'] != peer_id, self.call_store[conversation_id]))
 
         return_data = {
-            'peer_ids': self.call_store[conversation_id],
+            'members': self.call_store[conversation_id],
         }
         participants = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"])
         for participant in participants:
@@ -327,9 +331,7 @@ class ChatConsumer(WebsocketConsumer):
                 room_group_name, {"type": "end_video_call", "message": json.dumps(return_data)}
                 )
             
-        print('DELETE CALL STORE', self.call_store)
         self.call_store[conversation_id] = []
-        print('DELETE CALL STORE', self.call_store)
             
 
     def receive_get_peer_ids(self, data):
@@ -354,7 +356,7 @@ class ChatConsumer(WebsocketConsumer):
         }
         return_data = {
             'conversation': conversation_dict,
-            'peer_ids' : self.call_store[conversation_id]
+            'members' : self.call_store[conversation_id]
         }
         async_to_sync(self.channel_layer.group_send)(
             f"user_{self.scope['user'].id}", {"type": "return_get_peer_ids", "message": json.dumps(return_data)}
