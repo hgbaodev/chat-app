@@ -1,26 +1,9 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import AxiosInstance from '~/api/AxiosInstance';
-
-export const getProfile = createAsyncThunk(
-  'profile/getProfile',
-  async (user_id, { rejectWithValue }) => {
-    try {
-      const response = await AxiosInstance.get(`profile/${user_id}`);
-      return response;
-    } catch (error) {
-      return rejectWithValue(error.response.data);
-    }
-  }
-);
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   contactInfo: {
     open: false,
     type: 'CONTACT' // CONTACT, SHARED, ...
-  },
-  profile: {
-    id: null,
-    info: null
   }
 };
 
@@ -42,15 +25,7 @@ const slice = createSlice({
     },
     showMembersGroup(state) {
       state.contactInfo.type = 'MEMBERS';
-    },
-    setOpenProfile(state, action) {
-      state.profile.id = action.payload;
     }
-  },
-  extraReducers: (builder) => {
-    builder.addCase(getProfile.fulfilled, (state, action) => {
-      state.profile.info = action.payload.data;
-    });
   }
 });
 
@@ -60,6 +35,5 @@ export const {
   setOpenContactInfo,
   showSharedMessage,
   showContactInfo,
-  showMembersGroup,
-  setOpenProfile
+  showMembersGroup
 } = slice.actions;

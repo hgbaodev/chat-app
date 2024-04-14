@@ -1,7 +1,7 @@
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import GenericAPIView
-from .serializers import (SendFriendRequestSerializer, DeleteFriendRequestSerializer,
+from .serializers import (FriendRequestSerializer, SendFriendRequestSerializer, DeleteFriendRequestSerializer,
                         AcceptFriendRequestSerializer, DeleteFriendSerializer, BlockFriendSerializer, 
                         UnBlockFriendSerializer,RecommendedUserSerializer, GetAllFriendsSerializer, 
                         SearchUsersSerializer, GetAllFriendRequestSerializer)
@@ -58,7 +58,7 @@ class FriendRequestsView(GenericAPIView):
                     'message': NotificationSerializer(notification).data
                 }
             )
-            return Response({"msg": "Sent friend request successfully!"}, status=status.HTTP_201_CREATED)
+            return Response({"msg": "Sent friend request successfully!", 'data': FriendRequestSerializer(serializer.instance).data}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 

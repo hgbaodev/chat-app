@@ -1,6 +1,6 @@
 import { Avatar, Button, Flex, Image, Space, Typography } from 'antd';
 import { GoDownload } from 'react-icons/go';
-import { IoVideocam, IoVideocamOutline } from 'react-icons/io5';
+import { IoVideocam } from 'react-icons/io5';
 import { FaPhoneAlt } from 'react-icons/fa';
 import useHover from '~/hooks/useHover';
 import MessageAction from '~/section/chats/chat-view/MessageAction';
@@ -13,7 +13,7 @@ import { CallTypes, MessageTypes } from '~/utils/enum';
 import { convertLinksToAnchorTags } from '~/utils/textProcessing';
 import { v4 as uuidv4 } from 'uuid';
 import { useSocket } from '~/hooks/useSocket';
-import { setOpenProfile } from '~/store/slices/appSlice';
+import { setOpenProfile } from '~/store/slices/relationshipSlice';
 const MessageWrapper = memo(
   ({
     messageId,

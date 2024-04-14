@@ -5,12 +5,16 @@ import { LuMessagesSquare, LuUserPlus } from 'react-icons/lu';
 import ModalComponent from '~/components/ModalComponent';
 import SendFriendRequest from '~/section/common/SendFriendRequest';
 import { useDispatch, useSelector } from '~/store';
-import { getProfile } from '~/store/slices/appSlice';
-import { setOpenProfile } from '~/store/slices/appSlice';
+import {
+  acceptFriendRequest,
+  deleteFriendRequest,
+  getProfile,
+  setOpenProfile
+} from '~/store/slices/relationshipSlice';
 const { Text, Title } = Typography;
 
 const ProfileModal = () => {
-  const { info, id } = useSelector((state) => state.app.profile);
+  const { info, id } = useSelector((state) => state.relationship.profile);
   const currentUserId = useSelector((state) => state.auth.user.id);
   const dispatch = useDispatch();
   const [openFriendRequest, setOpenFriendRequest] = useState(false);
@@ -112,6 +116,9 @@ const ProfileModal = () => {
                   type="default"
                   shape="round"
                   icon={<IoArrowUndoSharp />}
+                  onClick={() =>
+                    dispatch(deleteFriendRequest(info?.friend_request?.id))
+                  }
                 >
                   Undo request
                 </Button>
@@ -128,14 +135,18 @@ const ProfileModal = () => {
                   <Button
                     type="text"
                     className="bg-neutral-200 w-[48%]"
-                    // onClick={handleDeleteFriendRequest}
+                    onClick={() =>
+                      dispatch(deleteFriendRequest(info?.friend_request?.id))
+                    }
                   >
                     Reject
                   </Button>
                   <Button
                     type="primary"
                     className="w-[48%]"
-                    // onClick={handleAcceptFriendRequest}
+                    onClick={() =>
+                      dispatch(acceptFriendRequest(info?.friend_request?.id))
+                    }
                   >
                     Accept
                   </Button>

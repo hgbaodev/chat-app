@@ -1,11 +1,12 @@
 import { Avatar, Badge, Button, Dropdown, Flex, Grid, Space } from 'antd';
 import { IoArrowBackSharp, IoEllipsisHorizontal } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
-import { setOpenProfile, showContactInfo } from '~/store/slices/appSlice';
+import { showContactInfo } from '~/store/slices/appSlice';
 import { LuUserPlus } from 'react-icons/lu';
 import { useMemo, useState } from 'react';
 import AddMember from '~/section/chats/chat-info/AddMember';
 import { setOpenMyProfile } from '~/store/slices/contactSlice';
+import { setOpenProfile } from '~/store/slices/relationshipSlice';
 const { useBreakpoint } = Grid;
 
 const ListMemberOfGroup = () => {

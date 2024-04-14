@@ -2,12 +2,8 @@ from rest_framework import serializers
 from authentication.models import User
 from relationship.models import FriendRelationship, FriendRequest
 from django.db.models import Q
+from relationship.serializers import FriendRequestSerializer
 
-class FriendRequestSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = FriendRequest
-        fields = ['sender', 'receiver', 'message', 'created_at']
 
 class GetInfoUserSerializer(serializers.ModelSerializer):
     full_name = serializers.SerializerMethodField()

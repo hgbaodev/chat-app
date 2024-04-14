@@ -10,6 +10,10 @@ const initialState = {
   groups: {
     isLoading: false,
     data: []
+  },
+  profile: {
+    id: null,
+    info: null
   }
 };
 
@@ -136,12 +140,27 @@ export const getAllGroup = createAsyncThunk(
   }
 );
 
+export const getProfile = createAsyncThunk(
+  'profile/getProfile',
+  async (user_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.get(`profile/${user_id}`);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
   reducers: {
     receiveFriendRequest(state, action) {
       state.received_friend_requests.push(action.payload);
+    },
+    setOpenProfile(state, action) {
+      state.profile.id = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -167,8 +186,12 @@ const relationshipSlice = createSlice({
       .addCase(sendFriendRequest.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(sendFriendRequest.fulfilled, (state) => {
+      .addCase(sendFriendRequest.fulfilled, (state, action) => {
         state.isLoading = false;
+        if (state.profile.id) {
+          console.log(action.payload.data);
+          state.profile.info.friend_request = action.payload.data.data;
+        }
       })
       .addCase(sendFriendRequest.rejected, (state) => {
         state.isLoading = false;
@@ -195,6 +218,9 @@ const relationshipSlice = createSlice({
         state.received_friend_requests = state.received_friend_requests.filter(
           (item) => item.id !== action.payload.data.id
         );
+        if (state.profile.id) {
+          state.profile.info.friend_request = null;
+        }
         state.isLoading = false;
       })
       .addCase(deleteFriendRequest.rejected, (state) => {
@@ -207,6 +233,10 @@ const relationshipSlice = createSlice({
         state.received_friend_requests = state.received_friend_requests.filter(
           (item) => item.id !== action.payload.data.id
         );
+        if (state.profile.id) {
+          state.profile.info.is_friend = true;
+          state.profile.info.friend_request = null;
+        }
         state.isLoading = false;
       })
       .addCase(acceptFriendRequest.rejected, (state) => {
@@ -247,9 +277,13 @@ const relationshipSlice = createSlice({
       })
       .addCase(getNumberOfReceiveFriendRequests.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(getProfile.fulfilled, (state, action) => {
+        state.profile.info = action.payload.data;
       });
   }
 });
 
 export default relationshipSlice.reducer;
-export const { receiveFriendRequest } = relationshipSlice.actions;
+export const { receiveFriendRequest, setOpenProfile } =
+  relationshipSlice.actions;

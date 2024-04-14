@@ -4,7 +4,6 @@ import { CloseOutlined } from '@ant-design/icons';
 import { IoChevronForward } from 'react-icons/io5';
 import { useDispatch } from 'react-redux';
 import {
-  setOpenProfile,
   showMembersGroup,
   showSharedMessage,
   toggleContactInfo
@@ -32,6 +31,7 @@ import {
 import AvatarImage from '~/section/users/AvatarImage';
 import { useMemo } from 'react';
 import { setOpenChangeNameConversation } from '~/store/slices/contactSlice';
+import { setOpenProfile } from '~/store/slices/relationshipSlice';
 const { useBreakpoint } = Grid;
 const { confirm } = Modal;
 
@@ -227,9 +227,7 @@ const HeaderInfoTool = () => {
           <ToolButton
             icon={<LuUser />}
             text="Profile"
-            onClick={() =>
-              dispatch(setOpenProfile(member.id))
-            }
+            onClick={() => dispatch(setOpenProfile(member.id))}
           />
           <ToolButton icon={<GrGroup />} text="Create group" />
         </>

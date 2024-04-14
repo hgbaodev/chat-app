@@ -288,7 +288,7 @@ class SearchUsersSerializer(serializers.ModelSerializer):
         print(users)
         return users
 
-
-
-
-
+class FriendRequestSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FriendRequest
+        fields = '__all__'

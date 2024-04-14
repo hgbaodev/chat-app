@@ -15,7 +15,7 @@ const store = configureStore({
     })
 });
 
-// const persistor = persistStore(store);
+const persistor = persistStore(store);
 
 const { dispatch } = store;
 
@@ -25,7 +25,7 @@ const useDispatch = () => useDefaultDispatch();
 
 export {
   store,
-  // persistor,
+  persistor,
   dispatch as useAppDispatch,
   useSelector,
   useDispatch
