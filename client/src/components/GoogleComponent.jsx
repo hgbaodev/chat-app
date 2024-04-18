@@ -4,11 +4,10 @@ import { loginWithGoogle } from '~/store/slices/authSlice';
 
 const GoogleComponent = () => {
   const dispatch = useDispatch();
-  const responseMessage = async (response) => {
+  const responseMessage = (response) => {
+    console.log(response);
     const payload = response.credential;
-    setTimeout(() => {
-      dispatch(loginWithGoogle(payload));
-    }, 5000);
+    dispatch(loginWithGoogle(payload));
   };
   const errorMessage = (error) => {
     console.log(error);

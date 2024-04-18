@@ -60,7 +60,7 @@ class LoginSerializer(serializers.ModelSerializer):
         
         email = attrs.get('email')
         password = attrs.get('password')
-        request = self.context.get('request')
+        request = self.context.get('request') 
         user = authenticate(request,email=email, password=password)
         if not user:
             raise AuthenticationFailed("Invalid credentials try again")

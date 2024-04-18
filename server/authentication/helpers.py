@@ -10,7 +10,7 @@ class Google():
     @staticmethod
     def validate(access_token):
         try:
-            id_info=id_token.verify_oauth2_token(access_token, requests.Request())
+            id_info=id_token.verify_oauth2_token(access_token, requests.Request(), settings.GOOGLE_CLIENT_ID)
             if 'accounts.google.com' in id_info['iss']:
                 return id_info
         except:

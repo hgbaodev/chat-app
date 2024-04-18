@@ -217,7 +217,7 @@ class GetAllFriendsSerializer(serializers.ModelSerializer):
 class RecommendedUserSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
-    avatar = serializers.SerializerMethodField()
+
     class Meta:
         model = User
         fields = ['id', 'email', 'full_name', 'avatar' ,'birthday' ,'about', 'relationship']
@@ -227,14 +227,6 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return obj.get_full_name
-    def get_avatar(self, obj):
-        if obj.avatar:
-            try:
-              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-              return avatar
-            except:
-              return None
-        return None
     
     @staticmethod
     def get_recommended_users(user_id):
@@ -263,9 +255,11 @@ class RecommendedUserSerializer(serializers.ModelSerializer):
     
 class SearchUsersSerializer(serializers.ModelSerializer):
     relationship = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'avatar' ,'birthday' ,'about', 'relationship']
+        fields = ['id', 'email', 'full_name', 'avatar' ,'birthday' ,'about', 'relationship']
 
     def get_relationship(self, user):
         user_id = self.context['request'].user.id
@@ -281,6 +275,9 @@ class SearchUsersSerializer(serializers.ModelSerializer):
             return 2
         
         return 0
+    
+    def get_full_name(self, obj):
+        return obj.get_full_name
     
     @staticmethod
     def get_results(user_id, search_text):
