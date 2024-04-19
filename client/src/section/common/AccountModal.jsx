@@ -16,13 +16,13 @@ import { IoChevronBack } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
 import { MdEdit } from 'react-icons/md';
-import moment from 'moment';
 import {
   getInfoUser,
   setOpenMyProfile,
   setType,
   uploadProfile
 } from '~/store/slices/contactSlice';
+import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 
@@ -177,7 +177,7 @@ const UpdateProfile = () => {
           last_name: info.last_name,
           email: info.email,
           phone: info.phone,
-          birthday: moment(info.birthday),
+          birthday: dayjs(info.birthday, 'YYYY-MM-DD'),
           about: info.about
         }}
         layout="vertical"

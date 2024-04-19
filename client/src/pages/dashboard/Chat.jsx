@@ -25,7 +25,7 @@ const Chat = () => {
     <Flex className="h-full">
       <Contacts
         style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}
-        className="w-[350px]"
+        className="w-[300px]"
       />
       <Flex className="w-full h-full flex-1 relative">
         {chat.currentConversation.id ? (

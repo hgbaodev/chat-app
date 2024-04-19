@@ -82,7 +82,7 @@ const TabJoinedGroups = () => {
             placeholder="Search friends"
             variant="filled"
             prefix={<IoSearchOutline />}
-            className="w-[350px]"
+            className="w-[300px]"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
