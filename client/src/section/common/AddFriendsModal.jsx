@@ -1,136 +1,66 @@
-import { Button, Empty, Flex, Input, Modal, Space } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
-import { useEffect, useState } from 'react';
-import { IoChevronBack } from 'react-icons/io5';
-import { useDispatch, useSelector } from '~/store';
-import {
-  getRecommendedUsers,
-  searchUsers
-} from '~/store/slices/relationshipSlice';
-import useDebounce from '~/hooks/useDebounce';
-import UserSearchItem from '~/section/common/UserSearchItem';
-import CustomLoader from '~/components/CustomLoader';
+import { useState, useCallback } from 'react';
 import SendFriendRequest from '~/section/common/SendFriendRequest';
+import ModalTitle from '~/components/ModalTitle';
+import FriendSuggestions from '~/section/common/FriendSuggestions';
+import ProfileInfo from '~/section/common/ProfileInfo';
+import ModalComponent from '~/components/ModalComponent';
 
 const AddFriendsModal = ({ isModalOpen, setIsModalOpen }) => {
-  const dispatch = useDispatch();
-  const { isLoading } = useSelector((state) => state.relationship);
-  const [users, setUsers] = useState([]);
-  const [search, setSearch] = useState('');
-  const debouncedSearchText = useDebounce(search, 500);
-  const [userSelected, setUserSelected] = useState(null);
+  const [viewType, setViewType] = useState('suggestions');
 
-  useEffect(() => {
-    (async () => {
-      if (debouncedSearchText) {
-        const response = await dispatch(searchUsers(debouncedSearchText));
-        setUsers(response.payload.data.users);
-      } else {
-        const response = await dispatch(getRecommendedUsers());
-        setUsers(response.payload.data.users);
-      }
-    })();
-  }, [debouncedSearchText, dispatch]);
-
-  // handle
-  const handleClose = () => {
-    setUserSelected(null);
+  const handleClose = useCallback(() => {
+    setViewType('suggestions');
     setIsModalOpen(false);
-  };
+  }, [setIsModalOpen]);
 
-  const handleSelectUser = (user_id) => {
-    setUserSelected(users.find((user) => user.id === user_id));
-  };
+  const modalTitle = useCallback(() => {
+    if (viewType === 'suggestions') {
+      return 'Add friend';
+    }
+    if (viewType === 'profile') {
+      return (
+        <ModalTitle
+          title="Profile"
+          onClick={() => setViewType('suggestions')}
+        />
+      );
+    }
+    if (viewType === 'request') {
+      return (
+        <ModalTitle title="Add friend" onClick={() => setViewType('profile')} />
+      );
+    }
+  }, [viewType]);
 
-  const handleResetSelectedUser = () => {
-    setUserSelected(null);
-  };
+  const modalContent = useCallback(() => {
+    if (viewType === 'suggestions') {
+      return (
+        <FriendSuggestions setViewType={setViewType} className="p-5 pt-0" />
+      );
+    }
+    if (viewType === 'profile') {
+      return <ProfileInfo changeView={() => setViewType('request')} />;
+    }
+    if (viewType === 'request') {
+      return (
+        <SendFriendRequest
+          handleCancel={() => setViewType('profile')}
+          className="p-6 pt-0"
+        />
+      );
+    }
+  }, [viewType]);
 
-  const fnCallBackSuccess = () => {
-    users.map((user) => {
-      if (user.id == userSelected.id) {
-        user.relationship = 1;
-      }
-    });
-    setUserSelected(null);
-  };
-
-  const handleSearchUsers = (e) => {
-    setSearch(e.target.value);
-  };
-
-  // render
   return (
-    <>
-      <Modal
-        title={
-          userSelected ? (
-            <Flex align="center" gap={8}>
-              <Button
-                type="text"
-                shape="circle"
-                size="small"
-                icon={<IoChevronBack size={18} />}
-                onClick={handleResetSelectedUser}
-              />
-              Add friend
-            </Flex>
-          ) : (
-            'Add friend'
-          )
-        }
-        open={isModalOpen}
-        onCancel={handleClose}
-        width={400}
-        footer={null}
-      >
-        {userSelected ? (
-          <SendFriendRequest
-            user={userSelected}
-            handleCancel={handleResetSelectedUser}
-            fnCallBack={fnCallBackSuccess}
-          />
-        ) : (
-          <Space direction="vertical" className="w-[100%]" size="middle">
-            <Input
-              name="input-search"
-              placeholder="Enter email or phone"
-              variant="filled"
-              prefix={<SearchOutlined />}
-              className="mt-2"
-              autoComplete="nope"
-              value={search}
-              onChange={handleSearchUsers}
-            />
-            {search ? (
-              <p className="text-xs text-gray-500">Recent searches</p>
-            ) : (
-              <p className="text-xs text-gray-500">Friendship suggestions</p>
-            )}
-            <div className="h-[380px] overflow-y-auto scrollbar">
-              {isLoading ? (
-                <CustomLoader />
-              ) : users.length ? (
-                users.map((user) => (
-                  <UserSearchItem
-                    key={user.id}
-                    avatar={user.avatar}
-                    fullName={user.full_name}
-                    email={user.email}
-                    status={user.relationship}
-                    handleSelected={() => {
-                      handleSelectUser(user.id);
-                    }}
-                  />
-                ))
-              ) : (
-                <Empty description="Friends is empty" className="py-4" />
-              )}
-            </div>
-          </Space>
-        )}
-      </Modal>
-    </>
+    <ModalComponent
+      title={modalTitle()}
+      open={isModalOpen}
+      onCancel={handleClose}
+      width={400}
+      footer={null}
+    >
+      {modalContent()}
+    </ModalComponent>
   );
 };
 

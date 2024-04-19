@@ -424,4 +424,19 @@ class GetListConversationTypeGroup(APIView):
         serializer = self.serializer_class(conversations, many=True, context={'request': request})
         return SuccessResponse(data=serializer.data, status=status.HTTP_200_OK)
 
+class GetConversationFromUserId(APIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ConversationSerializer
 
+    def get(self, request, user_id):
+        conversation = Conversation.objects.filter(
+            participants__user=user_id,
+            participants__conversation__type=Conversation.ConversationType.FRIEND,
+            participants__conversation__participants__user=request.user).first()
+        if not conversation:
+            conversation = Conversation.objects.create(type=Conversation.ConversationType.FRIEND)
+            Participants.objects.create(conversation=conversation, user=request.user)
+            Participants.objects.create(conversation=conversation, user=User.objects.get(id=user_id))
+            
+        serializer = self.serializer_class(conversation, context={'request': request})
+        return SuccessResponse(data=serializer.data, status=status.HTTP_201_CREATED)

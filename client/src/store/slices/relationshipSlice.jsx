@@ -12,6 +12,7 @@ const initialState = {
     data: []
   },
   profile: {
+    open: false,
     id: null,
     info: null
   }
@@ -160,6 +161,14 @@ const relationshipSlice = createSlice({
       state.received_friend_requests.push(action.payload);
     },
     setOpenProfile(state, action) {
+      state.profile.open = true;
+      state.profile.id = action.payload;
+    },
+    setCloseProfile(state) {
+      state.profile.open = false;
+      state.profile.id = '';
+    },
+    setProfileId(state, action) {
       state.profile.id = action.payload;
     }
   },
@@ -285,5 +294,9 @@ const relationshipSlice = createSlice({
 });
 
 export default relationshipSlice.reducer;
-export const { receiveFriendRequest, setOpenProfile } =
-  relationshipSlice.actions;
+export const {
+  receiveFriendRequest,
+  setOpenProfile,
+  setCloseProfile,
+  setProfileId
+} = relationshipSlice.actions;

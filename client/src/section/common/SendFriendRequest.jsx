@@ -5,17 +5,12 @@ import useCustomMessage from '~/hooks/useCustomMessage';
 import { useDispatch, useSelector } from '~/store';
 import { sendFriendRequest } from '~/store/slices/relationshipSlice';
 
-const SendFriendRequest = ({
-  user,
-  handleCancel,
-  fnCallBack,
-  className = ''
-}) => {
-  const { id, avatar, full_name, email } = user;
+const SendFriendRequest = ({ handleCancel, className = '' }) => {
   const dispatch = useDispatch();
   const { success, error } = useCustomMessage();
+  const { isLoading, profile } = useSelector((state) => state.relationship);
+  const { id, avatar, full_name, email } = profile.info;
   const { fullName } = useSelector((state) => state.auth.user);
-  const { isLoading } = useSelector((state) => state.relationship);
   const [invitationMessage, setInvitationMessage] = useState(
     `Hello, I'm ${fullName}, Let's be friends!`
   );
@@ -30,7 +25,7 @@ const SendFriendRequest = ({
       );
       if (!response.error) {
         success(response.payload.data.msg);
-        fnCallBack();
+        handleCancel();
       } else error(response.payload.receiver[0]);
     } else error('Invitation message cannot be empty!');
   };

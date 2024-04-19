@@ -152,7 +152,7 @@ const AboutSection = () => {
   return (
     <>
       <Typography className="font-semibold mb-2">About</Typography>
-      <Typography>{member.about}</Typography>
+      <Typography>{member.about ? member.about : 'No bio yet'}</Typography>
     </>
   );
 };
