@@ -30,3 +30,20 @@ class GetInfoUserSerializer(serializers.ModelSerializer):
         if friend_request.exists():
             return FriendRequestSerializer(friend_request[0]).data
         return None
+    
+
+class UpdateProfileSerializer(serializers.ModelSerializer):
+    full_name = serializers.SerializerMethodField()
+    avatar = serializers.CharField(max_length=255, read_only=True)
+    first_name = serializers.CharField(max_length=255, read_only=True)
+    last_name = serializers.CharField(max_length=255, read_only=True)
+    phone = serializers.CharField(max_length=20, read_only=True)
+    birthday = serializers.DateField(read_only=True)
+    about = serializers.CharField(max_length=255, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'email', 'first_name', 'last_name', 'full_name', 'avatar', 'phone', 'birthday', 'about'] 
+
+    def get_full_name(self, obj):
+        return obj.get_full_name

@@ -96,6 +96,20 @@ export const verifyEmail = createAsyncThunk(
   }
 );
 
+export const forgotPassword = createAsyncThunk(
+  'auth/forgot-password',
+  async (email, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/forgot-password/`, {
+        email
+      });
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   isAuthenticated: false,
   loaded: false,
@@ -107,7 +121,10 @@ const initialState = {
   },
   isLoadingLogin: false,
   isLoadingRegister: false,
-  isLoadingVerifyEmail: false
+  isLoadingVerifyEmail: false,
+  sendForgotPassword: false,
+  emailForgotPassword: null,
+  isLoadingSendForgotPassword: false
 };
 
 const handleLoginFulfilled = (state, action) => {
@@ -133,7 +150,12 @@ const handleLoginPending = (state) => {
 };
 
 const handleLoginRejected = (state, action) => {
+  const result = action.payload;
   state.isLoadingLogin = false;
+  if (result.code === '403') {
+    localStorage.setItem('email', result.email);
+    window.location.assign('/auth/verify-email');
+  }
   message.open({
     type: 'error',
     content: 'Login Failed: ' + action.error.message,
@@ -200,6 +222,21 @@ const authSlice = createSlice({
       .addCase(getUserFromToken.rejected, (state) => {
         state.isLoaded = true;
         state.isAuthenticated = false;
+      })
+      .addCase(forgotPassword.pending, (state) => {
+        state.isLoadingSendForgotPassword = true;
+        state.sendForgotPassword = false;
+        state.emailForgotPassword = null;
+      })
+      .addCase(forgotPassword.fulfilled, (state, action) => {
+        state.isLoadingSendForgotPassword = false;
+        state.sendForgotPassword = true;
+        state.emailForgotPassword = action.payload.data.result.email;
+      })
+      .addCase(forgotPassword.rejected, (state) => {
+        state.isLoadingSendForgotPassword = false;
+        state.sendForgotPassword = false;
+        state.emailForgotPassword = null;
       });
   }
 });

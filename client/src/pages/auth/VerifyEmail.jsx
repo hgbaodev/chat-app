@@ -9,9 +9,10 @@ const VerifyEmail = () => {
   return (
     <Row justify="center" className="h-[100vh] bg-neutral-100">
       <Col
-        xs={24}
-        md={12}
-        lg={8}
+        xs={20}
+        md={16}
+        lg={12}
+        xl={8}
         className="flex flex-col justify-center items-center"
       >
         <Flex

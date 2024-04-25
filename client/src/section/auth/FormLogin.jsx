@@ -1,45 +1,18 @@
-import { Button, Checkbox, Form, Input, Typography, message } from 'antd';
-
-import { Link, useNavigate } from 'react-router-dom';
+import { Button, Checkbox, Form, Input, Typography } from 'antd';
+import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from '~/store';
 import { login } from '~/store/slices/authSlice';
-import ReCAPTCHA from 'react-google-recaptcha';
-import React, { useState } from 'react';
-
 const { Text } = Typography;
 
 const FormLogin = () => {
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
   const { isLoadingLogin } = useSelector((state) => state.auth);
-  const recaptchaRef = React.createRef();
   const onFinish = async (values) => {
-    const response = await dispatch(login(values));
-    if (response.error && response.payload) {
-      messageApi.open({
-        type: 'error',
-        content: response.payload?.detail
-      });
-      console.log('Error login');
-    } else {
-      navigate('/');
-    }
-  };
-
-  const [captchaCompleted, setCaptchaCompleted] = useState(false);
-
-  const onChange = (value) => {
-    if (value) {
-      setCaptchaCompleted(true);
-    } else {
-      setCaptchaCompleted(false);
-    }
+    await dispatch(login(values));
   };
   return (
     <>
-      {contextHolder}
       <Form
         form={form}
         layout="vertical"
@@ -85,18 +58,10 @@ const FormLogin = () => {
           <Form.Item name="remember" valuePropName="checked" noStyle>
             <Checkbox>Remember me</Checkbox>
           </Form.Item>
-
-          <Link className="float-right" href="/auth/forgot-password">
+          <Link className="float-right" to="/auth/forgot-password">
             Forgot password
           </Link>
         </Form.Item>
-        {/* <Form.Item>
-          <ReCAPTCHA
-            ref={recaptchaRef}
-            sitekey="6LfpubYpAAAAAEaVdwJ3y8F1k7t0QJ_C2UMGWXBl"
-            onChange={onChange}
-          />
-        </Form.Item> */}
         <Form.Item>
           <Button
             type="primary"
@@ -104,7 +69,6 @@ const FormLogin = () => {
             className="w-full"
             size="large"
             loading={isLoadingLogin}
-            // disabled={!captchaCompleted}
           >
             Login
           </Button>

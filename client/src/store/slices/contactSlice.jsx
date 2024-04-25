@@ -44,7 +44,10 @@ export const uploadProfile = createAsyncThunk(
   'contact/upload-profile',
   async (values, { rejectWithValue }) => {
     try {
-      const response = await AxiosInstance.post(`auth/upload-profile`, values);
+      const response = await AxiosInstance.post(
+        `profile/upload-profile`,
+        values
+      );
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);

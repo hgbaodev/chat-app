@@ -12,6 +12,7 @@ from .utils import send_normal_email
 from .helpers import Google, register_social_user
 from .github import Github
 from django.conf import settings
+from rest_framework import status
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -66,7 +67,12 @@ class LoginSerializer(serializers.ModelSerializer):
             raise AuthenticationFailed("Invalid credentials try again")
         
         if not user.is_verified:
-            raise AuthenticationFailed("Email is not verified")
+            raise AuthenticationFailed({
+                'message':"Email is not verified",
+                'email': user.email,
+                'code': status.HTTP_403_FORBIDDEN,
+            },
+            code=status.HTTP_403_FORBIDDEN)
         
         tokens = user.tokens()
         return {
@@ -221,3 +227,20 @@ class GithubLoginSerializer(serializers.Serializer):
             return register_social_user(email, first_name, last_name, avatar)
         else: 
             return {'error': 'Invalid access token'}
+
+
+class ForgotPasswordSerializer(serializers.Serializer):
+    email = serializers.CharField()
+
+    def validate_email(self, value):
+        if not value:
+            raise serializers.ValidationError("Email not provided")
+        try:
+            user = User.objects.get(email=value)
+            return {
+                'email': user.email
+            }
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Email not found")
+        
+      

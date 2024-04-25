@@ -16,6 +16,7 @@ import { IoChevronBack } from 'react-icons/io5';
 import { useSelector } from 'react-redux';
 import ModalComponent from '~/components/ModalComponent';
 import { MdEdit } from 'react-icons/md';
+import dayjs from 'dayjs';
 import {
   getInfoUser,
   setOpenMyProfile,
@@ -23,14 +24,18 @@ import {
   uploadProfile
 } from '~/store/slices/contactSlice';
 import { useDispatch } from '~/store';
-import dayjs from 'dayjs';
 
 const { Text, Title } = Typography;
 
 const AccountModal = () => {
   const dispatch = useDispatch();
   const { openProfile, type, info } = useSelector((state) => state.contact);
-
+  useEffect(() => {
+    const fetch = () => {
+      dispatch(getInfoUser());
+    };
+    fetch();
+  }, [dispatch]);
   const handleClose = () => {
     dispatch(setType(0));
     dispatch(setOpenMyProfile(false));

@@ -22,7 +22,6 @@ import CallModal from '~/section/call/CallModal';
 const DashboardLayout = () => {
   const dispatch = useDispatch();
   const { avatar } = useSelector((state) => state.auth.user);
-  const { openProfile } = useSelector((state) => state.contact);
   const { received_friend_requests } = useSelector(
     (state) => state.relationship
   );
@@ -100,13 +99,13 @@ const DashboardLayout = () => {
           <Outlet />
         </div>
       </Flex>
-      {openProfile && <AccountModal />}
       <Notification
         open={openNotification}
         handleClose={() => {
           setOpenNotification(false);
         }}
       />
+      <AccountModal />
       <CallModal />
       <ProfileModal />
     </>

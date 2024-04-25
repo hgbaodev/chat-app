@@ -52,3 +52,11 @@ class UserVerification(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     otp = models.CharField(max_length=6)
     created_at = models.DateTimeField(auto_now_add=True)
+
+class PasswordReset(models.Model):
+    email = models.EmailField(unique=True)
+    token = models.CharField(max_length=40, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email

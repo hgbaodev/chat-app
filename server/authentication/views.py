@@ -1,5 +1,5 @@
 from rest_framework.generics import GenericAPIView
-from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer, GoogleSignInSerializer, GithubLoginSerializer
+from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer, GoogleSignInSerializer, GithubLoginSerializer, ForgotPasswordSerializer
 from rest_framework.response import Response
 from rest_framework import status
 from .models import UserVerification
@@ -10,11 +10,8 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from rest_framework.permissions import IsAuthenticated
 from .models import User
 from utils.responses import SuccessResponse, ErrorResponse
-import base64
-import secrets
-import cloudinary.uploader
-from django.http import Http404
-from rest_framework.views import APIView
+
+from .utils import send_generated_url_change_pass_to_email
 
 class RegisterUserView(GenericAPIView):
     serializer_class = RegisterSerializer
@@ -118,33 +115,6 @@ class GetInforUserView(GenericAPIView):
         serializer = self.serializer_class(user)
         return SuccessResponse(data=serializer.data)
 
-class UpdateProfileView(GenericAPIView):
-    permission_classes = [IsAuthenticated]
-    serializer_class = GetInfoUserSerializer
-    def post(self, request):
-        try:
-            user_data = request.data
-            image_file = user_data.get('image')
-            user_id = request.user.id
-            user = User.objects.get(id=user_id)
-            if image_file is not None:
-                decoded_file = base64.b64decode(image_file.split(",")[1])
-                file_name = f"{secrets.token_hex(8)}"
-                upload_result = cloudinary.uploader.upload(decoded_file,public_id=file_name,resource_type="auto")
-                user.avatar = upload_result['secure_url']
-            user.first_name = user_data.get('first_name')
-            user.last_name = user_data.get('last_name')
-            user.email = user_data.get('email')
-            user.phone = user_data.get('phone')
-            user.about = user_data.get('about')
-            if 'birthday' in user_data and isinstance(user_data['birthday'], str):
-                user.birthday = user_data.get('birthday')
-            user.save()
-            serializer = self.serializer_class(user)
-            return SuccessResponse(data=serializer.data)
-        except Exception as e:
-            print("Error uploading image:", e)
-            return ErrorResponse(error_message=str(e))
 
 #Login with google 
 class GoogleOauthSignInview(GenericAPIView):
@@ -164,3 +134,11 @@ class GithubOauthSignInView(GenericAPIView):
             print(serializer.data)
             return SuccessResponse(data=dataCode, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class ForgotPasswordView(GenericAPIView):
+    serializer_class = ForgotPasswordSerializer
+    def post(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        email = serializer.validated_data.get('email')['email']
+        return send_generated_url_change_pass_to_email(email)
