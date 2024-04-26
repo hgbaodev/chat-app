@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, UserVerification
+from .models import User, UserVerification, PasswordReset
 from django.contrib.auth import authenticate
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework_simplejwt.tokens import RefreshToken, TokenError
@@ -13,6 +13,7 @@ from .helpers import Google, register_social_user
 from .github import Github
 from django.conf import settings
 from rest_framework import status
+from django.utils import timezone
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(max_length=68, min_length=6, write_only=True)
@@ -242,5 +243,59 @@ class ForgotPasswordSerializer(serializers.Serializer):
             }
         except User.DoesNotExist:
             raise serializers.ValidationError("Email not found")
+
+class CheckTokenSerializer(serializers.Serializer):
+    token = serializers.CharField()
+
+    class Meta:
+        model = PasswordReset
+        fields = ['email', 'token']
+
+    def validate_token(self, value):
+        if not value:
+            raise serializers.ValidationError("Token not provided")
+        try:
+            PasswordReset.objects.filter(created_at__lte=timezone.now() - timezone.timedelta(minutes=5)).delete()
+            PasswordReset.objects.get(token=value)
+            return value
+        except PasswordReset.DoesNotExist:
+            raise serializers.ValidationError("Token is invalid")
+        
+class ChangePasswordWithTokenSerializer(serializers.Serializer):
+    password = serializers.CharField(max_length=100, min_length=6, write_only=True)
+    token = serializers.CharField(write_only=True)
+    full_name = serializers.SerializerMethodField()
+    avatar = serializers.CharField(max_length=255, read_only=True)
+    first_name = serializers.CharField(max_length=255, read_only=True)
+    last_name = serializers.CharField(max_length=255, read_only=True)
+
+    class Meta:
+        model = User
+        fields = ['email', 'first_name', 'last_name', 'full_name', 'avatar']
+    
+    def get_full_name(self, obj):
+        return obj.get_full_name
+    
+    def validate_token(self, value):
+        if not value:
+            raise serializers.ValidationError("Token not provided")
+        try:
+            PasswordReset.objects.filter(created_at__lte=timezone.now() - timezone.timedelta(minutes=5)).delete()
+            PasswordReset.objects.get(token=value)
+            return value
+        except PasswordReset.DoesNotExist:
+            raise serializers.ValidationError("Token is invalid")
+
+    def validate(self, attrs):
+        try:
+            token = attrs.get('token')
+            password = attrs.get('password')
+            password_reset = PasswordReset.objects.get(token=token)
+            user = User.objects.get(email=password_reset.email)
+            user.set_password(password)
+            user.save()
+            return user
+        except Exception as e:
+            raise serializers.ValidationError("Token is invalid")
         
       

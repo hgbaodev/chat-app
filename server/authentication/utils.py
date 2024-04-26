@@ -7,9 +7,7 @@ from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils import timezone
-from django.http import HttpResponse
 from utils.responses import SuccessResponse, ErrorResponse
-from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -69,8 +67,6 @@ def send_generated_url_change_pass_to_email(email):
         "message": "Send mail successfully. Please check your meail to change your password",
         "email": user.email
     })
-
-
 
 def send_normal_email(data):
     email=EmailMessage(
