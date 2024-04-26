@@ -110,6 +110,28 @@ export const forgotPassword = createAsyncThunk(
   }
 );
 
+export const checkToken = createAsyncThunk(
+  'auth/check-token',
+  async (token) => {
+    const response = await AxiosInstance.post(`auth/check-token/`, {
+      token
+    });
+    return response;
+  }
+);
+
+export const changePassword = createAsyncThunk(
+  'auth/change-password',
+  async (value, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.post(`auth/change-password/`, value);
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   isAuthenticated: false,
   loaded: false,
@@ -124,7 +146,8 @@ const initialState = {
   isLoadingVerifyEmail: false,
   sendForgotPassword: false,
   emailForgotPassword: null,
-  isLoadingSendForgotPassword: false
+  isLoadingSendForgotPassword: false,
+  isLoadingChangePassword: false
 };
 
 const handleLoginFulfilled = (state, action) => {
@@ -237,6 +260,28 @@ const authSlice = createSlice({
         state.isLoadingSendForgotPassword = false;
         state.sendForgotPassword = false;
         state.emailForgotPassword = null;
+      })
+      .addCase(changePassword.pending, (state) => {
+        state.isLoadingChangePassword = true;
+      })
+      .addCase(changePassword.fulfilled, (state) => {
+        state.isLoadingChangePassword = false;
+        message.open({
+          type: 'success',
+          content: 'Change password successfully',
+          duration: 2
+        });
+        setTimeout(() => {
+          window.location.assign('/auth/login');
+        }, 2000);
+      })
+      .addCase(changePassword.rejected, (state) => {
+        state.isLoadingChangePassword = false;
+        message.open({
+          type: 'error',
+          content: 'Change password not successfully',
+          duration: 2
+        });
       });
   }
 });

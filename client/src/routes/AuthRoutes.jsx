@@ -3,11 +3,15 @@ import Loadable from '~/components/Loadable';
 import AuthRoute from '~/guards/AuthRoute';
 import ChangePassword from '~/pages/auth/ChangePassword';
 import ForgetPassword from '~/pages/auth/ForgetPassword';
+import { store } from '~/store';
+import { checkToken } from '~/store/slices/authSlice';
 
 const Login = Loadable(lazy(() => import('~/pages/auth/Login')));
 const Register = Loadable(lazy(() => import('~/pages/auth/Register')));
 const VerifyEmail = Loadable(lazy(() => import('~/pages/auth/VerifyEmail')));
 const Page404 = Loadable(lazy(() => import('~/pages/errors/Page404')));
+
+const { dispatch } = store;
 
 const AuthRoutes = {
   path: '/auth',
@@ -33,9 +37,11 @@ const AuthRoutes = {
       path: 'change-password/:token',
       loader: async ({ params }) => {
         let token = params.token.split('=')[1];
-        const value = { token: token };
-        if (value) {
-          console.log('value', value);
+        const result = await dispatch(checkToken(token));
+        if (result.payload === undefined) {
+          throw new Response('Not Found', { status: 404 });
+        } else {
+          console.log('result', result);
         }
         return null;
       },

@@ -1,8 +1,8 @@
 from rest_framework.generics import GenericAPIView
-from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer, GoogleSignInSerializer, GithubLoginSerializer, ForgotPasswordSerializer
+from .serializers import GetInfoUserSerializer, RegisterSerializer, LoginSerializer, VerifyUserEmailSerializer, LogoutUserSerializer, SetNewPasswordSerializer, PasswordResetRequestSerializer, UserSerializer, GoogleSignInSerializer, GithubLoginSerializer, ForgotPasswordSerializer, CheckTokenSerializer, ChangePasswordWithTokenSerializer
 from rest_framework.response import Response
 from rest_framework import status
-from .models import UserVerification
+from .models import UserVerification, PasswordReset
 from .utils import send_generated_otp_to_email
 from django.utils.http import urlsafe_base64_decode
 from django.utils.encoding import smart_str, DjangoUnicodeDecodeError
@@ -142,3 +142,18 @@ class ForgotPasswordView(GenericAPIView):
         serializer.is_valid(raise_exception=True)
         email = serializer.validated_data.get('email')['email']
         return send_generated_url_change_pass_to_email(email)
+
+class CheckTokenView(GenericAPIView):
+    serializer_class = CheckTokenSerializer
+    def post(self, request):
+        serialzer = self.get_serializer(data=request.data)
+        serialzer.is_valid(raise_exception=True)
+        token = serialzer.validated_data.get('token')
+        return SuccessResponse(data=token, status=status.HTTP_200_OK)
+    
+class ChangePasswordWithTokenView(GenericAPIView):
+    serializer_class = ChangePasswordWithTokenSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return SuccessResponse(data=serializer.data, status=status.HTTP_200_OK)

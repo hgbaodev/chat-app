@@ -1,11 +1,16 @@
 import { Button, Form, Input } from 'antd';
-import { useSelector } from '~/store';
+import { useParams } from 'react-router-dom';
+import { useDispatch, useSelector } from '~/store';
+import { changePassword } from '~/store/slices/authSlice';
 
 const FormChangePassword = () => {
   const [form] = Form.useForm();
-  const { isLoadingLogin } = useSelector((state) => state.auth);
+  const { isLoadingChangePassword } = useSelector((state) => state.auth);
+  const { token } = useParams();
+  const dispatch = useDispatch();
   const onFinish = async (values) => {
-    console.log('values', values);
+    values['token'] = token.split('=')[1];
+    dispatch(changePassword(values));
   };
   return (
     <>
@@ -13,13 +18,12 @@ const FormChangePassword = () => {
         form={form}
         layout="vertical"
         className="w-full"
-        initialValues={{ remember: true }}
         requiredMark="optional"
         onFinish={onFinish}
       >
         <Form.Item
           label="New Password"
-          name="new_password"
+          name="password"
           validateTrigger="onBlur"
           rules={[
             {
@@ -50,7 +54,7 @@ const FormChangePassword = () => {
             },
             ({ getFieldValue }) => ({
               validator(_, value) {
-                if (!value || getFieldValue('new_password') === value) {
+                if (!value || getFieldValue('password') === value) {
                   return Promise.resolve();
                 }
                 return Promise.reject(
@@ -73,7 +77,7 @@ const FormChangePassword = () => {
             htmlType="submit"
             className="w-full"
             size="large"
-            loading={isLoadingLogin}
+            loading={isLoadingChangePassword}
           >
             Submit
           </Button>
