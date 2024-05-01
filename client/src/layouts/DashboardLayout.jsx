@@ -34,6 +34,7 @@ const DashboardLayout = () => {
     dispatch(getNumberOfUnseenNotifications());
   }, [dispatch]);
 
+  
   return (
     <>
       <Flex className="h-[100vh]">
