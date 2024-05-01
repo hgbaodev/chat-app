@@ -221,7 +221,7 @@ const CallWrapper = () => {
     initPeer();
     setDuration(0);
   };
-
+  
   if (call_type == CallTypes.VIDEO)
     return (
       <VideoCall
