@@ -83,8 +83,9 @@ const MesssageList = () => {
                 messages.data[index - 1].sender.id === message.sender.id &&
                 messages.data[index - 1].message_type !== MessageTypes.NEWS &&
                 !check
-              )
+              ) {
                 showAvatar = false;
+              }
             }
 
             switch (message.message_type) {
@@ -103,6 +104,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.RECALL:
@@ -111,6 +113,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.DOCUMENT:
@@ -119,6 +122,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.IMAGE:
@@ -127,6 +131,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.NEWS:
@@ -143,6 +148,7 @@ const MesssageList = () => {
                     key={message.id}
                     {...message}
                     created={check ? message.created_at : null}
+                    showAvatar={showAvatar}
                   />
                 );
               case MessageTypes.VIDEOCALL:
