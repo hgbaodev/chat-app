@@ -36,7 +36,7 @@ export const SharedMessages = () => {
   return (
     <Flex
       vertical
-      className={`w-[300px] ${
+      className={`w-[350px] ${
         !screens.xl ? 'absolute bg-white right-0 bottom-0 top-0 border-l' : ''
       }`}
       style={{ boxShadow: '0px 0px 2px rgba(0,0,0,.1)' }}

@@ -1,12 +1,13 @@
 import { Flex } from 'antd';
 import { formatTimeAgo } from '~/utils/formatTimeAgo';
 
-export const NotificationItem = ({ title, message, created_at }) => {
+export const NotificationItem = ({ title, message, seen, created_at }) => {
   return (
     <Flex
       vertical
-      className={`p-3 rounded-md cursor-pointer`}
-      style={{ borderBottom: '1px solid #e5e5e5' }}
+      className={`${
+        !seen ? 'bg-blue-100' : ''
+      } p-3 rounded-md cursor-pointer border-x-0 border-t-0 border-b border-solid border-[#e5e5e5]`}
       gap={0}
     >
       <p className="text-[14px] font-semibold">{title}</p>

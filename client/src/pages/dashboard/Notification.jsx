@@ -1,9 +1,13 @@
-import { Drawer, Empty, Space } from 'antd';
+import { Button, Drawer, Empty, Space, Tooltip } from 'antd';
 import { useEffect } from 'react';
+import { IoCheckmarkDone } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import CustomLoader from '~/components/CustomLoader';
 import { NotificationItem } from '~/section/notifications/NotificationItem';
-import { getAllNotifications } from '~/store/slices/notificationSlice';
+import {
+  getAllNotifications,
+  markAllNotificationsAsSeen
+} from '~/store/slices/notificationSlice';
 
 const Notification = ({ open, handleClose }) => {
   const dispatch = useDispatch();
@@ -16,6 +20,10 @@ const Notification = ({ open, handleClose }) => {
     }
   }, [dispatch, open]);
 
+  const handleMarkAllAsRead = () => {
+    dispatch(markAllNotificationsAsSeen());
+  };
+
   return (
     <Drawer
       title="Notifications"
@@ -24,6 +32,16 @@ const Notification = ({ open, handleClose }) => {
       onClose={handleClose}
       open={open}
       key={'left'}
+      extra={
+        <Tooltip placement="bottomRight" title="Mark all as read">
+          <Button
+            shape="circle"
+            type="primary"
+            icon={<IoCheckmarkDone />}
+            onClick={handleMarkAllAsRead}
+          />
+        </Tooltip>
+      }
     >
       <Space direction="vertical" className="w-full">
         {isLoading ? (

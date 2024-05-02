@@ -31,6 +31,20 @@ export const getNumberOfUnseenNotifications = createAsyncThunk(
   }
 );
 
+export const markAllNotificationsAsSeen = createAsyncThunk(
+  'relationship/markAllNotificationsAsSeen',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.put(
+        `notifications/mark-all-as-seen`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const notificationSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -60,6 +74,13 @@ const notificationSlice = createSlice({
       })
       .addCase(getAllNotifications.rejected, (state) => {
         state.isLoading = false;
+      })
+      .addCase(markAllNotificationsAsSeen.fulfilled, (state) => {
+        state.totalUnseen = 0;
+        state.notifications = state.notifications.map((notification) => {
+          notification.seen = 1;
+          return notification;
+        });
       });
   }
 });

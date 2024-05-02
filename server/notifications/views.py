@@ -23,3 +23,11 @@ class GetNumberOfUnseenNotificationsView(GenericAPIView):
         user_id = request.user.id
         total = Notification.objects.filter(receiver=user_id, seen=False).count()
         return Response({'result': total}, status=status.HTTP_200_OK)
+    
+class MarkAllNotificationsAsSeenView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+
+    def put(self, request):
+        user_id = request.user.id
+        Notification.objects.filter(receiver=user_id).update(seen=True)
+        return Response({'result': 'All notifications marked as seen'}, status=status.HTTP_200_OK)

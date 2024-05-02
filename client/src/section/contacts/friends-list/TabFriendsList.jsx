@@ -43,7 +43,7 @@ const TabFriendsList = () => {
             placeholder="Search friends"
             variant="filled"
             prefix={<IoSearchOutline />}
-            className="w-[300px]"
+            className="w-[350px]"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
