@@ -279,7 +279,7 @@ class GetAttachmentConversation(generics.ListAPIView):
         queryset = queryset.exclude(message__deletemessage__user=self.request.user)
         if message_type:
             queryset = queryset.filter(message__message_type=message_type)
-        return queryset
+        return queryset.order_by('-created_at')
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()

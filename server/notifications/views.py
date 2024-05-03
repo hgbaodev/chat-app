@@ -13,7 +13,7 @@ class GetAllNotificationsView(GenericAPIView):
 
     def get(self, request):
         user_id = request.user.id
-        notification = Notification.objects.filter(receiver=user_id)
+        notification = Notification.objects.filter(receiver=user_id).order_by('-created_at')
         return Response({'result': NotificationSerializer(notification, many=True).data }, status=status.HTTP_200_OK)
 
 class GetNumberOfUnseenNotificationsView(GenericAPIView):

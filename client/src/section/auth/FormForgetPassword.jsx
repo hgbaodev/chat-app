@@ -1,11 +1,11 @@
-import { Button, Form, Input, Typography } from 'antd';
+import { Button, Flex, Form, Input } from 'antd';
 import { Link } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { forgotPassword } from '~/store/slices/authSlice';
 import { formatErrors } from '~/utils/formatErrors';
 import { useSelector } from 'react-redux';
+import { IoArrowBack } from 'react-icons/io5';
 
-const { Text } = Typography;
 const FormForgetPassword = () => {
   const { isLoadingSendForgotPassword } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -27,7 +27,7 @@ const FormForgetPassword = () => {
     >
       <Form.Item
         className="mb-8"
-        label="Enter the email registered in the system"
+        label="Enter address"
         name="email"
         validateTrigger="onBlur"
         rules={[
@@ -40,7 +40,7 @@ const FormForgetPassword = () => {
         ]}
       >
         <Input
-          placeholder="Please enter your email"
+          placeholder="Enter email address"
           variant="filled"
           size="large"
         />
@@ -57,9 +57,11 @@ const FormForgetPassword = () => {
         </Button>
       </Form.Item>
       <Form.Item className="mb-0 text-center">
-        <Text className="text-sm">
-          Don’t have a code? <Link to="#">Resend code</Link>
-        </Text>
+        <Link to="/auth/login">
+          <Flex align="center" justify="center" gap={10}>
+            <IoArrowBack /> <span>Return to sign in</span>
+          </Flex>
+        </Link>
       </Form.Item>
     </Form>
   );

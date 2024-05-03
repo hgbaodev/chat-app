@@ -55,6 +55,7 @@ const AddMember = ({ open, onClose }) => {
           id: currentConversation.id
         })
       );
+      setSelectedFriends([]);
       onClose();
     }
   };

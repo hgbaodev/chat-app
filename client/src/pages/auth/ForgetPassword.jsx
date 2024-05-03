@@ -22,13 +22,10 @@ const ForgetPassword = () => {
         <Flex
           gap="small"
           vertical
-          justify="center"
-          align="center"
           className="w-full mx-auto bg-white rounded-lg p-6"
         >
           {!sendForgotPassword ? (
             <>
-              <FaLock className="object-fill w-[100px] h-[100px]" />
               <Text className="text-xl font-medium mb-3">Forgot password</Text>
               <FormForgetPassword />
             </>

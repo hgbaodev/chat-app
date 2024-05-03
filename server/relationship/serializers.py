@@ -8,7 +8,6 @@ import cloudinary.api
 from chat.models import Conversation, Message, Participants
 
 class UserSerializer(serializers.ModelSerializer):
-    avatar = serializers.SerializerMethodField()
     full_name = serializers.SerializerMethodField()
     class Meta:
         model = User
@@ -16,15 +15,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     def get_full_name(self, obj):
         return obj.get_full_name
-
-    def get_avatar(self, obj):
-        if obj.avatar:
-            try:
-              avatar = cloudinary.api.resource_by_asset_id(obj.avatar).get('secure_url')
-              return avatar
-            except:
-              return None
-        return None
+    
 
 class GetAllFriendRequestSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
