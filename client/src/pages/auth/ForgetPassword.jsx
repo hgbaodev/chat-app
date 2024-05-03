@@ -26,7 +26,9 @@ const ForgetPassword = () => {
         >
           {!sendForgotPassword ? (
             <>
-              <Text className="text-xl font-medium mb-3">Forgot password</Text>
+              <Text className="text-xl font-medium mb-3 text-center">
+                Forgot password
+              </Text>
               <FormForgetPassword />
             </>
           ) : (
