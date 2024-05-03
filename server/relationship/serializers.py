@@ -83,22 +83,6 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
         
         if not existing_request:
             raise serializers.ValidationError("Cannot find this friendrequest.")
-        
-        FriendRelationship.objects.create(
-            user_1=existing_request.sender,
-            user_2=existing_request.receiver
-        )
-        
-        conversation = Conversation.objects.filter(
-            participants__user=existing_request.sender,
-            participants__conversation__type=Conversation.ConversationType.FRIEND,
-            participants__conversation__participants__user=receiver).first()
-        if not conversation:
-            conversation = Conversation.objects.create(type=Conversation.ConversationType.FRIEND)
-            Participants.objects.create(user=existing_request.sender, conversation=conversation)
-            Participants.objects.create(user=receiver, conversation=conversation)
-
-        existing_request.delete()
        
         return value
     

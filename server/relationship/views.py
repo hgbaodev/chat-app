@@ -8,8 +8,9 @@ from .serializers import (FriendRequestSerializer, SendFriendRequestSerializer, 
 from rest_framework.permissions import IsAuthenticated
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from .models import FriendRequest
+from .models import FriendRequest, FriendRelationship
 from notifications.models import Notification
+from chat.models import Conversation, Participants
 from notifications.serializers import NotificationSerializer
 
 class FriendRequestsView(GenericAPIView):
@@ -79,6 +80,42 @@ class ManageFriendRequestView(GenericAPIView):
         serializer = AcceptFriendRequestSerializer(data=request.data, context={'request': request})
 
         if serializer.is_valid(raise_exception=True):
+            receiver = request.user
+            existing_request = FriendRequest.objects.filter(id=friend_request_id, receiver=receiver).first()
+            
+            FriendRelationship.objects.create(
+                user_1=existing_request.sender,
+                user_2=existing_request.receiver
+            )
+            
+            conversation = Conversation.objects.filter(
+                participants__user=existing_request.sender,
+                participants__conversation__type=Conversation.ConversationType.FRIEND,
+                participants__conversation__participants__user=receiver).first()
+            
+            if not conversation:
+                conversation = Conversation.objects.create(type=Conversation.ConversationType.FRIEND)
+                Participants.objects.create(user=existing_request.sender, conversation=conversation)
+                Participants.objects.create(user=receiver, conversation=conversation)
+
+            existing_request.delete()
+            
+            # create notification
+            notification =  Notification.objects.create(
+                receiver=existing_request.sender,
+                title = "Friend request notification",
+                message=f"{existing_request.receiver.get_full_name} accepted your friend request"
+            )
+            
+            # socket response
+            channel_layer = get_channel_layer()
+            async_to_sync(channel_layer.group_send)(
+                'user_%s' % existing_request.sender.pk, {
+                    'type': 'receive_notification',
+                    'message': NotificationSerializer(notification).data
+                }
+            )
+            
             return Response({"msg": "Accepted request successfully", "id": serializer.data['id']}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
