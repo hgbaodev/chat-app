@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import GetInfoUserSerializer, UpdateProfileSerializer
+from .serializers import GetInfoUserSerializer, UpdateProfileSerializer, ChangePasswordSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +10,7 @@ import secrets
 import cloudinary.uploader
 from utils.responses import SuccessResponse, ErrorResponse
 from rest_framework.generics import GenericAPIView
+from rest_framework import status
 
 # Create your views here.
 class GetUserView(APIView):
@@ -52,4 +53,20 @@ class UpdateProfileView(GenericAPIView):
             return SuccessResponse(data=serializer.data)
         except Exception as e:
             print("Error uploading image:", e)
+            return ErrorResponse(error_message=str(e))
+        
+# Change password view (current password, new password, confirm password) use serializer class ChangePasswordSerializer
+class ChangePasswordView(GenericAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = ChangePasswordSerializer
+    def put(self, request):
+        try:
+            serializer = self.serializer_class(data=request.data, context={'request':request})
+            if serializer.is_valid():
+                user = request.user
+                user.set_password(serializer.data.get('new_password'))
+                user.save()
+                return Response({'message': 'Password changed successfully'}, status=status.HTTP_200_OK)
+            return ErrorResponse(error_message=serializer.errors)
+        except Exception as e:
             return ErrorResponse(error_message=str(e))

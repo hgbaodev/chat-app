@@ -120,14 +120,30 @@ export const checkToken = createAsyncThunk(
   }
 );
 
-export const changePassword = createAsyncThunk(
-  'auth/change-password',
+export const resetPassword = createAsyncThunk(
+  'auth/reset-password',
   async (value, { rejectWithValue }) => {
     try {
       const response = await AxiosInstance.post(`auth/change-password/`, value);
       return response;
     } catch (error) {
       return rejectWithValue(error.response.data);
+    }
+  }
+);
+
+// change password
+export const changePassword = createAsyncThunk(
+  'profile/change-password',
+  async (value, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.put(
+        `profile/change-password`,
+        value
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data.error_message);
     }
   }
 );
@@ -261,10 +277,10 @@ const authSlice = createSlice({
         state.sendForgotPassword = false;
         state.emailForgotPassword = null;
       })
-      .addCase(changePassword.pending, (state) => {
+      .addCase(resetPassword.pending, (state) => {
         state.isLoadingChangePassword = true;
       })
-      .addCase(changePassword.fulfilled, (state) => {
+      .addCase(resetPassword.fulfilled, (state) => {
         state.isLoadingChangePassword = false;
         message.open({
           type: 'success',
@@ -275,7 +291,7 @@ const authSlice = createSlice({
           window.location.assign('/auth/login');
         }, 2000);
       })
-      .addCase(changePassword.rejected, (state) => {
+      .addCase(resetPassword.rejected, (state) => {
         state.isLoadingChangePassword = false;
         message.open({
           type: 'error',

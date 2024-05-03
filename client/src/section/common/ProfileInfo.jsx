@@ -1,4 +1,4 @@
-import { Avatar, Flex, Image, Space, Typography, Button } from 'antd';
+import { Avatar, Flex, Image, Space, Typography, Button, Tooltip } from 'antd';
 import { useEffect } from 'react';
 import { IoArrowUndoSharp } from 'react-icons/io5';
 import { LuMessagesSquare, LuUserPlus } from 'react-icons/lu';
@@ -64,28 +64,34 @@ const ProfileInfo = ({ changeView }) => {
             </Title>
           </Space>
           <Space>
-            <Button
-              type="primary"
-              icon={<LuMessagesSquare />}
-              shape="circle"
-              onClick={openConversation}
-            />
+            <Tooltip placement="bottomRight" title="Send message">
+              <Button
+                type="primary"
+                icon={<LuMessagesSquare />}
+                shape="circle"
+                onClick={openConversation}
+              />
+            </Tooltip>
             {!info?.is_friend && !info?.friend_request ? (
-              <Button
-                type="primary"
-                icon={<LuUserPlus />}
-                shape="circle"
-                onClick={changeView}
-              />
+              <Tooltip placement="bottomRight" title="Add friends">
+                <Button
+                  type="primary"
+                  icon={<LuUserPlus />}
+                  shape="circle"
+                  onClick={changeView}
+                />
+              </Tooltip>
             ) : info?.friend_request?.sender == currentUserId ? (
-              <Button
-                type="primary"
-                icon={<IoArrowUndoSharp />}
-                shape="circle"
-                onClick={() =>
-                  dispatch(deleteFriendRequest(info?.friend_request?.id))
-                }
-              />
+              <Tooltip placement="bottomRight" title="Undo request">
+                <Button
+                  type="primary"
+                  icon={<IoArrowUndoSharp />}
+                  shape="circle"
+                  onClick={() =>
+                    dispatch(deleteFriendRequest(info?.friend_request?.id))
+                  }
+                />
+              </Tooltip>
             ) : null}
           </Space>
         </Flex>

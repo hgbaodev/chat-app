@@ -1,7 +1,7 @@
 import { Button, Form, Input } from 'antd';
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from '~/store';
-import { changePassword } from '~/store/slices/authSlice';
+import { resetPassword } from '~/store/slices/authSlice';
 
 const FormChangePassword = () => {
   const [form] = Form.useForm();
@@ -10,7 +10,7 @@ const FormChangePassword = () => {
   const dispatch = useDispatch();
   const onFinish = async (values) => {
     values['token'] = token.split('=')[1];
-    dispatch(changePassword(values));
+    dispatch(resetPassword(values));
   };
   return (
     <>

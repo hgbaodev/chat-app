@@ -47,3 +47,23 @@ class UpdateProfileSerializer(serializers.ModelSerializer):
 
     def get_full_name(self, obj):
         return obj.get_full_name
+    
+# Change password view (current password, new password, confirm password)
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(max_length=255, min_length=6, required=True)
+    new_password = serializers.CharField(max_length=255, min_length=6,required=True)
+    confirm_password = serializers.CharField(max_length=255, min_length=6, required=True)
+    
+    def validate_confirm_password(self, data):
+        if data != self.initial_data.get('new_password'):
+            raise serializers.ValidationError("Passwords do not match.")
+        return data
+    
+    def validate_current_password(self, data):
+        request = self.context.get('request')
+        if not request.user.check_password(data):
+            raise serializers.ValidationError("Current password is incorrect.")
+        return data
+    
+    
+    

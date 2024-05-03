@@ -18,6 +18,7 @@ import { setOpenMyProfile, setOpenSearch } from '~/store/slices/contactSlice';
 import AccountModal from '~/section/common/AccountModal';
 import ProfileModal from '~/section/common/ProfileModal';
 import CallModal from '~/section/call/CallModal';
+import ChangePasswordModal from '~/section/common/ChangePasswordModal';
 
 const DashboardLayout = () => {
   const dispatch = useDispatch();
@@ -27,6 +28,7 @@ const DashboardLayout = () => {
   );
   const { totalUnseen } = useSelector((state) => state.notifications);
   const [openNotification, setOpenNotification] = useState(false);
+  const [openChangePassword, setOpenChangePassword] = useState(false);
 
   // effect
   useEffect(() => {
@@ -34,7 +36,6 @@ const DashboardLayout = () => {
     dispatch(getNumberOfUnseenNotifications());
   }, [dispatch]);
 
-  
   return (
     <>
       <Flex className="h-[100vh]">
@@ -82,9 +83,10 @@ const DashboardLayout = () => {
           </Flex>
           <Space direction="vertical" align="center">
             <NavButton
-              href="/settings"
+              href="#"
               tooltip="Settings"
               icon={<IoSettings size={27} className="text-gray-500" />}
+              onClick={() => setOpenChangePassword(true)}
               badge={0}
             />
             <NavButton
@@ -109,6 +111,10 @@ const DashboardLayout = () => {
       <AccountModal />
       <CallModal />
       <ProfileModal />
+      <ChangePasswordModal
+        isOpen={openChangePassword}
+        handleClose={() => setOpenChangePassword(false)}
+      />
     </>
   );
 };
