@@ -15,7 +15,8 @@ const initialState = {
     open: false,
     id: null,
     info: null
-  }
+  },
+  isOpenFriendRequest: false
 };
 
 export const getRecommendedUsers = createAsyncThunk(
@@ -185,6 +186,9 @@ const relationshipSlice = createSlice({
     },
     setProfileId(state, action) {
       state.profile.id = action.payload;
+    },
+    setOpenFriendRequest(state, action) {
+      state.isOpenFriendRequest = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -321,5 +325,6 @@ export const {
   receiveFriendRequest,
   setOpenProfile,
   setCloseProfile,
-  setProfileId
+  setProfileId,
+  setOpenFriendRequest
 } = relationshipSlice.actions;

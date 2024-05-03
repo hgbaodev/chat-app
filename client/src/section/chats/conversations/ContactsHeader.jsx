@@ -2,14 +2,15 @@ import { Button, Flex, Input } from 'antd';
 import { useState } from 'react';
 import { CiSearch } from 'react-icons/ci';
 import { LuUserPlus, LuUsers } from 'react-icons/lu';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import AddFriendsModal from '~/section/common/AddFriendsModal';
 import NewGroupModel from '~/section/common/NewGroupModal';
 import { setOpenSearch } from '~/store/slices/contactSlice';
+import { setOpenFriendRequest } from '~/store/slices/relationshipSlice';
 
 const ContactsHeader = () => {
-  const [isAddFriendModalOpen, setIsAddFriendModalOpen] = useState(false);
   const [isNewGroupModalOpen, setIsNewGroupModalOpen] = useState(false);
+  const { isOpenFriendRequest } = useSelector((state) => state.relationship);
   const dispatch = useDispatch();
 
   const handleSearch = () => {
@@ -29,7 +30,7 @@ const ContactsHeader = () => {
         <Button
           type="text"
           icon={<LuUserPlus size={20} />}
-          onClick={() => setIsAddFriendModalOpen(true)}
+          onClick={() => dispatch(setOpenFriendRequest(true))}
         />
         <Button
           type="text"
@@ -37,12 +38,7 @@ const ContactsHeader = () => {
           onClick={() => setIsNewGroupModalOpen(true)}
         />
       </Flex>
-      {isAddFriendModalOpen && (
-        <AddFriendsModal
-          isModalOpen={isAddFriendModalOpen}
-          setIsModalOpen={setIsAddFriendModalOpen}
-        />
-      )}
+      {isOpenFriendRequest && <AddFriendsModal />}
       {isNewGroupModalOpen && (
         <NewGroupModel
           isModalOpen={isNewGroupModalOpen}

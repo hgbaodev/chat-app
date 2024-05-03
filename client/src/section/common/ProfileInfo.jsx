@@ -10,7 +10,8 @@ import {
   deleteFriend,
   deleteFriendRequest,
   getProfile,
-  setCloseProfile
+  setCloseProfile,
+  setOpenFriendRequest
 } from '~/store/slices/relationshipSlice';
 import { FiUserMinus } from 'react-icons/fi';
 const { Text, Title } = Typography;
@@ -27,6 +28,7 @@ const ProfileInfo = ({ changeView }) => {
   const openConversation = () => {
     dispatch(getConversationUserId(info?.id));
     dispatch(setCloseProfile());
+    dispatch(setOpenFriendRequest(false));
     dispatch(showContactInfo());
   };
 
