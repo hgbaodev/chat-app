@@ -180,7 +180,8 @@ const AttachmentInput = () => {
   const handleDropdownItemClick = (type) => {
     if (type === 'photoOrVideo') {
       setMessageType(MessageTypes.IMAGE);
-      setFileType('image/*,video/*');
+      // image/*,video/*
+      setFileType('image/*');
     } else if (type === 'document') {
       setMessageType(MessageTypes.DOCUMENT);
       setFileType('.pdf,.doc,.docx,.xls,.xlsx');
@@ -226,7 +227,7 @@ const AttachmentInput = () => {
           items: [
             {
               key: '1',
-              label: 'Photo or Video',
+              label: 'Photo',
               icon: <IoImageOutline size={17} />,
               onClick: () => handleDropdownItemClick('photoOrVideo')
             },
