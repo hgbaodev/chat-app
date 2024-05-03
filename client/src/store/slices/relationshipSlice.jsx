@@ -153,6 +153,21 @@ export const getProfile = createAsyncThunk(
   }
 );
 
+// Delete friend
+export const deleteFriend = createAsyncThunk(
+  'relationship/deleteFriend',
+  async (friend_id, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `relationship/friends/${friend_id}`
+      );
+      return response;
+    } catch (error) {
+      return rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const relationshipSlice = createSlice({
   name: 'relationship',
   initialState,
@@ -289,6 +304,14 @@ const relationshipSlice = createSlice({
       })
       .addCase(getProfile.fulfilled, (state, action) => {
         state.profile.info = action.payload.data;
+      })
+      .addCase(deleteFriend.fulfilled, (state, action) => {
+        state.friends = state.friends.filter(
+          (item) => item.id !== action.payload.data.id
+        );
+        if (state.profile.info) {
+          state.profile.info.is_friend = false;
+        }
       });
   }
 });

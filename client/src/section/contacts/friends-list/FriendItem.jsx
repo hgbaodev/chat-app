@@ -4,7 +4,7 @@ import { IoEllipsisHorizontal } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from '~/store';
 import { setCurrentConversation } from '~/store/slices/chatSlice';
-import { setOpenProfile } from '~/store/slices/relationshipSlice';
+import { deleteFriend, setOpenProfile } from '~/store/slices/relationshipSlice';
 
 export const FriendItem = ({ id, avatar, fullName, conversation }) => {
   const [openOptions, setOpenOptions] = useState(false);
@@ -13,7 +13,7 @@ export const FriendItem = ({ id, avatar, fullName, conversation }) => {
 
   // handle
   const handleDeleteFriend = () => {
-    // logic here
+    dispatch(deleteFriend(id));
   };
 
   const handleShowFriendDetail = () => {

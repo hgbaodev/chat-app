@@ -7,10 +7,12 @@ import { showContactInfo } from '~/store/slices/appSlice';
 import { getConversationUserId } from '~/store/slices/chatSlice';
 import {
   acceptFriendRequest,
+  deleteFriend,
   deleteFriendRequest,
   getProfile,
   setCloseProfile
 } from '~/store/slices/relationshipSlice';
+import { FiUserMinus } from 'react-icons/fi';
 const { Text, Title } = Typography;
 
 const ProfileInfo = ({ changeView }) => {
@@ -93,6 +95,16 @@ const ProfileInfo = ({ changeView }) => {
                 />
               </Tooltip>
             ) : null}
+            {info?.is_friend && (
+              <Tooltip placement="bottomRight" title="Unfriend">
+                <Button
+                  type="primary"
+                  icon={<FiUserMinus />}
+                  shape="circle"
+                  onClick={() => dispatch(deleteFriend(id))}
+                />
+              </Tooltip>
+            )}
           </Space>
         </Flex>
         {info?.friend_request?.receiver == currentUserId && (

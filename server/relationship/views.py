@@ -92,7 +92,7 @@ class DeleteFriendView(GenericAPIView):
         request.data['user_2'] = friend_id
         serializer = self.get_serializer(data=request.data)
         if  serializer.is_valid(raise_exception=True):
-            return Response({"msg": "Deleted friend successfully"}, status=status.HTTP_201_CREATED)
+            return Response({"id": friend_id,"msg": "Deleted friend successfully"}, status=status.HTTP_201_CREATED)
         return Response({"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
     
 
