@@ -422,3 +422,6 @@ class ChatConsumer(WebsocketConsumer):
 
     def online_notification(self, event):
         self.send(text_data=json.dumps(event))
+    
+    def delete_member(self, event):
+        self.send(text_data=json.dumps(event))

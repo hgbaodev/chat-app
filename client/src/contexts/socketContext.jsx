@@ -14,7 +14,9 @@ import {
   setConversationCall,
   setCallMembers,
   setTypingIndicator,
-  updateVideoCallMessage
+  updateVideoCallMessage,
+  removeConversation,
+  deleteMemberGroup
 } from '~/store/slices/chatSlice';
 import { receiveNotification } from '~/store/slices/notificationSlice';
 import { receiveFriendRequest } from '~/store/slices/relationshipSlice';
@@ -24,7 +26,7 @@ export const SocketContext = createContext({
 
 export const SocketProvider = ({ children }) => {
   const dispatch = useDispatch();
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
   const [socketInstance, setSocketInstance] = useState(null);
 
   // effect
@@ -146,6 +148,11 @@ export const SocketProvider = ({ children }) => {
             dispatch(changeStatusUser(data.message));
           } else if (data.type === 'pin_message') {
             dispatch(changeStatePinMessage(data.message));
+          } else if (data.type === 'delete_member') {
+            dispatch(deleteMemberGroup(data.message));
+            if (data.message.user_id === user.id) {
+              dispatch(removeConversation(data.message.conversation_id));
+            }
           }
         } catch (error) {
           console.error('Error parsing message:', error);

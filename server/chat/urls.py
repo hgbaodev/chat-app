@@ -1,10 +1,9 @@
 from django.urls import path
-from .views import GetConversationFromUserId, GetListConversationTypeGroup, DeleteMember, DeletePinnedMessage, PinnedMessagesList, GetAttachmentConversation, ConversationList, ConversationDetail, MesssageDetail, GetMemberConversation, GetMessagesConversation, ConversationListFind, PinConversationUser, UnpinConversationUser, LeaveConversation, ChangeNameConversation
+from .views import GetConversationFromUserId, GetListConversationTypeGroup, DeleteMember, DeletePinnedMessage, PinnedMessagesList, GetAttachmentConversation, ConversationList, MesssageDetail, GetMemberConversation, GetMessagesConversation, ConversationListFind, PinConversationUser, UnpinConversationUser, LeaveConversation, ChangeNameConversation
 
 urlpatterns = [
     path('conversations/', ConversationList.as_view(), name='conversations'),
     path('find-conversations/', ConversationListFind.as_view(), name='find-conversations'),
-    path('conversations/<int:pk>/', ConversationDetail.as_view(), name='conversation-detail'),
     path('conversations/<int:pk>/participants/', GetMemberConversation.as_view(), name='get-members'),
     path('conversations/<int:conversation_id>/participants/<int:user_id>', DeleteMember.as_view(), name='delete-member'),
     path('conversations/<int:pk>/attachments/', GetAttachmentConversation.as_view(), name='get-attachments'),

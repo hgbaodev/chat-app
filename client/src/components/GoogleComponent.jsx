@@ -5,7 +5,6 @@ import { loginWithGoogle } from '~/store/slices/authSlice';
 const GoogleComponent = () => {
   const dispatch = useDispatch();
   const responseMessage = (response) => {
-    console.log(response);
     const payload = response.credential;
     dispatch(loginWithGoogle(payload));
   };

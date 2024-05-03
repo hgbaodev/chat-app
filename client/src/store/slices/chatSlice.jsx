@@ -170,6 +170,21 @@ export const getConversationUserId = createAsyncThunk(
   }
 );
 
+// Delete memeber in conversation
+export const deleteMemberInConversation = createAsyncThunk(
+  'chat/deleteMemberInConversation',
+  async ({ conversation_id, user_id }, { rejectWithValue }) => {
+    try {
+      const response = await AxiosInstance.delete(
+        `/chat/conversations/${conversation_id}/participants/${user_id}`
+      );
+      return response.data;
+    } catch (error) {
+      throw rejectWithValue(error.response.data);
+    }
+  }
+);
+
 const initialState = {
   conversations: [],
   currentPage: 1,
@@ -447,6 +462,40 @@ const chatSlice = createSlice({
     },
     setOpenPinnedMessage(state, action) {
       state.chat.pinned_messages.isOpen = action.payload;
+    },
+    deleteMemberGroup(state, action) {
+      const { conversation_id, user_id } = action.payload;
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === conversation_id) {
+          conversation.members = conversation.members.filter(
+            (member) => member.id !== user_id
+          );
+        }
+        return conversation;
+      });
+      if (state.chat.currentConversation.id === conversation_id) {
+        state.chat.currentConversation.members =
+          state.chat.currentConversation.members.filter(
+            (member) => member.id !== user_id
+          );
+      }
+    },
+    removeConversation(state, action) {
+      console.log(action.payload);
+      state.conversations = state.conversations.filter(
+        (conversation) => conversation.id !== action.payload
+      );
+      if (state.chat.currentConversation.id === action.payload) {
+        state.chat.currentConversation = {
+          id: null,
+          title: null,
+          image: null,
+          type: null,
+          latest_message: null,
+          members: [],
+          is_pinned: null
+        };
+      }
     }
   },
   extraReducers: (builder) => {
@@ -547,6 +596,21 @@ const chatSlice = createSlice({
         state.chat.messages.data = [];
         state.chat.pinned_messages.isOpen = false;
         state.chat.pinned_messages.data = [];
+      })
+      .addCase(deleteMemberInConversation.fulfilled, (state, action) => {
+        const { conversation_id, user_id } = action.payload.result;
+        state.chat.currentConversation.members =
+          state.chat.currentConversation.members.filter(
+            (member) => member.id !== user_id
+          );
+        state.conversations = state.conversations.map((conversation) => {
+          if (conversation.id === conversation_id) {
+            conversation.members = conversation.members.filter(
+              (member) => member.id !== user_id
+            );
+          }
+          return conversation;
+        });
       });
   }
 });
@@ -572,5 +636,7 @@ export const {
   receiveChangeNameConversation,
   changeStatusUser,
   setOpenPinnedMessage,
-  setConversationCallingState
+  setConversationCallingState,
+  removeConversation,
+  deleteMemberGroup
 } = chatSlice.actions;

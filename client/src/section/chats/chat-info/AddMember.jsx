@@ -75,7 +75,7 @@ const AddMember = ({ open, onClose }) => {
           placeholder="Search your friends"
           variant="filled"
           prefix={<SearchOutlined />}
-          className="mt-2 rounded-full"
+          className="mt-2 "
           autoComplete="nope"
           value={search}
           onChange={(e) => setSearch(e.target.value)}

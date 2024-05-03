@@ -63,37 +63,38 @@ class ConversationList(APIView):
         return ErrorResponse(error_message=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     
-class ConversationDetail(APIView):
-    def get_object(self, pk):
-        try:
-            return Conversation.objects.get(pk=pk)
-        except Conversation.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        conversation = self.get_object(pk)
-        serializer = ConversationSerializer(conversation, context={'request': request})
-        return Response(serializer.data)
-
-    def put(self, request, pk, format=None):
-        conversation = self.get_object(pk)
-        serializer = ConversationSerializer(conversation, data=request.data, context={'request': request})
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    def delete(self, request, pk, format=None):
-        conversation = self.get_object(pk)
-        conversation.delete()
-        return Response({"message": "Conversation deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
-    
 class DeleteMember(APIView):
     # Delete member from conversation
     def delete(self, request, conversation_id, user_id, format=None):
+        # send message to conversation members
+        conversation = Conversation.objects.get(id=conversation_id)
+        message = Message.objects.create(
+            conversation=conversation,
+            sender=request.user,
+            message=f"{request.user.last_name} đã xóa {User.objects.get(id=user_id).last_name} khỏi nhóm!",
+            message_type=Message.MessageType.NEWS
+        )
+        message_serializer = MessageSerializer(instance=message)
+        
+        send_message_to_conversation_members(
+            conversation.id,
+            'delete_member', 
+            {
+                "conversation_id": conversation_id,
+                "user_id": user_id,
+            })
+        
+        send_message_to_conversation_members(conversation.id, 'chat_message', message_serializer.data)
+        
+        # delete participant
         participant = Participants.objects.filter(conversation__id=conversation_id, user__id=user_id)
         participant.delete()
-        return SuccessResponse(data={"message": 'Member deleted successfully.'}, status=status.HTTP_200_OK)
+        
+        return SuccessResponse(data={
+            "conversation_id": conversation_id,
+            "user_id": user_id,
+            "message": 'Member deleted successfully.'
+            }, status=status.HTTP_200_OK)
     
 class GetMemberConversation(generics.ListAPIView):
     permission_classes = [IsAuthenticated]

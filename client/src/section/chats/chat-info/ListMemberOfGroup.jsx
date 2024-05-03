@@ -7,6 +7,7 @@ import { useMemo, useState } from 'react';
 import AddMember from '~/section/chats/chat-info/AddMember';
 import { setOpenMyProfile } from '~/store/slices/contactSlice';
 import { setOpenProfile } from '~/store/slices/relationshipSlice';
+import { deleteMemberInConversation } from '~/store/slices/chatSlice';
 const { useBreakpoint } = Grid;
 
 const ListMemberOfGroup = () => {
@@ -103,14 +104,25 @@ const MemberItem = ({ id, avatar, first_name, last_name, status }) => {
         key: '3',
         label: `${id === currentUserId ? 'Leave group' : 'Delete'}`,
         onClick: () => {
-          console.log('delete');
+          dispatch(
+            deleteMemberInConversation({
+              conversation_id: currentConversation.id,
+              user_id: id
+            })
+          );
         },
         danger: true
       });
     }
 
     return items;
-  }, [currentConversation.admin, currentUserId, dispatch, id]);
+  }, [
+    currentConversation.admin,
+    currentConversation.id,
+    currentUserId,
+    dispatch,
+    id
+  ]);
 
   return (
     <Flex
