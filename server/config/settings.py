@@ -29,8 +29,8 @@ CORS_ALLOWED_ORIGINS = [
     'wss://chat-app-production-2c7a.up.railway.app',
     'http://127.0.0.1:3001',
     'http://localhost:3001',
-    'wss://127.0.0.1:8000', 
-    'wss://127.0.0.1',
+    'ws://127.0.0.1:8000', 
+    'ws://127.0.0.1',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -178,11 +178,8 @@ SIMPLE_JWT = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis://default:Aa3rAAIncDEyZTQ1NmM1NDAzMWU0OGM1OGIyN2NhNjM4NWUxMDMzZHAxNDQ1MjM@living-pika-44523.upstash.io:6379")]
-        },
-    },
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 cloudinary.config(
