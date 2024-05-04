@@ -179,7 +179,9 @@ SIMPLE_JWT = {
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {"hosts": [("redis://default:Aa3rAAIncDEyZTQ1NmM1NDAzMWU0OGM1OGIyN2NhNjM4NWUxMDMzZHAxNDQ1MjM@living-pika-44523.upstash.io:6379")]},
+        "CONFIG": {
+            "hosts": [("redis://default:Aa3rAAIncDEyZTQ1NmM1NDAzMWU0OGM1OGIyN2NhNjM4NWUxMDMzZHAxNDQ1MjM@living-pika-44523.upstash.io:6379")]
+        },
     },
 }
 
