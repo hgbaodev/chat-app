@@ -14,3 +14,5 @@ application = ProtocolTypeRouter({
             SimpleJWTAuthTokenMiddleware(URLRouter(websocket_urlpatterns))
         ),
 })
+
+app = application
