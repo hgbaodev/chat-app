@@ -1,0 +1,28 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+asgiref = "==3.7.2"
+django = "==5.0.1"
+django-cors-headers = "==4.3.1"
+django-environ = "==0.11.2"
+djangorestframework = "==3.14.0"
+djangorestframework-simplejwt = "==5.3.1"
+mysqlclient = "==2.2.1"
+pygments = "==2.17.2"
+pyjwt = "==2.8.0"
+pytz = "==2023.3.post1"
+sqlparse = "==0.4.4"
+tzdata = "==2023.4"
+cloudinary = "*"
+drf-writable-nested = "*"
+daphne = "*"
+channels-auth-token-middlewares = "*"
+google-api-python-client = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
