@@ -3,6 +3,7 @@ import environ
 from pathlib import Path
 from datetime import timedelta
 import cloudinary
+import dj_database_url
 
 env = environ.Env(
     DEBUG=(bool, False)
@@ -103,6 +104,8 @@ DATABASES = {
         }
     }  
 }
+
+DATABASES['default'] = dj_database_url.config()
 
 AUTH_USER_MODEL = 'authentication.User'
 
