@@ -25,6 +25,7 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
+    '*',
     'https://chat-app-pro.vercel.app',
     'wss://chat-python-server.up.railway.app',
     'http://127.0.0.1:3001',
