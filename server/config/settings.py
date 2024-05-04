@@ -26,7 +26,7 @@ ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
     'https://chat-app-pro.vercel.app',
-    'wss://chatossd.vercel.app',
+    'wss://chat-app-4cu6.onrender.com',
     'http://127.0.0.1:3001',
     'http://localhost:3001',
     'wss://127.0.0.1:8000', 
