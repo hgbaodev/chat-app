@@ -34,7 +34,7 @@ export const SocketProvider = ({ children }) => {
     let token = Cookies.get('token');
     if (!token) return;
     if (isAuthenticated) {
-      const endpoint = `ws://chatossd.app/ws/chat/${token}/`;
+      const endpoint = `wss://chatossd.app/ws/chat/${token}/`;
       var socket = new ReconnectingWebSocket(endpoint);
 
       socket.onopen = function (e) {
