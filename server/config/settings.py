@@ -3,8 +3,7 @@ import environ
 from pathlib import Path
 from datetime import timedelta
 import cloudinary
-import dj_database_url
-from decouple import config
+
 env = environ.Env(
     DEBUG=(bool, False)
 )
@@ -25,12 +24,10 @@ DEBUG = env('DEBUG')
 ALLOWED_HOSTS = ['*']
 
 CORS_ALLOWED_ORIGINS = [
-    'https://chat-app-pro.vercel.app',
-    'wss://chat-app-4cu6.onrender.com',
     'http://127.0.0.1:3001',
     'http://localhost:3001',
-    'wss://127.0.0.1:8000', 
-    'wss://127.0.0.1',
+    'ws://127.0.0.1:8000', 
+    'ws://127.0.0.1',
 ]
 
 CORS_ALLOW_CREDENTIALS = True
@@ -92,19 +89,20 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+DATABASES = {  
+    'default': {  
+        "ENGINE": "django.db.backends." + env('DB_CONNECTION'),
+        "NAME": env('DB_DATABASE'),
+        "USER": env('DB_USERNAME'),
+        "PASSWORD": env('DB_PASSWORD'),
+        "HOST": env('DB_HOST'),
+        "PORT": env('DB_PORT'),
         "OPTIONS": {
           'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
           'charset': 'utf8mb4',
         }
-    }
+    }  
 }
-
-DATABASES['default'] = dj_database_url.config()
 
 AUTH_USER_MODEL = 'authentication.User'
 
@@ -142,8 +140,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
+STATIC_URL = 'static/'
 
 
 
@@ -178,11 +175,8 @@ SIMPLE_JWT = {
 
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("redis://default:Aa3rAAIncDEyZTQ1NmM1NDAzMWU0OGM1OGIyN2NhNjM4NWUxMDMzZHAxNDQ1MjM@living-pika-44523.upstash.io:6379")]
-        },
-    },
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
 cloudinary.config(
