@@ -10,3 +10,5 @@ python3.12 manage.py migrate
 
 echo "Collect Static..."
 python3.12 manage.py collectstatic --noinput --clear
+
+daphne config.asgi:application
