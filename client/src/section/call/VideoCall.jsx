@@ -98,7 +98,12 @@ const VideoCall = ({
                 className={`relative w-full h-full max-h-full gap-4 p-4 flex-wrap`}
                 justify="space-between"
               >
-                <VideoFrame name="You" videoRef={videoRef} responsive={true} />
+                <VideoFrame
+                  name="You"
+                  videoRef={videoRef}
+                  responsive={true}
+                  isMuted={true}
+                />
                 {remoteStreams.map((stream, index) => {
                   const member = call.members.find(
                     (member) => member.peer_id === stream.peer_id
@@ -206,7 +211,7 @@ const VideoCall = ({
   );
 };
 
-const VideoFrame = ({ name, videoRef, responsive }) => {
+const VideoFrame = ({ name, videoRef, isMuted, responsive }) => {
   return (
     <Flex
       align="center"
@@ -219,6 +224,7 @@ const VideoFrame = ({ name, videoRef, responsive }) => {
         ref={videoRef}
         autoPlay
         playsInline
+        muted={isMuted && 'muted'}
         className="w-full max-w-full max-h-full"
       />
       <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
