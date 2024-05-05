@@ -114,13 +114,14 @@ export const useSocket = () => {
     }
   };
 
-  const emitGetPeerIds = ({ conversation_id, type }) => {
+  const emitGetPeerIds = ({ conversation_id, type, peer_id }) => {
     if (socketInstance) {
       socketInstance.send(
         JSON.stringify({
           source: 'get_peer_ids',
           conversation_id: parseInt(conversation_id),
-          type
+          type,
+          peer_id
         })
       );
     }

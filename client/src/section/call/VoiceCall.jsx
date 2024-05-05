@@ -17,6 +17,7 @@ const VoiceCall = ({
   remoteStreams,
   videoRef,
   videoRefs,
+  gridLayout,
   handleCloseCall,
   handleLeaveCall,
   handleRecall,
@@ -24,9 +25,7 @@ const VoiceCall = ({
 }) => {
   const { call } = useSelector((state) => state.chat);
   const { user } = useSelector((state) => state.auth);
-
   const [isMicrophoneOn, setIsMicrophoneOn] = useState(true);
-
   const [showMembers, setShowMembers] = useState(false);
 
   // handle toggle microphone
@@ -39,7 +38,7 @@ const VoiceCall = ({
       setIsMicrophoneOn(!isMicrophoneOn);
     }
   };
-  const gridLayout = Math.ceil(Math.sqrt(remoteStreams.length + 1));
+
   return (
     <Flex
       align="center"

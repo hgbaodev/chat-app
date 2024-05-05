@@ -12,7 +12,7 @@ import {
 import { useSelector } from 'react-redux';
 import AvatarGroup from '~/components/AvatarGroup';
 
-import { ConversationTypes } from '~/utils/enum';
+import { CallTypes, ConversationTypes } from '~/utils/enum';
 import { formatSeconds } from '~/utils/formatDayTime';
 const VideoCall = ({
   stream,
@@ -20,6 +20,7 @@ const VideoCall = ({
   videoRef,
   videoRefs,
   duration,
+  gridLayout,
   handleCloseCall,
   handleLeaveCall,
   handleRecall
@@ -49,7 +50,7 @@ const VideoCall = ({
       setIsCameraOn(!isCameraOn);
     }
   };
-  const gridLayout = Math.ceil(Math.sqrt(remoteStreams.length + 1));
+
   return (
     <Flex
       align="center"
@@ -66,30 +67,54 @@ const VideoCall = ({
           <p>This call has ended.</p>
         ) : (
           <>
-            <Flex
-              id="video-frame"
-              className={`relative w-full h-full gap-4 p-4 grid ${
-                remoteStreams.length === 0
-                  ? 'grid-cols-1 grid-rows-1'
-                  : remoteStreams.length === 1
-                  ? 'grid-cols-2 grid-rows-1'
-                  : `grid-cols-${gridLayout} grid-rows-${gridLayout}`
-              }`}
-            >
-              <VideoFrame name="You" videoRef={videoRef} />
-              {remoteStreams.map((stream, index) => {
-                const member = call.members.find(
-                  (member) => member.peer_id === stream.peer_id
-                );
-                return (
-                  <VideoFrame
-                    key={index}
-                    name={member?.name}
-                    videoRef={videoRefs[index]}
-                  />
-                );
-              })}
-            </Flex>
+            {gridLayout < 2 || call.type == CallTypes.AUDIO ? (
+              <Flex
+                id="video-frame"
+                className={`relative w-full h-full max-h-full gap-4 p-4 grid overflow-auto ${
+                  remoteStreams.length === 0
+                    ? 'grid-cols-1 grid-rows-1'
+                    : remoteStreams.length === 1
+                    ? 'grid-cols-2 grid-rows-1'
+                    : `grid-cols-${gridLayout} grid-rows-${gridLayout}`
+                }`}
+              >
+                <VideoFrame name="You" videoRef={videoRef} />
+                {remoteStreams.map((stream, index) => {
+                  const member = call.members.find(
+                    (member) => member.peer_id === stream.peer_id
+                  );
+                  return (
+                    <VideoFrame
+                      key={index}
+                      name={member?.name}
+                      videoRef={videoRefs[index]}
+                    />
+                  );
+                })}
+              </Flex>
+            ) : (
+              <Flex
+                id="video-frame"
+                className={`relative w-full h-full max-h-full gap-4 p-4 flex-wrap`}
+                justify="space-between"
+              >
+                <VideoFrame name="You" videoRef={videoRef} responsive={true} />
+                {remoteStreams.map((stream, index) => {
+                  const member = call.members.find(
+                    (member) => member.peer_id === stream.peer_id
+                  );
+                  return (
+                    <VideoFrame
+                      key={index}
+                      name={member?.name}
+                      videoRef={videoRefs[index]}
+                      responsive={true}
+                    />
+                  );
+                })}
+              </Flex>
+            )}
+
             {showMembers && <MembersList members={call.members} />}
           </>
         )}
@@ -181,9 +206,15 @@ const VideoCall = ({
   );
 };
 
-const VideoFrame = ({ name, videoRef }) => {
+const VideoFrame = ({ name, videoRef, responsive }) => {
   return (
-    <Flex align="center" justify="center" className="relative bg-[#3c4043] p-2">
+    <Flex
+      align="center"
+      justify="center"
+      className={`relative bg-[#3c4043] p-2 ${
+        responsive ? 'w-[48%] h-[48%]' : ''
+      }`}
+    >
       <video
         ref={videoRef}
         autoPlay
