@@ -12,6 +12,7 @@ const TabJoinedGroups = () => {
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('newest');
   const [filter, setFilter] = useState('all');
+  const { user } = useSelector((state) => state.auth);
 
   const { isLoading, data } = useSelector((state) => state.relationship.groups);
 
@@ -35,9 +36,10 @@ const TabJoinedGroups = () => {
 
     const furtherFilteredGroups = filteredGroups.filter((group) => {
       if (filter === 'admin') {
-        return group.admin === 1;
+        return group.admin === user.id;
+      } else {
+        return true;
       }
-      return true;
     });
 
     return furtherFilteredGroups.sort((a, b) => {
@@ -58,7 +60,7 @@ const TabJoinedGroups = () => {
       }
       return 0;
     });
-  }, [data, search, sort, filter]);
+  }, [data, search, filter, user.id, sort]);
 
   return (
     <>
@@ -104,7 +106,7 @@ const TabJoinedGroups = () => {
               { value: 'all', label: 'All' },
               { value: 'admin', label: 'My admin groups' }
             ]}
-            onBlur={handleFilterChange}
+            onChange={handleFilterChange}
           />
         </Flex>
         {isLoading ? (

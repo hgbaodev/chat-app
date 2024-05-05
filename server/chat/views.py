@@ -255,6 +255,12 @@ class LeaveConversation(APIView):
         conversation_id = serializer.validated_data['conversation_id']
         conversation = Conversation.objects.get(id=conversation_id)
         try:
+            send_message_to_conversation_members(conversation.id,
+                'delete_member', 
+                {
+                    "conversation_id": conversation_id,
+                    "user_id": user.id,
+                })
             participant = Participants.objects.get(conversation_id=conversation_id, user=user)
             participant.delete()
             message = Message.objects.create(
