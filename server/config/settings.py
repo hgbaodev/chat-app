@@ -24,16 +24,17 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
-# CORS_ALLOWED_ORIGINS = [
-#     'https://chat-app-pro.vercel.app',
-#     'wss://chat-python-server.up.railway.app',
-#     'http://127.0.0.1:3001',
-#     'http://localhost:3001',
-#     'ws://127.0.0.1:8000', 
-#     'ws://127.0.0.1',
-# ]
+CORS_ALLOWED_ORIGINS = [
+    'https://chat-app-pro.vercel.app',
+    'wss://chat-python-server.up.railway.app',
+    'http://127.0.0.1:3001',
+    'http://localhost:3001',
+    'ws://127.0.0.1:8000', 
+    'ws://127.0.0.1',
+]
 
-# CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -47,7 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt.token_blacklist',
-    # 'corsheaders',
+    'corsheaders',
     'authentication',
     'relationship',
     'chat',
@@ -63,8 +64,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'corsheaders.middleware.CorsMiddleware',
-    # 'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     
 ]
 
