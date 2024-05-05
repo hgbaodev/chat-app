@@ -198,19 +198,19 @@ class ChatConsumer(WebsocketConsumer):
         
         conversation = Conversation.objects.get(id=conversation_id)
         conversation_type = conversation.type
-        conversation_title = conversation.title
-        conversation_image = conversation.image
-        if conversation.type == Conversation.ConversationType.FRIEND:
-            participant = Participants.objects.filter(conversation_id=conversation_id).exclude(user=self.scope["user"]).first()
-            conversation_title = participant.user.first_name + ' ' + participant.user.last_name
-            conversation_image = participant.user.avatar
-        
+        conversation_title =self.scope["user"].first_name + ' ' + self.scope["user"].last_name
+        conversation_images = [self.scope["user"].avatar]
+        if conversation.type == Conversation.ConversationType.GROUP:
+            conversation_title = conversation.title
+            participants =  Participants.objects.filter(conversation_id=conversation_id).all()
+            conversation_images = [participant.user.avatar for participant in participants]
+
         message_dict = {
             'type': call_type,
             'conversation': {
                 'conversation_id': conversation_id,
                 'title': conversation_title,
-                'image': conversation_image,
+                'images': conversation_images,
                 'type': conversation_type,
             },
         }
