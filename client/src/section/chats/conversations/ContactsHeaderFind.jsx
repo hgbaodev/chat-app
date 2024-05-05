@@ -80,7 +80,7 @@ const ContactsHeaderFind = () => {
               (conversation) => conversation.type === ConversationTypes.FRIEND
             ) && (
               <Typography.Text strong className="px-4 mb-2">
-                Friends
+                Peoples
               </Typography.Text>
             )}
             {renderConversationsByType(ConversationTypes.FRIEND)}
