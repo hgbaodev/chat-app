@@ -10,6 +10,7 @@ import { setCall } from '~/store/slices/chatSlice';
 import { CallTypes, ConversationTypes } from '~/utils/enum';
 import VideoCall from './VideoCall';
 import VoiceCall from './VoiceCall';
+import { set } from 'lodash';
 const CallWrapper = () => {
   const { socketInstance } = useContext(SocketContext);
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const CallWrapper = () => {
   const [remoteStreams, setRemoteStreams] = useState([]);
   const videoRefs = remoteStreams.map(() => React.createRef());
   const [duration, setDuration] = useState(0);
+  const [gridLayout, setGridLayout] = useState(1);
 
   const initPeer = useCallback(() => {
     if (socketInstance) {
@@ -61,7 +63,7 @@ const CallWrapper = () => {
           ]
         }
       });
-      emitGetPeerIds({ conversation_id, type: call_type });
+      emitGetPeerIds({ conversation_id, type: call_type, peer_id: peer_id });
       if (peer) peer.destroy();
       setPeer(peerInstance);
       navigator.mediaDevices
@@ -83,6 +85,7 @@ const CallWrapper = () => {
                       : stream
                   );
                 } else {
+                  setGridLayout((prev) => Math.sqrt(prev + 2));
                   return [
                     ...prevStreams,
                     { peer_id: call.peer, stream: remoteStream }
@@ -101,9 +104,11 @@ const CallWrapper = () => {
         }
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketInstance]);
   useEffect(() => {
     initPeer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [socketInstance]);
 
   useEffect(() => {
@@ -125,6 +130,7 @@ const CallWrapper = () => {
                         : stream
                     );
                   } else {
+                    setGridLayout((prev) => Math.sqrt(prev + 2));
                     return [
                       ...prevStreams,
                       { peer_id: myCall.peer, stream: remoteStream }
@@ -162,6 +168,7 @@ const CallWrapper = () => {
     // serialize peer_ids
     const peer_ids = call.members.map((member) => member.peer_id);
     console.log('peer_ids', peer_ids);
+    setGridLayout(Math.sqrt(peer_ids.length + 1));
     setRemoteStreams((preStream) =>
       preStream.filter((stream) => peer_ids.includes(stream.peer_id))
     );
@@ -194,6 +201,7 @@ const CallWrapper = () => {
     peer.destroy();
   };
   // handle interrupt call
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleLeaveCall = useCallback(() => {
     const confirm = window.confirm('Are you sure you want to leave this call?');
     if (!confirm) return;
@@ -258,6 +266,7 @@ const CallWrapper = () => {
         duration={duration}
         videoRef={videoRef}
         videoRefs={videoRefs}
+        gridLayout={gridLayout}
         handleCloseCall={handleCloseCall}
         handleLeaveCall={handleLeaveCall}
         handleRecall={handleRecall}
@@ -270,6 +279,7 @@ const CallWrapper = () => {
       duration={duration}
       videoRef={videoRef}
       videoRefs={videoRefs}
+      gridLayout={gridLayout}
       handleCloseCall={handleCloseCall}
       handleLeaveCall={handleLeaveCall}
       handleRecall={handleRecall}
