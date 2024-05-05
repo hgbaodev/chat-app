@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from '~/store';
 import { setCall, setConversationCallingState } from '~/store/slices/chatSlice';
 import { v4 as uuidv4 } from 'uuid';
 import { CallTypes, ConversationTypes } from '~/utils/enum';
+import AvatarGroupCall from '~/components/AvatarGroupCall';
 
 const CallModal = () => {
   const dispatch = useDispatch();
@@ -66,7 +67,13 @@ const CallModal = () => {
       >
         <div className="flex flex-col items-center justify-center">
           <div className="flex flex-col items-center justify-center mb-5">
-            <Avatar size={70} src={call.conversation?.image} />
+            {call.conversation?.images &&
+            call.conversation.images.length > 1 ? (
+              <AvatarGroupCall avatars={call.conversation?.images} />
+            ) : (
+              <Avatar size={70} src={call.conversation?.images?.[0]} />
+            )}
+
             <h2 className="my-3 text-[20px] font-semibold text-center">
               {call.conversation?.title}
             </h2>
