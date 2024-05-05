@@ -38,27 +38,9 @@ const CallWrapper = () => {
         config: {
           iceServers: [
             {
-              urls: 'stun:stun.relay.metered.ca:80'
-            },
-            {
-              urls: 'turn:sg.relay.metered.ca:80',
-              username: '8b743f9ddbf2ebef110702b9',
-              credential: 'fZZ3K5SbdiVz2llK'
-            },
-            {
-              urls: 'turn:sg.relay.metered.ca:80?transport=tcp',
-              username: '8b743f9ddbf2ebef110702b9',
-              credential: 'fZZ3K5SbdiVz2llK'
-            },
-            {
-              urls: 'turn:sg.relay.metered.ca:443',
-              username: '8b743f9ddbf2ebef110702b9',
-              credential: 'fZZ3K5SbdiVz2llK'
-            },
-            {
-              urls: 'turns:sg.relay.metered.ca:443?transport=tcp',
-              username: '8b743f9ddbf2ebef110702b9',
-              credential: 'fZZ3K5SbdiVz2llK'
+              urls: 'turn:freeturn.net:3478',
+              username: 'free',
+              credential: 'free'
             }
           ]
         }
