@@ -78,7 +78,7 @@ const VideoCall = ({
                     : `grid-cols-${gridLayout} grid-rows-${gridLayout}`
                 }`}
               >
-                <VideoFrame name="You" videoRef={videoRef} />
+                <VideoFrame name="You" videoRef={videoRef} isMuted={true} />
                 {remoteStreams.map((stream, index) => {
                   const member = call.members.find(
                     (member) => member.peer_id === stream.peer_id
@@ -224,7 +224,7 @@ const VideoFrame = ({ name, videoRef, isMuted, responsive }) => {
         ref={videoRef}
         autoPlay
         playsInline
-        muted={isMuted && 'muted'}
+        muted={isMuted ? 'muted' : ''}
         className="w-full max-w-full max-h-full"
       />
       <div className="bg-[#202124] absolute bottom-[10px] left-[10px] px-2 py-1 rounded">
