@@ -185,12 +185,20 @@ class ChatConsumer(WebsocketConsumer):
         peer_id = data["peer_id"]
         call_type = data["type"]
         print('call_type', call_type)
+
+        if conversation_id in self.call_store:
+            if self.call_store[conversation_id] != {}:
+                print('BREAK HERE')
+                return
+           
+
         # init call store
         self.call_store[conversation_id] = {
             'type': call_type,
             'members': [
             {
                 'peer_id': peer_id, 
+                'user_id': self.scope["user"].id,
                 'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
                 'avatar': self.scope["user"].avatar
             }]
@@ -244,6 +252,7 @@ class ChatConsumer(WebsocketConsumer):
         self.call_store[conversation_id]["members"].append(
             {
                 'peer_id': peer_id, 
+                'user_id': self.scope["user"].id,
                 'name':  f'{self.scope["user"].first_name} {self.scope["user"].last_name}', 
                 'avatar': self.scope["user"].avatar
             })
@@ -345,10 +354,12 @@ class ChatConsumer(WebsocketConsumer):
     def receive_get_peer_ids(self, data):
         conversation_id = data["conversation_id"]
         call_type = data["type"]
+
         # can not access when call type is different
         if str(self.call_store[conversation_id]["type"]) != str(call_type):
             print('diff', call_type)
             return
+        
 
         # check user is in this conversation
         if not Participants.objects.filter(conversation_id=conversation_id, user=self.scope["user"]).exists():

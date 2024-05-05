@@ -120,7 +120,7 @@ export const useSocket = () => {
         JSON.stringify({
           source: 'get_peer_ids',
           conversation_id: parseInt(conversation_id),
-          type
+          type,
         })
       );
     }
