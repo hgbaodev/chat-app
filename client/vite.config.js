@@ -8,7 +8,7 @@ export default defineConfig({
   server: {
     port: 3001,
   },
-  // base: './'
+  base: './',
   resolve: {
     alias: [{ find: '~', replacement: '/src' }],
   },
