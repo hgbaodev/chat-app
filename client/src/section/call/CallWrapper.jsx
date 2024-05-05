@@ -178,6 +178,7 @@ const CallWrapper = () => {
   useEffect(() => {
     if (videoRef.current) {
       videoRef.current.srcObject = stream;
+      videoRef.current.muted = true;
     }
   }, [stream]);
 
