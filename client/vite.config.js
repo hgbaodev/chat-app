@@ -6,10 +6,10 @@ import svgr from 'vite-plugin-svgr';
 export default defineConfig({
   plugins: [react(), svgr()],
   server: {
-    port: 3001,
+    port: 3001
   },
-  // base: './'
+  // base: './',
   resolve: {
-    alias: [{ find: '~', replacement: '/src' }],
-  },
+    alias: [{ find: '~', replacement: '/src' }]
+  }
 });
