@@ -1,7 +1,6 @@
 import Cookies from 'js-cookie';
 import { createContext, useEffect, useState } from 'react';
 import ReconnectingWebSocket from 'reconnecting-websocket';
-import { WEBSOCKETURL } from '~/config';
 import { useDispatch, useSelector } from '~/store';
 import {
   changeStatePinMessage,
@@ -35,7 +34,7 @@ export const SocketProvider = ({ children }) => {
     let token = Cookies.get('token');
     if (!token) return;
     if (isAuthenticated) {
-      const endpoint = `${WEBSOCKETURL}/${token}/`;
+      const endpoint = `ws://127.0.0.1:8000/ws/chat/${token}/`;
       var socket = new ReconnectingWebSocket(endpoint);
 
       socket.onopen = function (e) {
