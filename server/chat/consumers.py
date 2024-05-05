@@ -184,13 +184,18 @@ class ChatConsumer(WebsocketConsumer):
         conversation_id = data["conversation_id"]
         peer_id = data["peer_id"]
         call_type = data["type"]
-        print('call_type', call_type)
+
+        if conversation_id in self.call_store:
+            if self.call_store[conversation_id] != {}:
+                return
+           
         # init call store
         self.call_store[conversation_id] = {
             'type': call_type,
             'members': [
             {
                 'peer_id': peer_id, 
+                'user_id': self.scope["user"].id,
                 'name': f'{self.scope["user"].first_name} {self.scope["user"].last_name}',
                 'avatar': self.scope["user"].avatar
             }]
