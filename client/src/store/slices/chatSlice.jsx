@@ -325,6 +325,17 @@ const chatSlice = createSlice({
           message.message_type = MessageTypes.RECALL;
         }
       }
+
+      state.conversations = state.conversations.map((conversation) => {
+        if (conversation.id === conversation_id) {
+          conversation.latest_message = {
+            ...conversation.latest_message,
+            message_type: MessageTypes.RECALL
+          };
+        }
+        return conversation;
+      });
+
     },
     openCall(state) {
       state.call.calling = false;
