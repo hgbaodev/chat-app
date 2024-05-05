@@ -24,16 +24,16 @@ DEBUG = env('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
-CORS_ALLOWED_ORIGINS = [
-    'https://chat-app-pro.vercel.app',
-    'wss://chat-python-server.up.railway.app',
-    'http://127.0.0.1:3001',
-    'http://localhost:3001',
-    'ws://127.0.0.1:8000', 
-    'ws://127.0.0.1',
-]
+# CORS_ALLOWED_ORIGINS = [
+#     'https://chat-app-pro.vercel.app',
+#     'wss://chat-python-server.up.railway.app',
+#     'http://127.0.0.1:3001',
+#     'http://localhost:3001',
+#     'ws://127.0.0.1:8000', 
+#     'ws://127.0.0.1',
+# ]
 
-CORS_ALLOW_CREDENTIALS = True
+# CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
