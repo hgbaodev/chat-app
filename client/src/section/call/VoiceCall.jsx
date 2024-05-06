@@ -69,6 +69,7 @@ const VoiceCall = ({
                 name={user.fullName}
                 avatar={user.avatar}
                 videoRef={videoRef}
+                isMuted={true}
               />
               {remoteStreams.map((stream, index) => {
                 const member = call.members.find(
@@ -162,7 +163,7 @@ const VoiceCall = ({
   );
 };
 
-const VideoFrame = ({ name, avatar, videoRef }) => {
+const VideoFrame = ({ name, avatar, videoRef, isMuted }) => {
   return (
     <Flex
       align="center"
@@ -173,6 +174,7 @@ const VideoFrame = ({ name, avatar, videoRef }) => {
         ref={videoRef}
         autoPlay
         playsInline
+        muted={isMuted ? 'muted' : ''}
         className="w-full max-w-full max-h-full hidden"
       />
       <Avatar size={60} src={avatar} />
