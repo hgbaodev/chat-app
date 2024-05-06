@@ -40,9 +40,8 @@ export const ContactItem = ({
   const { currentConversation } = useSelector((state) => state.chat.chat);
   const user = useSelector((state) => state.auth.user);
 
-  const handleDeleteConversation = (e) => {
-    e.stopPropagation();
-    message.success('Delete conversation successfully!');
+  const handleNotAvaiable = () => {
+    message.info('Function is not available yet');
   };
 
   const handlePin = () => {
@@ -55,27 +54,19 @@ export const ContactItem = ({
   const items = [
     {
       key: '1',
-      label: (
-        <p className="m-0 min-w-[180px]">
-          {is_pinned ? 'Unpin this conversation' : 'Pin this conversation'}
-        </p>
-      ),
+      label: is_pinned ? 'Unpin this conversation' : 'Pin this conversation',
       onClick: handlePin
     },
     {
       key: '2',
-      label: <p className="m-0 w-[180px]">Hide conversation</p>
+      label: 'Hide conversation',
+      onClick: handleNotAvaiable
     },
     {
       key: '3',
-      label: (
-        <p
-          onClick={handleDeleteConversation}
-          className="text-red-500 m-0 w-[180px]"
-        >
-          Delete conversation
-        </p>
-      )
+      label: 'Delete conversation',
+      onClick: handleNotAvaiable,
+      danger: true
     }
   ];
 

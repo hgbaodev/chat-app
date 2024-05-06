@@ -8,7 +8,7 @@ import {
   showSharedMessage,
   toggleContactInfo
 } from '~/store/slices/appSlice';
-import { GrGroup, GrPin } from 'react-icons/gr';
+import { GrPin } from 'react-icons/gr';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { ExclamationCircleFilled } from '@ant-design/icons';
 import { useSelector } from '~/store';
@@ -229,7 +229,6 @@ const HeaderInfoTool = () => {
             text="Profile"
             onClick={() => dispatch(setOpenProfile(member.id))}
           />
-          <ToolButton icon={<GrGroup />} text="Create group" />
         </>
       )}
       {!currentConversation.is_pinned ? (

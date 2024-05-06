@@ -174,6 +174,17 @@ const UpdateProfile = ({ handleClose }) => {
     }
   };
 
+  const validatePhoneNumber = (_, value) => {
+    if (value) {
+      var vnPhoneRegex = /(03|05|07|08|09|01[2|6|8|9])+([0-9]{8})\b/;
+      if (vnPhoneRegex.test(value)) {
+        return Promise.resolve();
+      }
+      return Promise.reject('Invalid phone number!');
+    }
+    return Promise.resolve();
+  };
+
   const handleSubmit = (values) => {
     values.birthday = values?.birthday.format('YYYY-MM-DD');
     if (imageFile != null) values['image'] = imageFile;
@@ -259,10 +270,11 @@ const UpdateProfile = ({ handleClose }) => {
             name="phone"
             label="Phone"
             rules={[
-              { required: false, message: 'Please input your phone number!' }
+              { required: false, message: 'Please input your phone number!' },
+              { validator: validatePhoneNumber }
             ]}
           >
-            <Input placeholder="Enter your phone number" />
+            <Input type="number" placeholder="Enter your phone number" />
           </Form.Item>
           <Form.Item
             name="birthday"
@@ -273,8 +285,11 @@ const UpdateProfile = ({ handleClose }) => {
           >
             <DatePicker
               className="w-full"
-              placeholder="Enter your phone birthday"
+              placeholder="Choose your phone birthday"
               format="YYYY-MM-DD"
+              disabledDate={(current) =>
+                current && current > dayjs().endOf('day')
+              }
             />
           </Form.Item>
           <Form.Item name="about" label="About" rules={[{ required: false }]}>

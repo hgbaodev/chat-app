@@ -1,5 +1,4 @@
 import { Flex, Row, Typography, Col, Button } from 'antd';
-import { FaLock } from 'react-icons/fa';
 import FormForgetPassword from '~/section/auth/FormForgetPassword';
 import SendIcon from '~/assets/sendIcon';
 import { useSelector } from 'react-redux';
@@ -34,7 +33,7 @@ const ForgetPassword = () => {
           ) : (
             <>
               <SendIcon color="#1677ff" />
-              <Typography.Title level={3} className="mb-3">
+              <Typography.Title level={3} className="mb-3 text-center">
                 Request sent successfully
               </Typography.Title>
               <Typography.Text className="text-center mb-4">

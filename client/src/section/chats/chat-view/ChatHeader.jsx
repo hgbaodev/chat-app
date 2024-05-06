@@ -1,9 +1,5 @@
 import { Button, Flex, Space, Typography } from 'antd';
-import {
-  SearchOutlined,
-  ExclamationCircleOutlined,
-  PhoneOutlined
-} from '@ant-design/icons';
+import { ExclamationCircleOutlined, PhoneOutlined } from '@ant-design/icons';
 import { IoVideocamOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from 'react-redux';
 import { showMembersGroup, toggleContactInfo } from '~/store/slices/appSlice';
@@ -104,7 +100,6 @@ export const ChatHeader = () => {
             (c) => c.id === currentConversation.id && c.calling
           )}
         />
-        <Button type="text" shape="circle" icon={<SearchOutlined />} />
         {!contactInfo.open && (
           <Button
             type="text"

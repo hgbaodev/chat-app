@@ -6,7 +6,6 @@ import {
   Input,
   Modal,
   Space,
-  Upload,
   message
 } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
@@ -15,7 +14,6 @@ import { IoAdd, IoCloseOutline } from 'react-icons/io5';
 import { useDispatch, useSelector } from '~/store';
 import { getAllFriends } from '~/store/slices/relationshipSlice';
 import Loader from '~/components/Loader';
-import { FaCamera } from 'react-icons/fa';
 import useDebounce from '~/hooks/useDebounce';
 import { createConversation } from '~/store/slices/contactSlice';
 
@@ -59,28 +57,15 @@ const NewGroupModel = ({ isModalOpen, setIsModalOpen }) => {
       width={500}
       confirmLoading={isLoadingCreateConversation}
     >
-      <Flex align="center" gap={10} className="py-2 w-full">
-        <div>
-          <Upload
-            listType="picture-circle"
-            fileList={[]}
-            onPreview={null}
-            onChange={null}
-            accept="image/*"
-          >
-            <FaCamera size={20} className="text-gray-400" />
-          </Upload>
-        </div>
-        <Input
-          name="input-search"
-          placeholder="Enter group name"
-          variant="filled"
-          autoComplete="nope"
-          className="h-[40px]"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      </Flex>
+      <Input
+        name="input-search"
+        placeholder="Enter group name"
+        variant="filled"
+        autoComplete="nope"
+        className="h-[40px]"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
       <Flex>
         <Avatar.Group
           maxCount={2}
