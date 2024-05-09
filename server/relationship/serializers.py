@@ -86,8 +86,6 @@ class AcceptFriendRequestSerializer(serializers.Serializer):
        
         return value
     
-
-    
 class BlockFriendSerializer(serializers.Serializer):
     
     blocked_by = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
