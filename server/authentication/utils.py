@@ -8,7 +8,7 @@ from django.template.loader import render_to_string
 from django.utils.crypto import get_random_string
 from django.utils import timezone
 from utils.responses import SuccessResponse, ErrorResponse
-
+from django.conf import settings
 
 
 def send_generated_otp_to_email(email, request): 
@@ -33,7 +33,7 @@ def send_generated_url_change_pass_to_email(email):
         "email": user.email
     })
     token = get_random_string(40)
-    url = f"http://localhost:3001/auth/change-password/token={token}"
+    url = f"{settings.APP_URL}/auth/change-password/token={token}"
     clickable_text = f"""
     <div style="font-family: Helvetica, Arial, sans-serif; min-width: 500px; overflow: auto; line-height: 2">
         <div style="margin: 50px auto; width: 70%; padding: 20px 0">
